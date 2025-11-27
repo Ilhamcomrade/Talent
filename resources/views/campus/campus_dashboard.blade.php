@@ -94,7 +94,7 @@
     </style>
 </head>
 <body>
-        
+
     {{-- Navbar --}}
     @include('partials.navbar_campus')
 
@@ -149,8 +149,8 @@
                     </div>
                     <div class="card-body logo-container">
                         @if(Auth::guard('campus')->user()->logo_path)
-                            <img src="{{ asset('storage/' . Auth::guard('campus')->user()->logo_path) }}" 
-                                 alt="Logo {{ Auth::guard('campus')->user()->nama_kampus }}" 
+                            <img src="{{ asset('storage/' . Auth::guard('campus')->user()->logo_path) }}"
+                                 alt="Logo {{ Auth::guard('campus')->user()->nama_kampus }}"
                                  class="logo-image">
                         @else
                             <div class="logo-placeholder">

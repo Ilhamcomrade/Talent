@@ -14,11 +14,10 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        // Mengambil semua data perusahaan, diurutkan berdasarkan kolom 'nama_perusahaan'
-        $companies = Company::orderBy('nama_perusahaan')->paginate(10); 
-
+        $companies = Company::orderBy('nama_perusahaan')->paginate(10);
         return view('admin.companies.index', compact('companies'));
     }
+
     public function store(Request $request)
     {
         // 1. Validasi Data
@@ -50,10 +49,9 @@ class CompanyController extends Controller
             $data['logo'] = $request->file('logo')->store('company_logos', 'public');
         }
 
-        // 4. Handle is_active (untuk checkbox)
+        // 4. Handle is_active
         $data['is_active'] = $request->has('is_active');
-        // HAPUS: $data['is_verified'] = false;
-        
+
         // 5. Menyimpan ke Database
         Company::create($data);
 
@@ -63,15 +61,20 @@ class CompanyController extends Controller
     }
 
     /**
-     * Menampilkan detail perusahaan tertentu (Show) - TAMBAHKAN METHOD SHOW
+     * Menampilkan detail perusahaan tertentu (Show)
      */
-    public function show(Company $company)
+    public function show($slug) // Ubah parameter menjadi slug
     {
+        // Cari perusahaan berdasarkan slug
+        $company = Company::where('slug', $slug)->firstOrFail();
         return view('admin.companies.show', compact('company'));
     }
 
-    public function destroy(Company $company)
+    public function destroy($slug) // Ubah parameter menjadi slug
     {
+        // Cari perusahaan berdasarkan slug
+        $company = Company::where('slug', $slug)->firstOrFail();
+
         // Hapus logo dari storage
         if ($company->logo) {
             Storage::disk('public')->delete($company->logo);

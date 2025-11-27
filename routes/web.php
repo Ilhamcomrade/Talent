@@ -28,7 +28,6 @@ use App\Http\Controllers\Company\cJobController;
 use App\Http\Controllers\Company\cProfileController;
 use App\Http\Controllers\Company\cNotificationController;
 use App\Http\Controllers\Company\cMagangController;
-use App\Http\Controllers\Company\cApplicantController;
 // use App\Http\Controllers\Company\cDashboardController;
 
 
@@ -233,25 +232,12 @@ Route::middleware(['auth.company'])->group(function () {
     Route::get('jobs/{id}/edit', [cJobController::class, 'edit'])->name('companiesjobs.edit');
     Route::put('jobs/{id}', [cJobController::class, 'update'])->name('companiesjobs.update');
     Route::delete('jobs/{id}', [cJobController::class, 'destroy'])->name('companiesjobs.destroy');
+    // Halaman daftar pelamar
+Route::get('jobs/pelamar', function () {
+    return view('company.jobs.pelamar');
+})->name('companiesjobs.pelamar');
+
     Route::get('jobs/{id}', [cJobController::class, 'show'])->name('companiesjobs.show');
-
-    // ======= ROUTE PELAMAR (AMAN, TIDAK CAMPUR JOB) ========
-Route::get('applications', [cApplicantController::class, 'index'])
-        ->name('company.applications.index');
-
-Route::get('jobs/{id}/pelamar', [cApplicantController::class, 'pelamarByJob'])
-        ->name('company.applications.byJob');
-
-Route::get('applications/{id}', [cApplicantController::class, 'show'])
-        ->name('company.applications.show');
-
-Route::post('applications/{id}/status', [cApplicantController::class, 'updateStatus'])
-        ->name('company.applications.updateStatus');
-
-Route::get('applications/{id}/cv', [cApplicantController::class, 'cv'])
-        ->name('company.applications.cv');
-
-    
 });
     
     

@@ -51,16 +51,16 @@
         .dropdown-menu-scrollable { max-height: 300px; overflow-y: auto; padding: 0; min-width: 400px; }
         .dropdown-item-custom { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 1rem; color: #212529; transition: background-color 0.2s, color 0.2s; }
         .dropdown-item-custom:hover, .dropdown-item-custom:focus { background-color: #e9f5ff; color: #007bff; }
-        .search-box .btn.dropdown-toggle { 
-            background-color: #fff; 
-            color: #212529; 
-            border: none; 
-            box-shadow: none; 
-            text-align: left; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 0.75rem 1rem; 
+        .search-box .btn.dropdown-toggle {
+            background-color: #fff;
+            color: #212529;
+            border: none;
+            box-shadow: none;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
         }
         .search-box .btn.dropdown-toggle:focus { box-shadow: none; }
         .dropdown-toggle .bi-chevron-down { transition: transform 0.3s ease-in-out; }
@@ -108,63 +108,63 @@
         }
 
         /* === Sidebar Filter === */
-        .sidebar { 
-            background: #fff; 
-            border-radius: 10px; 
-            padding: 20px; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
-            position: sticky; 
-            top: 20px; 
+        .sidebar {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 20px;
         }
-        .filter-section { 
-            margin-bottom: 20px; 
-            padding-bottom: 15px; 
-            border-bottom: 1px solid #eee; 
+        .filter-section {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
         }
         .filter-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .filter-title { 
-            font-weight: 600; 
-            font-size: 1rem; 
-            color: #333; 
-            cursor: pointer; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 10px; 
+        .filter-title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #333;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
             padding: 5px 0;
         }
         .filter-title:hover { color: #3200e6; }
         .filter-options label { font-weight: normal; font-size: 0.9rem; }
         .filter-options .form-check { margin-bottom: 8px; }
-        .priority-btn { 
-            background-color: transparent; 
-            border: 1px solid #ced4da; 
-            color: #495057; 
-            padding: 6px 15px; 
-            border-radius: 20px; 
-            font-size: 0.9rem; 
-            transition: all 0.2s; 
-            margin-right: 8px; 
+        .priority-btn {
+            background-color: transparent;
+            border: 1px solid #ced4da;
+            color: #495057;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            margin-right: 8px;
             margin-bottom: 8px;
         }
-        .priority-btn.active, .priority-btn:hover { 
-            background-color: #eaf3ff; 
-            border-color: #0d6efd; 
-            color: #0d6efd; 
+        .priority-btn.active, .priority-btn:hover {
+            background-color: #eaf3ff;
+            border-color: #0d6efd;
+            color: #0d6efd;
         }
-        .page-header-sidebar { 
-            font-size: 1.3rem; 
-            font-weight: bold; 
-            margin-bottom: 20px; 
+        .page-header-sidebar {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 20px;
             color: #333;
             padding-bottom: 10px;
             border-bottom: 2px solid #131313;
         }
-        
+
         /* Badge styles */
         .badge-new { background: #28a745; }
         .badge-featured { background: #e6007e; }
-        
+
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .search-header { padding: 2rem 0; }
@@ -174,6 +174,57 @@
                 height: 60px;
             }
         }
+
+                /* WhatsApp Floating Button - Functional */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 80px; /* Dinaikkan dari 25px menjadi 80px */
+            right: 25px;
+            z-index: 1000;
+        }
+
+        .whatsapp-link {
+            display: block;
+            text-decoration: none;
+            transition: transform 0.2s ease;
+        }
+
+        .whatsapp-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .whatsapp-link:hover {
+            transform: scale(1.05);
+        }
+
+        /* Responsive WhatsApp */
+        @media (max-width: 768px) {
+            .whatsapp-float {
+                bottom: 70px; /* Dinaikkan dari 20px menjadi 70px */
+                right: 20px;
+            }
+
+            .whatsapp-logo {
+                width: 55px;
+                height: 55px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .whatsapp-float {
+                bottom: 60px; /* Dinaikkan dari 15px menjadi 60px */
+                right: 15px;
+            }
+
+            .whatsapp-logo {
+                width: 50px;
+                height: 50px;
+            }
+        }
+        
     </style>
 </head>
 <body>
@@ -199,8 +250,8 @@
         <i class="bi bi-chevron-down"></i>
     </button>
     <ul class="dropdown-menu dropdown-menu-scrollable w-100" aria-labelledby="dropdownKlasifikasi">
-       
-        
+
+
         {{-- Kategori Baru Ditambahkan di Sini --}}
 <li><a class="dropdown-item" href="#" data-value="sales">Sales</a></li>
 <li><a class="dropdown-item" href="#" data-value="it">IT</a></li>
@@ -226,7 +277,7 @@
 <li><a class="dropdown-item" href="#" data-value="magang">Magang</a></li>
 <li><a class="dropdown-item" href="#" data-value="remote">Remote Work</a></li>
 {{-- Akhir Kategori Baru --}}
-        
+
     </ul>
 </div>
                 </div>
@@ -264,7 +315,7 @@
                             Prioritaskan <i class="fas fa-chevron-down"></i>
                         </div>
                         <div class="collapse show" id="collapsePrioritas">
-                            
+
                         </div>
                     </div>
 
@@ -441,8 +492,8 @@
                                         {{-- Logo Perusahaan --}}
                                         <div class="me-3" style="flex: 0 0 80px;">
                                             @if($job->company_logo && Storage::disk('public')->exists($job->company_logo))
-                                                <img src="{{ asset('storage/' . $job->company_logo) }}" 
-                                                     alt="Logo {{ $job->company }}" 
+                                                <img src="{{ asset('storage/' . $job->company_logo) }}"
+                                                     alt="Logo {{ $job->company }}"
                                                      class="company-logo"
                                                      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                                 <div class="logo-placeholder" style="display: none;">
@@ -466,7 +517,7 @@
                                                 @endif
                                             </div>
                                             <p class="text-muted mb-1">
-                                                <i class="bi bi-building me-1"></i>{{ $job->company }} - 
+                                                <i class="bi bi-building me-1"></i>{{ $job->company }} -
                                                 <i class="bi bi-geo-alt me-1 ms-2"></i>
                                                 {{-- Tampilkan lokasi lengkap --}}
                                                 @if($job->full_location && $job->full_location != 'Lokasi tidak tersedia')
@@ -541,7 +592,7 @@
                         <div class="mt-4">
                             {{ $jobs->appends(request()->query())->links('pagination::bootstrap-5') }}
                         </div>
-                    
+
                     @else
                         <div class="text-center py-5">
                             <i class="bi bi-search display-1 text-muted"></i>
@@ -553,6 +604,16 @@
                 </div>
             </div>
         </div>
+    </div>
+
+         <!-- INTEGRASI WHATSAPP YANG BERFUNGSI -->
+    <div class="whatsapp-float">
+        <a href="https://wa.me/6282115179879?text=Halo%2C%20saat%20ini%20saya%20sedang%20mengakses%20website%20Inotal%20dan%20saya%20butuh%20bantuan"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="whatsapp-link">
+            <img src="{{ asset('images/whatsapp.png') }}" alt="Chat via WhatsApp" class="whatsapp-logo">
+        </a>
     </div>
 
     {{-- 2. IMPORT FOOTER --}}
@@ -572,10 +633,10 @@
             const jobCount = document.getElementById('jobCount');
             const categoryCheckboxes = document.querySelectorAll('.category-checkbox');
             const klasifikasiText = document.getElementById('klasifikasiText');
-            
+
             // Priority buttons
             const priorityButtons = document.querySelectorAll('.priority-btn');
-            
+
             // Filter elements
             const jobTypeFilters = document.querySelectorAll('.job-type-filter');
             const workPolicyFilters = document.querySelectorAll('.work-policy-filter');
@@ -595,7 +656,7 @@
                 const selectedCategories = Array.from(categoryCheckboxes)
                     .filter(cb => cb.checked)
                     .map(cb => cb.parentElement.querySelector('span').textContent);
-                
+
                 if (selectedCategories.length === 0) {
                     klasifikasiText.textContent = 'Semua kategori';
                 } else if (selectedCategories.length === 1) {
@@ -621,7 +682,7 @@
                 const selectedExperiences = getSelectedValues(experienceFilters);
                 const selectedEducations = getSelectedValues(educationFilters);
                 const selectedUpdate = getSelectedRadioValue(updateFilters);
-                
+
                 let visibleCount = 0;
 
                 jobCards.forEach(card => {
@@ -629,12 +690,12 @@
                     const workPolicy = card.getAttribute('data-work-policy');
                     const experience = card.getAttribute('data-experience');
                     const education = card.getAttribute('data-education');
-                    
+
                     const matchesJobType = selectedJobTypes.length === 0 || selectedJobTypes.includes(jobType);
                     const matchesWorkPolicy = selectedWorkPolicies.length === 0 || selectedWorkPolicies.includes(workPolicy);
                     const matchesExperience = selectedExperiences.length === 0 || selectedExperiences.includes(experience);
                     const matchesEducation = selectedEducations.length === 0 || selectedEducations.includes(education);
-                    
+
                     if (matchesJobType && matchesWorkPolicy && matchesExperience && matchesEducation) {
                         card.style.display = 'block';
                         visibleCount++;
@@ -665,7 +726,7 @@
                 } else {
                     jobResults.style.display = 'block';
                     if (noResults) noResults.classList.add('d-none');
-                    
+
                     // Show alert if filters are active
                     const activeFilters = document.querySelectorAll('.filter-options input:checked');
                     if (activeFilters.length > 0) {
@@ -675,7 +736,7 @@
                         searchAlert.classList.add('d-none');
                     }
                 }
-                
+
                 jobCount.innerHTML = `Menampilkan <strong>${visibleCount}</strong> lowongan`;
             }
 
@@ -685,29 +746,29 @@
                 document.querySelectorAll('.filter-options input[type="checkbox"]').forEach(cb => {
                     cb.checked = false;
                 });
-                
+
                 // Reset radio buttons
                 document.querySelectorAll('.filter-options input[type="radio"]').forEach((radio, index) => {
                     radio.checked = index === 0;
                 });
-                
+
                 // Reset category checkboxes
                 categoryCheckboxes.forEach(cb => cb.checked = false);
                 updateKlasifikasiText();
-                
+
                 // Reset priority buttons
                 priorityButtons.forEach((btn, index) => {
                     btn.classList.toggle('active', index === 0);
                 });
-                
+
                 // Reset search form
                 document.getElementById('keywordInput').value = '';
                 document.getElementById('locationInput').value = '';
-                
+
                 // Show all jobs
                 jobCards.forEach(card => card.style.display = 'block');
                 updateResultsDisplay(jobCards.length);
-                
+
                 searchAlert.classList.add('d-none');
             }
 
@@ -715,19 +776,19 @@
             jobTypeFilters.forEach(filter => {
                 filter.addEventListener('change', filterJobs);
             });
-            
+
             workPolicyFilters.forEach(filter => {
                 filter.addEventListener('change', filterJobs);
             });
-            
+
             experienceFilters.forEach(filter => {
                 filter.addEventListener('change', filterJobs);
             });
-            
+
             educationFilters.forEach(filter => {
                 filter.addEventListener('change', filterJobs);
             });
-            
+
             updateFilters.forEach(filter => {
                 filter.addEventListener('change', filterJobs);
             });
@@ -738,21 +799,21 @@
             // Real-time search filtering
             const keywordInput = document.getElementById('keywordInput');
             const locationInput = document.getElementById('locationInput');
-            
+
             function performSearch() {
                 const keyword = keywordInput.value.toLowerCase();
                 const location = locationInput.value.toLowerCase();
-                
+
                 let visibleCount = 0;
-                
+
                 jobCards.forEach(card => {
                     const title = card.querySelector('.job-title').textContent.toLowerCase();
                     const company = card.querySelector('.text-muted').textContent.toLowerCase();
                     const description = card.querySelector('p.mb-1')?.textContent.toLowerCase() || '';
-                    
+
                     const matchesKeyword = !keyword || title.includes(keyword) || company.includes(keyword) || description.includes(keyword);
                     const matchesLocation = !location || company.includes(location);
-                    
+
                     if (matchesKeyword && matchesLocation) {
                         card.style.display = 'block';
                         visibleCount++;
@@ -760,23 +821,23 @@
                         card.style.display = 'none';
                     }
                 });
-                
+
                 updateResultsDisplay(visibleCount);
-                
+
                 // Show search alert if keyword or location is used
                 if (keyword || location) {
                     alertText.textContent = `Menampilkan ${visibleCount} lowongan untuk pencarian "${keyword || ''}" ${location ? `di ${location}` : ''}`;
                     searchAlert.classList.remove('d-none');
                 }
             }
-            
+
             // Debounce search function
             let searchTimeout;
             function debounceSearch() {
                 clearTimeout(searchTimeout);
                 searchTimeout = setTimeout(performSearch, 300);
             }
-            
+
             keywordInput.addEventListener('input', debounceSearch);
             locationInput.addEventListener('input', debounceSearch);
 
