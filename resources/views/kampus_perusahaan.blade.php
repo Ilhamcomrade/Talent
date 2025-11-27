@@ -169,7 +169,7 @@
                 </div>
                 <div class="choice-item">
                     <img src="/images/perusahaan.png" alt="Ilustrasi Perusahaan" class="registration-img">
-                    <a href="/perusahaan" class="btn btn-choose btn-company d-flex align-items-center justify-content-center">
+                    <a href="/company" class="btn btn-choose btn-company d-flex align-items-center justify-content-center">
                         Daftar Perusahaan
                     </a>
                 </div>

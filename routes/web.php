@@ -23,6 +23,14 @@ use App\Http\Controllers\intersipController;
 //Company Controllers
 use App\Http\Controllers\Company\RegisterController;
 use App\Http\Controllers\Company\LoginController;
+use App\Http\Controllers\Company\cAuthController;
+use App\Http\Controllers\Company\cJobController;
+use App\Http\Controllers\Company\cProfileController;
+use App\Http\Controllers\Company\cNotificationController;
+use App\Http\Controllers\Company\cMagangController;
+use App\Http\Controllers\Company\cApplicantController;
+// use App\Http\Controllers\Company\cDashboardController;
+
 
 // Campus Controllers
 use App\Http\Controllers\Campus\RegisterController as CampusRegisterController;
@@ -157,7 +165,7 @@ Route::get('/tipe-pekerjaan', fn() => view('job_type'))->name('job.type');
 
 
 // Group untuk route perusahaan
-Route::prefix('perusahaan')->group(function () {
+Route::prefix('company')->group(function () {
     // Halaman utama perusahaan
     Route::get('/', fn() => view('company.company'))->name('company');
 
@@ -175,8 +183,78 @@ Route::prefix('perusahaan')->group(function () {
     Route::post('/daftar/lokasi/step3', [App\Http\Controllers\Company\RegisterController::class, 'processStep3'])->name('company.register.step3');
     Route::get('/daftar/batal', [App\Http\Controllers\Company\RegisterController::class, 'cancelRegistration'])->name('company.register.cancel');
 
+    // Semua route dalam group ini akan dilindungi middleware 'auth.company'
+Route::middleware(['auth.company'])->group(function () {
+    
     // Dashboard
-    Route::get('/dashboard', fn() => view('company.company_dashboard'))->name('company.dashboard')->middleware('auth.company');
+    Route::get('/dashboard', fn() => view('company.company_dashboard'))->name('company.dashboard');
+    
+    // // Lowongan
+    // Route::get('/jobs', [cJobController::class, 'index'])->name('company.jobs.index');
+    // Route::get('/jobs/create', [cJobController::class, 'create'])->name('company.jobs.create');
+    // Route::post('/jobs', [cJobController::class, 'store'])->name('jobs.store');
+    // Route::get('/jobs/{id}/edit', [cJobController::class, 'edit'])->name('jobs.edit');
+    // Route::put('/jobs/{id}', [cJobController::class, 'update'])->name('jobs.update');
+    // Route::delete('/jobs/{id}', [cJobController::class, 'destroy'])->name('jobs.destroy');
+    
+    // API untuk wilayah (jika perlu akses terproteksi)
+    Route::get('/api/regencies/{id}', [cJobController::class, 'getRegencies']);
+    Route::get('/api/districts/{id}', [cJobController::class, 'getDistricts']);
+    Route::get('/api/villages/{id}', [cJobController::class, 'getVillages']);
+
+    // Profil
+    Route::get('/profile', [cProfileController::class, 'index'])->name('profile');
+    Route::post('/profile', [cProfileController::class, 'index'])->name('profile');
+    Route::get('/company/profile', [\App\Http\Controllers\Company\cProfileController::class, 'index'])
+        ->name('company.profile');
+
+    Route::post('/company/profile/update', [\App\Http\Controllers\Company\cProfileController::class, 'update'])
+        ->name('company.profile.update');
+        Route::put('/company/profile/update', [cProfileController::class, 'update'])
+    ->name('company.profile.update');
+
+        // Profile Delete
+    Route::delete('/company/profile/destroy', [\App\Http\Controllers\Company\cProfileController::class, 'destroy'])
+        ->name('company.profile.destroy');
+
+    // CRUD Magang
+    Route::get('magang', [CMagangController::class, 'index'])->name('company.magang.index');
+    Route::get('magang/create', [CMagangController::class, 'create'])->name('company.magang.create');
+    Route::post('magang', [CMagangController::class, 'store'])->name('company.magang.store');
+    Route::get('magang/{id}', [CMagangController::class, 'show'])->name('company.magang.show');
+    Route::get('magang/{id}/edit', [CMagangController::class, 'edit'])->name('company.magang.edit');
+    Route::put('magang/{id}', [CMagangController::class, 'update'])->name('company.magang.update');
+    Route::delete('magang/{id}', [CMagangController::class, 'destroy'])->name('company.magang.destroy');
+
+    // Route jobs dengan nama berbeda (perhatikan duplikasi)
+    Route::get('jobs', [cJobController::class, 'index'])->name('companiesjobs.index');
+    Route::get('jobs/create', [cJobController::class, 'create'])->name('companiesjobs.create');
+    Route::post('jobs', [cJobController::class, 'store'])->name('companiesjobs.store');
+    Route::get('jobs/{id}/edit', [cJobController::class, 'edit'])->name('companiesjobs.edit');
+    Route::put('jobs/{id}', [cJobController::class, 'update'])->name('companiesjobs.update');
+    Route::delete('jobs/{id}', [cJobController::class, 'destroy'])->name('companiesjobs.destroy');
+    Route::get('jobs/{id}', [cJobController::class, 'show'])->name('companiesjobs.show');
+
+    // ======= ROUTE PELAMAR (AMAN, TIDAK CAMPUR JOB) ========
+Route::get('applications', [cApplicantController::class, 'index'])
+        ->name('company.applications.index');
+
+Route::get('jobs/{id}/pelamar', [cApplicantController::class, 'pelamarByJob'])
+        ->name('company.applications.byJob');
+
+Route::get('applications/{id}', [cApplicantController::class, 'show'])
+        ->name('company.applications.show');
+
+Route::post('applications/{id}/status', [cApplicantController::class, 'updateStatus'])
+        ->name('company.applications.updateStatus');
+
+Route::get('applications/{id}/cv', [cApplicantController::class, 'cv'])
+        ->name('company.applications.cv');
+
+    
+});
+    
+    
 });
 
 
@@ -352,5 +430,6 @@ Route::prefix('wawancara')->name('wawancara.')->middleware(['auth', 'wawancara']
     Route::prefix('jadwal')->name('jadwal.')->group(function () {
         Route::get('/', fn() => view('admin.calendar.index'))->name('index');
         Route::get('/events', [CalendarController::class, 'fetchEvents'])->name('index.events');
+        
     });
 });

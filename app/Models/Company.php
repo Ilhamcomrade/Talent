@@ -27,6 +27,9 @@ class Company extends Authenticatable
         'kecamatan', // Kolom baru
         'desa_kelurahan', // Kolom baru
         'alamat_lengkap',
+        'visi',
+        'misi',
+        'alasan',
         'is_active',
         // HAPUS: 'is_verified',
     ];

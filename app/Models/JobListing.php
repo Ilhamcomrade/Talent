@@ -12,6 +12,7 @@ class JobListing extends Model
     protected $fillable = [
         'title',
         'company',
+        'company_id', // TAMBAHKAN INI
         'company_logo',
         'provinsi_id',
         'kabupaten_id',
@@ -101,5 +102,17 @@ class JobListing extends Model
         } else {
             return 'Tidak Menampilkan Gaji';
         }
+    }
+
+    // Relasi ke tabel companies
+    public function company()
+    {
+        return $this->belongsTo(\App\Models\Company::class, 'company_id', 'id');
+    }
+
+    // Accessor untuk mendapatkan nama pengelola
+    public function getPengelolaAttribute()
+    {
+        return $this->company ? $this->company->nama_lengkap : '-';
     }
 }

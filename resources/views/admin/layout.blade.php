@@ -50,7 +50,7 @@
     }
 
     /* ====================
-        SIDEBAR STYLES
+        SIDEBAR STYLES - IMPROVED
         ==================== */
     #sidebar-wrapper {
       background: linear-gradient(0deg, 
@@ -66,6 +66,8 @@
       z-index: 1000;
       animation: rainbowBG 15s linear infinite;
       left: 0;
+      display: flex;
+      flex-direction: column;
     }
 
     @keyframes rainbowBG {
@@ -83,6 +85,7 @@
       align-items: center;
       justify-content: center;
       height: 120px;
+      flex-shrink: 0;
     }
 
     .sidebar-brand img {
@@ -100,10 +103,19 @@
       transition: all 0.5s ease;
     }
 
+    .sidebar-nav-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
     .sidebar-nav {
-      height: calc(100vh - 120px);
+      flex: 1;
       overflow-y: auto;
-      padding-bottom: 2rem;
+      padding-bottom: 1rem;
+      max-height: calc(100vh - 180px); /* Membatasi tinggi maksimum */
     }
 
     .sidebar-nav::-webkit-scrollbar {
@@ -130,10 +142,11 @@
     .nav-link {
       display: flex;
       align-items: center;
-      padding: 1rem;
+      padding: 0.8rem 1rem; /* Sedikit lebih kecil padding */
       color: #fff;
       position: relative;
       transition: all 0.3s ease;
+      font-size: 0.95rem; /* Sedikit lebih kecil font */
     }
     
     .nav-link.active {
@@ -149,7 +162,7 @@
 
     .nav-link i {
       margin-right: 0.8rem;
-      font-size: 1.2rem;
+      font-size: 1.1rem; /* Sedikit lebih kecil */
       width: 20px;
       text-align: center;
     }
@@ -181,9 +194,9 @@
 
     .sidebar-nav .dropdown-menu .dropdown-item {
       color: #fff;
-      padding: 0.75rem 1rem 0.75rem 3.2rem;
+      padding: 0.6rem 1rem 0.6rem 3.2rem; /* Sedikit lebih kecil */
       background-color: transparent;
-      font-size: 0.95rem;
+      font-size: 0.9rem; /* Sedikit lebih kecil */
       display: flex;
       align-items: center;
       transition: all 0.3s ease;
@@ -202,6 +215,33 @@
     .sidebar-nav .dropdown-menu .dropdown-item.active {
         background-color: rgba(255, 255, 255, 0.2); 
         font-weight: bold;
+    }
+
+    /* Logout button di bagian bawah */
+    .sidebar-footer {
+      padding: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      flex-shrink: 0;
+    }
+
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      padding: 0.8rem 1rem;
+      color: #fff;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border-radius: 5px;
+    }
+
+    .logout-btn:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .logout-btn i {
+      margin-right: 0.8rem;
+      font-size: 1.1rem;
     }
 
     /* ====================
@@ -596,130 +636,132 @@
         </a>
       </div>
 
-      <ul class="nav flex-column sidebar-nav mt-3">
-        <li class="nav-item">
-          <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
-            <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
-          </a>
-        </li>
+      <div class="sidebar-nav-container">
+        <ul class="nav flex-column sidebar-nav mt-3">
+          <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
+              <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+            </a>
+          </li>
 
-        @auth
-        {{-- BLOK KHUSUS UNTUK ROLE WAWANCARA --}}
-        @if(Auth::user()->role === 'wawancara')
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('wawancara.jadwal.index') ? 'active' : '' }}" 
-                   href="{{ route('wawancara.jadwal.index') }}">
-                    <i class="fas fa-calendar-alt"></i> <span>Lihat Jadwal</span>
-                </a>
-            </li>
-        @endif
+          @auth
+          {{-- BLOK KHUSUS UNTUK ROLE WAWANCARA --}}
+          @if(Auth::user()->role === 'wawancara')
+              <li class="nav-item">
+                  <a class="nav-link {{ request()->routeIs('wawancara.jadwal.index') ? 'active' : '' }}" 
+                     href="{{ route('wawancara.jadwal.index') }}">
+                      <i class="fas fa-calendar-alt"></i> <span>Lihat Jadwal</span>
+                  </a>
+              </li>
+          @endif
         
-          {{-- BLOK UNTUK ROLE ADMIN & SUPER ADMIN --}}
-          @if(in_array(Auth::user()->role, ['admin', 'super admin']))
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.job_listings.*') ? 'active' : '' }}" 
-                   href="{{ route('admin.job_listings.index') }}">
-                   <i class="fas fa-briefcase"></i> <span>Lowongan Kerja</span>
+            {{-- BLOK UNTUK ROLE ADMIN & SUPER ADMIN --}}
+            @if(in_array(Auth::user()->role, ['admin', 'super admin']))
+              <li class="nav-item">
+                  <a class="nav-link {{ request()->routeIs('admin.job_listings.*') ? 'active' : '' }}" 
+                     href="{{ route('admin.job_listings.index') }}">
+                     <i class="fas fa-briefcase"></i> <span>Lowongan Kerja</span>
+                  </a>
+              </li>
+
+              <li class="nav-item">
+                  <a class="nav-link {{ request()->routeIs('admin.applicants.*') ? 'active' : '' }}" 
+                     href="{{ route('admin.applicants.index') }}">
+                     <i class="fas fa-user-tie"></i> <span>Pelamar</span>
+                  </a>
+              </li>
+
+              <li class="nav-item">
+                  <a class="nav-link {{ request()->routeIs('admin.calendar.*') ? 'active' : '' }}" 
+                     href="{{ route('admin.calendar.index') }}">
+                     <i class="fas fa-calendar-alt"></i> <span>Manajemen Jadwal</span>
+                  </a>
+              </li>
+
+              <li class="nav-item">
+                  <a class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}" 
+                     href="{{ route('admin.reports.index') }}">
+                     <i class="fas fa-chart-bar"></i> <span>LAPORAN</span>
+                  </a>
+              </li>
+
+              <li class="nav-item">
+                  <a class="nav-link {{ request()->routeIs('admin.notif.*') ? 'active' : '' }}" 
+                     href="{{ route('admin.notif.index') }}">
+                     <i class="fas fa-bell"></i> <span>Notifikasi</span>
+                  </a>
+              </li>
+
+              <li class="nav-item">
+                  <a class="nav-link {{ request()->routeIs('admin.magang.*') ? 'active' : '' }}" 
+                     href="{{ route('admin.magang.index') }}">
+                     <i class="fas fa-briefcase"></i> <span>Lowongan magang</span>
+                  </a>
+              </li>
+
+              {{-- TAMBAHAN: Navigasi untuk Pesan Masuk / Form Kontak yang telah disubmit pengguna --}}
+              <li class="nav-item">
+                  {{-- Menghitung jumlah pesan baru (belum dibaca). 
+                      Jika Anda ingin menghindari query di blade, pindahkan ke view composer. --}}
+                  @php
+                      try {
+                          $countNewMessages = \App\Models\ContactMessage::whereNull('read_at')->count();
+                      } catch (\Throwable $e) {
+                          // Jika model/migration belum ada -> fallback 0 supaya UI tidak error
+                          $countNewMessages = 0;
+                      }
+                  @endphp
+
+                  <a class="nav-link {{ request()->routeIs('admin.contact-messages.*') ? 'active' : '' }}" 
+                     href="{{ route('admin.contact-messages.index') }}">
+                     <i class="fas fa-envelope"></i> <span>kontak</span>
+                     @if($countNewMessages > 0)
+                         <span class="badge bg-danger ms-auto" style="margin-left: 0.5rem;">{{ $countNewMessages }}</span>
+                     @endif
+                  </a>
+              </li>
+            @endif
+
+            {{-- BLOK KHUSUS UNTUK ROLE SUPER ADMIN --}}
+            @if(Auth::user()->role === 'super admin')
+              <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('admin.users.index') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">
+                  <i class="fas fa-users-cog"></i> <span>Manajemen User</span>
                 </a>
-            </li>
+              </li>
 
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.applicants.*') ? 'active' : '' }}" 
-                   href="{{ route('admin.applicants.index') }}">
-                   <i class="fas fa-user-tie"></i> <span>Manajemen Pelamar</span>
+              <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('admin.lokasi.index') ? 'active' : '' }}" href="{{ route('admin.lokasi.index') }}">
+                  <i class="fas fa-map-marker-alt"></i> <span>Manajemen Lokasi</span>
                 </a>
-            </li>
+              </li>
 
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.calendar.*') ? 'active' : '' }}" 
-                   href="{{ route('admin.calendar.index') }}">
-                   <i class="fas fa-calendar-alt"></i> <span>Manajemen Jadwal</span>
+              <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('admin.companies.index') ? 'active' : '' }}" href="{{ route('admin.companies.index') }}">
+                  <i class="fas fa-building"></i> <span>Perusahaan</span>
                 </a>
-            </li>
+              </li>
 
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}" 
-                   href="{{ route('admin.reports.index') }}">
-                   <i class="fas fa-chart-bar"></i> <span>LAPORAN</span>
+              <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('admin.campus.index') ? 'active' : '' }}" href="{{ route('admin.campus.index') }}">
+                  <i class="fa-solid fa-school"></i> <span>Kampus</span>
                 </a>
-            </li>
+              </li>
+            @endif
+          @endauth
+        </ul>
+      </div>
 
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.notif.*') ? 'active' : '' }}" 
-                   href="{{ route('admin.notif.index') }}">
-                   <i class="fas fa-bell"></i> <span>Notifikasi</span>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.magang.*') ? 'active' : '' }}" 
-                   href="{{ route('admin.magang.index') }}">
-                   <i class="fas fa-briefcase"></i> <span>Lowongan magang</span>
-                </a>
-            </li>
-
-            {{-- TAMBAHAN: Navigasi untuk Pesan Masuk / Form Kontak yang telah disubmit pengguna --}}
-            <li class="nav-item">
-                {{-- Menghitung jumlah pesan baru (belum dibaca). 
-                    Jika Anda ingin menghindari query di blade, pindahkan ke view composer. --}}
-                @php
-                    try {
-                        $countNewMessages = \App\Models\ContactMessage::whereNull('read_at')->count();
-                    } catch (\Throwable $e) {
-                        // Jika model/migration belum ada -> fallback 0 supaya UI tidak error
-                        $countNewMessages = 0;
-                    }
-                @endphp
-
-                <a class="nav-link {{ request()->routeIs('admin.contact-messages.*') ? 'active' : '' }}" 
-                   href="{{ route('admin.contact-messages.index') }}">
-                   <i class="fas fa-envelope"></i> <span>kontak</span>
-                   @if($countNewMessages > 0)
-                       <span class="badge bg-danger ms-auto" style="margin-left: 0.5rem;">{{ $countNewMessages }}</span>
-                   @endif
-                </a>
-            </li>
-          @endif
-
-          {{-- BLOK KHUSUS UNTUK ROLE SUPER ADMIN --}}
-          @if(Auth::user()->role === 'super admin')
-            <li class="nav-item">
-              <a class="nav-link {{ request()->routeIs('admin.users.index') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">
-                <i class="fas fa-users-cog"></i> <span>Manajemen User</span>
-              </a>
-            </li>
-
-            <li class="nav-item">
-              <a class="nav-link {{ request()->routeIs('admin.lokasi.index') ? 'active' : '' }}" href="{{ route('admin.lokasi.index') }}">
-                <i class="fas fa-map-marker-alt"></i> <span>Manajemen Lokasi</span>
-              </a>
-            </li>
-
-            <li class="nav-item">
-              <a class="nav-link {{ request()->routeIs('admin.companies.index') ? 'active' : '' }}" href="{{ route('admin.companies.index') }}">
-                <i class="fas fa-building"></i> <span>Perusahaan</span>
-              </a>
-            </li>
-
-             <li class="nav-item">
-              <a class="nav-link {{ request()->routeIs('admin.campus.index') ? 'active' : '' }}" href="{{ route('admin.campus.index') }}">
-                <i class="fa-solid fa-school"></i> <span>Kampus</span>
-              </a>
-            </li>
-
-          @endif
-        @endauth
-
-        <li class="nav-item mt-auto">
-          <a class="nav-link" href="{{ route('logout') }}" 
-             onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-            <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
-          </a>
-          <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-            @csrf
-          </form>
-        </li>
-      </ul>
+      <!-- Logout Button di Footer Sidebar -->
+      <div class="sidebar-footer">
+        <a class="logout-btn" href="{{ route('logout') }}" 
+           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+          <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+        </a>
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+          @csrf
+        </form>
+      </div>
     </div>
 
     <!-- Content Wrapper -->
@@ -879,15 +921,6 @@
 
       // Listen for window resize
       window.addEventListener('resize', handleResponsive);
-
-      // Smooth scrolling untuk sidebar
-      const sidebarNav = document.querySelector('.sidebar-nav');
-      if (sidebarNav) {
-        sidebarNav.addEventListener('wheel', function(e) {
-          e.preventDefault();
-          this.scrollTop += e.deltaY;
-        });
-      }
 
       // ==================== NOTIFICATION FUNCTIONS ====================
       
