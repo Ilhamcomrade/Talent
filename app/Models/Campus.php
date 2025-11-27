@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 
 class Campus extends Authenticatable
 {
@@ -15,7 +16,7 @@ class Campus extends Authenticatable
 
     protected $fillable = [
         'nama_lengkap',
-        'no_hp', 
+        'no_hp',
         'jabatan',
         'email',
         'password',
@@ -25,10 +26,11 @@ class Campus extends Authenticatable
         'logo_path',
         'provinsi',
         'kota',
-        'kecamatan', // Kolom baru
-        'desa_kelurahan', // Kolom baru
+        'kecamatan',
+        'desa_kelurahan',
         'alamat_lengkap',
-        'is_active'
+        'is_active',
+        'slug', // Tambahkan slug
     ];
 
     protected $hidden = [
@@ -38,4 +40,26 @@ class Campus extends Authenticatable
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    // Boot method untuk generate slug
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($campus) {
+            $campus->slug = Str::slug($campus->nama_kampus);
+        });
+
+        static::updating(function ($campus) {
+            if ($campus->isDirty('nama_kampus')) {
+                $campus->slug = Str::slug($campus->nama_kampus);
+            }
+        });
+    }
+
+    // Method untuk mendapatkan route key name (untuk route model binding)
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
 }

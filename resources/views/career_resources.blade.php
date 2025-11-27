@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <style>
-   
+
         /* === SLIDER STYLE (Existing) === */
         .article-slider {
             position: relative;
@@ -125,8 +125,8 @@
         .career-cards {
             width: 100%;
             padding: 60px 40px; /* Jarak 40px dari kiri dan kanan */
-            margin: 30px auto 60px auto; 
-            margin-top: 30px; 
+            margin: 30px auto 60px auto;
+            margin-top: 30px;
         }
 
         .career-cards h2 {
@@ -140,7 +140,7 @@
 
         .career-cards .row {
             display: flex;
-            justify-content: space-between; 
+            justify-content: space-between;
             gap: 20px;
             flex-wrap: nowrap;
             /* Hapus padding/margin tambahan di sini */
@@ -154,7 +154,7 @@
             display: flex;
             align-items: center;
             gap: 15px;
-            flex: 1; 
+            flex: 1;
             min-height: 150px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
@@ -183,7 +183,7 @@
         .career-latest-advice-section {
             width: 100%; /* Lebar penuh */
             padding: 0 40px; /* Menyamakan jarak 40px dari kiri dan kanan seperti .career-cards */
-            margin: 0 auto 60px auto; 
+            margin: 0 auto 60px auto;
             /* Hapus max-width */
         }
 
@@ -214,7 +214,7 @@
         .advice-header a:hover {
             text-decoration: underline;
         }
-        
+
         /* Card Utama/Besar */
         .main-advice-card {
             display: flex;
@@ -231,22 +231,22 @@
         }
 
         .main-advice-card img {
-            width: 60%; 
-            height: 350px; 
+            width: 60%;
+            height: 350px;
             object-fit: cover;
             flex-shrink: 0;
         }
 
         .main-advice-content {
-            width: 40%; 
-            padding: 50px 40px; 
+            width: 40%;
+            padding: 50px 40px;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
 
         .main-advice-content h3 {
-            font-size: 26px; 
+            font-size: 26px;
             font-weight: 700;
             margin-bottom: 20px;
             color: #333;
@@ -278,16 +278,16 @@
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-            flex: 1; 
+            flex: 1;
             max-width: calc(25% - 15px); /* Pertahankan ini, gap 20px (3x20 = 60), (100% - 60px)/4 */
-            min-height: 250px; 
+            min-height: 250px;
             display: flex;
             flex-direction: column;
         }
 
         .small-advice-card img {
             width: 100%;
-            height: 150px; 
+            height: 150px;
             object-fit: cover;
             flex-shrink: 0;
         }
@@ -432,7 +432,7 @@
         width: 100%;
         padding: 0 40px;
         margin: 80px auto;
-        margin-top: 100px;  
+        margin-top: 100px;
     }
 
     .change-header {
@@ -508,7 +508,7 @@
             background-color: #5564cc; /* warna biru seperti di gambar */
             border-radius: 16px;
             margin: 80px auto;
-            margin-top: 100px;  
+            margin-top: 100px;
             padding: 80px 100px; /* perbesar isi card */
             box-sizing: border-box;
         }
@@ -753,6 +753,57 @@
         text-decoration: underline; /* tetap underline saat hover */
     }
 
+              /* WhatsApp Floating Button - Functional */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 80px; /* Dinaikkan dari 25px menjadi 80px */
+            right: 25px;
+            z-index: 1000;
+        }
+
+        .whatsapp-link {
+            display: block;
+            text-decoration: none;
+            transition: transform 0.2s ease;
+        }
+
+        .whatsapp-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .whatsapp-link:hover {
+            transform: scale(1.05);
+        }
+
+        /* Responsive WhatsApp */
+        @media (max-width: 768px) {
+            .whatsapp-float {
+                bottom: 70px; /* Dinaikkan dari 20px menjadi 70px */
+                right: 20px;
+            }
+
+            .whatsapp-logo {
+                width: 55px;
+                height: 55px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .whatsapp-float {
+                bottom: 60px; /* Dinaikkan dari 15px menjadi 60px */
+                right: 15px;
+            }
+
+            .whatsapp-logo {
+                width: 50px;
+                height: 50px;
+            }
+        }
+
+
     </style>
 </head>
 
@@ -760,7 +811,7 @@
     {{-- Memanggil navbar dari file parsial --}}
     @include('partials.navbar')
 
-    
+
     {{-- Header Import dari File Partial --}}
     @include('partials.header_career')
 
@@ -808,13 +859,13 @@
     </div>
 
     <div class="slider-dots" id="sliderDots"></div>
-    
+
 
     <div class="career-cards">
         <h2>Ingin mengubah karier? Jelajahi karier baru di luar sana!</h2>
         <div class="row">
             <div class="career-card">
-                <img src="images/icon.png" alt="Jelajahi karier"> 
+                <img src="images/icon.png" alt="Jelajahi karier">
                 <div>
                     <h5>Jelajahi karier</h5>
                     <p>Pelajari tentang ribuan karier, mulai dari Akuntan hingga Penjaga Kebun Binatang.</p>
@@ -852,7 +903,7 @@
         </div>
 
         <div class="small-advice-cards-row">
-            
+
             <div class="small-advice-card">
                 <img src="images/kantoran5.png" alt="Panel Interview">
                 <div class="small-advice-card-body">
@@ -908,7 +959,7 @@
     <div class="career-industries">
         <h2>Telusuri karir berdasarkan industri</h2>
         <p class="subtitle">Eksplorasi gaji dan tren pekerjaan berbagai karir dari setiap industri.</p>
-        
+
         <div class="industry-list">
             <button>Administrasi & Dukungan Perkantoran</button>
             <button>Akuntansi</button>
@@ -1037,13 +1088,24 @@
         </form>
 
         <small>
-            Dengan memberikan informasi pribadi Anda, Anda menyetujui 
-            <a href="#">Pemberitahuan Pengumpulan</a> dan 
-            <a href="#">Kebijakan Privasi</a>. Jika Anda berusia di bawah 21 tahun, Anda memiliki izin dari orang tua agar Talenthub dan afiliasinya memproses data pribadi Anda. 
+            Dengan memberikan informasi pribadi Anda, Anda menyetujui
+            <a href="#">Pemberitahuan Pengumpulan</a> dan
+            <a href="#">Kebijakan Privasi</a>. Jika Anda berusia di bawah 21 tahun, Anda memiliki izin dari orang tua agar Talenthub dan afiliasinya memproses data pribadi Anda.
             Anda dapat berhenti berlangganan kapan saja.
         </small>
     </div>
 </div>
+
+
+         <!-- INTEGRASI WHATSAPP YANG BERFUNGSI -->
+    <div class="whatsapp-float">
+        <a href="https://wa.me/6282115179879?text=Halo%2C%20saat%20ini%20saya%20sedang%20mengakses%20website%20Inotal%20dan%20saya%20butuh%20bantuan"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="whatsapp-link">
+            <img src="{{ asset('images/whatsapp.png') }}" alt="Chat via WhatsApp" class="whatsapp-logo">
+        </a>
+    </div>
 
     {{-- Memanggil footer dari file parsial --}}
     @include('partials.footer')

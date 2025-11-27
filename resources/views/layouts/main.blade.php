@@ -210,8 +210,8 @@
             opacity: 0.8;
         }
 
-        .trusted-companies .logo:hover { 
-            opacity: 1; 
+        .trusted-companies .logo:hover {
+            opacity: 1;
         }
 
         /* Responsive design untuk perusahaan terpercaya */
@@ -219,11 +219,11 @@
             .trusted-companies .logo-container {
                 grid-template-columns: repeat(3, 1fr); /* 3 logo per baris di tablet */
             }
-            
+
             .trusted-companies .logo-wrapper {
                 height: 65px;
             }
-            
+
             .trusted-companies .default-logo {
                 width: 50px;
                 height: 50px;
@@ -235,11 +235,11 @@
             .trusted-companies .logo-container {
                 grid-template-columns: repeat(2, 1fr); /* 2 logo per baris di mobile */
             }
-            
+
             .trusted-companies .logo-wrapper {
                 height: 60px;
             }
-            
+
             .trusted-companies .default-logo {
                 width: 45px;
                 height: 45px;
@@ -247,8 +247,8 @@
             }
         }
 
-        .see-more-offset { 
-            margin-left: 20px; 
+        .see-more-offset {
+            margin-left: 20px;
         }
 
 
@@ -373,7 +373,7 @@
                 bottom: 70px; /* Dinaikkan dari 20px menjadi 70px */
                 right: 20px;
             }
-            
+
             .whatsapp-logo {
                 width: 55px;
                 height: 55px;
@@ -385,7 +385,7 @@
                 bottom: 60px; /* Dinaikkan dari 15px menjadi 60px */
                 right: 15px;
             }
-            
+
             .whatsapp-logo {
                 width: 50px;
                 height: 50px;

@@ -1,4 +1,4 @@
-@extends('admin.layout') 
+@extends('admin.layout')
 
 <style>
 .btn-group {
@@ -52,7 +52,7 @@
                     </button>
                 </div>
             @endif
-            
+
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Daftar Kampus/Sekolah</h6>
@@ -95,10 +95,11 @@
                                     <td>{{ $campus->email }}</td>
                                     <td>
                                         <div class="btn-group btn-group-sm" role="group">
-                                            <a href="{{ route('admin.campus.show', $campus->id) }}" class="btn btn-info" title="Lihat Detail">
+                                                    <!-- Ubah route untuk menggunakan slug -->
+                                            <a href="{{ route('admin.campus.show', $campus->slug) }}" class="btn btn-info" title="Lihat Detail">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <form action="{{ route('admin.campus.destroy', $campus->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kampus ini?')">
+                                            <form action="{{ route('admin.campus.destroy', $campus->slug) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kampus ini?')">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-danger" title="Hapus">

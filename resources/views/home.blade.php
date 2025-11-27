@@ -110,9 +110,9 @@
                 </div>
             </form>
 
-            <div class="search-options-wrapper">
+            {{-- <div class="search-options-wrapper">
                 <a href="#" class="more-options">Opsi lainnya <i class="bi bi-sliders"></i></a>
-            </div>
+            </div> --}}
         </div>
     </section>
 
@@ -241,8 +241,8 @@
                                 <div class="logo-wrapper">
                                     <div class="logo-card">
                                         @if($company->logo)
-                                            <img src="{{ asset('storage/' . $company->logo) }}" 
-                                                alt="{{ $company->nama_perusahaan }}" 
+                                            <img src="{{ asset('storage/' . $company->logo) }}"
+                                                alt="{{ $company->nama_perusahaan }}"
                                                 class="logo"
                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                             <div class="default-logo" style="display: none;">
@@ -356,12 +356,12 @@
         </div>
     </section>
 
-        
+
      <!-- INTEGRASI WHATSAPP YANG BERFUNGSI -->
     <div class="whatsapp-float">
-        <a href="https://wa.me/6282115179879?text=Halo%2C%20saat%20ini%20saya%20sedang%20mengakses%20website%20Inotal%20dan%20saya%20butuh%20bantuan" 
-        target="_blank" 
-        rel="noopener noreferrer" 
+        <a href="https://wa.me/6282115179879?text=Halo%2C%20saat%20ini%20saya%20sedang%20mengakses%20website%20Inotal%20dan%20saya%20butuh%20bantuan"
+        target="_blank"
+        rel="noopener noreferrer"
         class="whatsapp-link">
             <img src="{{ asset('images/whatsapp.png') }}" alt="Chat via WhatsApp" class="whatsapp-logo">
         </a>

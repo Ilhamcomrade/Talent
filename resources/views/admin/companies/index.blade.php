@@ -1,4 +1,4 @@
-@extends('admin.layout') 
+@extends('admin.layout')
 
 <style>
 .btn-group {
@@ -52,7 +52,7 @@
                     </button>
                 </div>
             @endif
-            
+
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex justify-content-between align-items-center">
                     <h6 class="m-0 font-weight-bold text-primary">Daftar Perusahaan</h6>
@@ -95,17 +95,18 @@
                                     <td>{{ $company->email }}</td>
                                     <td>
                                         <div class="btn-group btn-group-sm" role="group">
-                                            <a href="{{ route('admin.companies.show', $company->id) }}" class="btn btn-info" title="Lihat Detail">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                            <form action="{{ route('admin.companies.destroy', $company->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus perusahaan ini?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger" title="Hapus">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
-                                        </div>
+                                               <!-- Ubah route untuk menggunakan slug -->
+                                        <a href="{{ route('admin.companies.show', $company->slug) }}" class="btn btn-info" title="Lihat Detail">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <form action="{{ route('admin.companies.destroy', $company->slug) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus perusahaan ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger" title="Hapus">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                            </div>
                                     </td>
                                 </tr>
                                 @empty

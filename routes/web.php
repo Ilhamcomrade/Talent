@@ -23,10 +23,12 @@ use App\Http\Controllers\intersipController;
 //Company Controllers
 use App\Http\Controllers\Company\RegisterController;
 use App\Http\Controllers\Company\LoginController;
+use App\Http\Controllers\Company\CompanyController as PublicCompanyController;
 
 // Campus Controllers
 use App\Http\Controllers\Campus\RegisterController as CampusRegisterController;
 use App\Http\Controllers\Campus\LoginController as CampusLoginController;
+use App\Http\Controllers\Campus\CampusController as PublicCampusController;
 
 // Public Controllers
 use App\Http\Controllers\JobController;
@@ -34,8 +36,6 @@ use App\Http\Controllers\AccountSettingsController;
 use App\Http\Controllers\contactController;
 use App\Http\Controllers\UserNotifController;
 use App\Http\Controllers\ProfileController;
-
-
 
 
 /*
@@ -63,6 +63,22 @@ Route::post('/kontak', [ContactController::class, 'store'])->name('contact.store
 
 Route::get('/tentang-perusahaan', fn() => view('about_company'))->name('about');
 Route::get('/explore-perusahaan', fn() => view('explore_company'));
+// Pencarian explore
+Route::get('/explore/search', function () {
+    return view('explore_company');
+})->name('explore.search');
+
+// Routes untuk detail perusahaan dan kampus dengan slug
+Route::get('/company/{company:slug}', [PublicCompanyController::class, 'show'])->name('company.detail');
+Route::get('/company/{company:slug}/culture', [PublicCompanyController::class, 'culture'])->name('company.culture');
+Route::get('/company/{company:slug}/job', [PublicCompanyController::class, 'job'])->name('company.job');
+Route::get('/company/{company:slug}/salary', [PublicCompanyController::class, 'salary'])->name('company.salary');
+
+Route::get('/campus/{campus:slug}', [PublicCampusController::class, 'show'])->name('campus.detail');
+Route::get('/campus/{campus:slug}/culture', [PublicCampusController::class, 'culture'])->name('campus.culture');
+Route::get('/campus/{campus:slug}/prodi', [PublicCampusController::class, 'prodi'])->name('campus.prodi');
+Route::get('/campus/{campus:slug}/facility', [PublicCampusController::class, 'facility'])->name('campus.facility');
+
 Route::get('/open-intership', fn() => view('open_intership'));
 Route::get('/registrasi-perusahaan', fn() => view('daftar_perusahaan'));
 Route::get('/registrasi-kampus', fn() => view('daftar_kampus'));
@@ -97,7 +113,7 @@ Route::middleware(['auth'])->group(function () {
 
 
 
-    
+
     Route::get('/pengaturan/detail', [AccountSettingsController::class, 'index'])->name('account.settings');
 
     // RUTE BARU: Halaman Kontak Saya
@@ -142,7 +158,7 @@ Route::post('/notifications/read/{id}', [UserNotifController::class, 'markAsRead
     ->name('notifications.markRead');
     // ❌ RUTE DELETE SATU NOTIFIKASI (DELETE /notifications/{id})
     Route::delete('/notifications/delete/{id}', [UserNotifController::class, 'delete'])->name('notifications.delete');
-    
+
     // ❌ RUTE DELETE SEMUA NOTIFIKASI (DELETE /notifications/delete-all)
     Route::delete('/notifications/delete-all', [UserNotifController::class, 'deleteAll'])->name('notifications.deleteAll');
     Route::get('/notifications/{id}', [UserNotifController::class, 'show'])->name('notifications.show');
@@ -300,11 +316,13 @@ Route::get('/api/magang/villages/{districtId}', [MagangController::class, 'getVi
     // Halaman Manajemen Perusahaan (Admin)
     Route::get('companies', [CompanyController::class, 'index'])->name('companies.index');
     Route::post('companies', [CompanyController::class, 'store'])->name('companies.store');
-    Route::get('companies/{company}', [CompanyController::class, 'show'])->name('companies.show');
-    Route::delete('companies/{company}', [CompanyController::class, 'destroy'])->name('companies.destroy');
+    Route::get('companies/{company:slug}', [CompanyController::class, 'show'])->name('companies.show'); // Gunakan slug
+    Route::delete('companies/{company:slug}', [CompanyController::class, 'destroy'])->name('companies.destroy'); // Gunakan slug
 
     // Halaman Manajemen Kampus/Sekolah (Admin)
-    Route::resource('campus', CampusController::class)->only(['index', 'show', 'destroy']);
+    Route::get('campus', [CampusController::class, 'index'])->name('campus.index');
+    Route::get('campus/{campus:slug}', [CampusController::class, 'show'])->name('campus.show'); // Gunakan slug
+    Route::delete('campus/{campus:slug}', [CampusController::class, 'destroy'])->name('campus.destroy'); // Gunakan slug
 
     // TAMBAHAN: Routes untuk Pemagang (Interns)
     Route::prefix('interns')->name('interns.')->group(function () {
