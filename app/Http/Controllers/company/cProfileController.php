@@ -57,6 +57,7 @@ class cProfileController extends Controller
     // Update profil
     public function update(Request $request)
     {
+        /** @var \App\Models\Company $company */
         $company = Auth::guard('company')->user();
 
         $request->validate([

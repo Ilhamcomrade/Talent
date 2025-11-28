@@ -29,11 +29,13 @@ use App\Http\Controllers\Company\cProfileController;
 use App\Http\Controllers\Company\cNotificationController;
 use App\Http\Controllers\Company\cMagangController;
 // use App\Http\Controllers\Company\cDashboardController;
+use App\Http\Controllers\Company\CompanyController as PublicCompanyController;
 
 
 // Campus Controllers
 use App\Http\Controllers\Campus\RegisterController as CampusRegisterController;
 use App\Http\Controllers\Campus\LoginController as CampusLoginController;
+use App\Http\Controllers\Campus\CampusController as PublicCampusController;
 
 // Public Controllers
 use App\Http\Controllers\JobController;
@@ -70,6 +72,106 @@ Route::post('/kontak', [ContactController::class, 'store'])->name('contact.store
 
 Route::get('/tentang-perusahaan', fn() => view('about_company'))->name('about');
 Route::get('/explore-perusahaan', fn() => view('explore_company'));
+// Pencarian explore
+Route::get('/explore/search', function () {
+    return view('explore_company');
+})->name('explore.search');
+
+
+// Group untuk route perusahaan
+Route::prefix('company')->group(function () {
+    // Halaman utama perusahaan
+    Route::get('/', fn() => view('company.company'))->name('company');
+
+    // Auth routes
+    Route::get('/login', [App\Http\Controllers\Company\LoginController::class, 'showLoginForm'])->name('company.login');
+    Route::post('/login', [App\Http\Controllers\Company\LoginController::class, 'login'])->name('company.login.submit');
+    Route::post('/logout', [App\Http\Controllers\Company\LoginController::class, 'logout'])->name('company.logout');
+
+    // Registration routes
+    Route::get('/daftar', [App\Http\Controllers\Company\RegisterController::class, 'showStep1'])->name('company.register');
+    Route::post('/daftar/step1', [App\Http\Controllers\Company\RegisterController::class, 'processStep1'])->name('company.register.step1');
+    Route::get('/daftar/proses', [App\Http\Controllers\Company\RegisterController::class, 'showStep2'])->name('company.register.process');
+    Route::post('/daftar/proses/step2', [App\Http\Controllers\Company\RegisterController::class, 'processStep2'])->name('company.register.step2');
+    Route::get('/daftar/lokasi', [App\Http\Controllers\Company\RegisterController::class, 'showStep3'])->name('company.register.location');
+    Route::post('/daftar/lokasi/step3', [App\Http\Controllers\Company\RegisterController::class, 'processStep3'])->name('company.register.step3');
+    Route::get('/daftar/batal', [App\Http\Controllers\Company\RegisterController::class, 'cancelRegistration'])->name('company.register.cancel');
+
+    // Semua route dalam group ini akan dilindungi middleware 'auth.company'
+Route::middleware(['auth.company'])->group(function () {
+
+    // Dashboard
+    Route::get('/dashboard', fn() => view('company.company_dashboard'))->name('company.dashboard');
+
+    // // Lowongan
+    // Route::get('/jobs', [cJobController::class, 'index'])->name('company.jobs.index');
+    // Route::get('/jobs/create', [cJobController::class, 'create'])->name('company.jobs.create');
+    // Route::post('/jobs', [cJobController::class, 'store'])->name('jobs.store');
+    // Route::get('/jobs/{id}/edit', [cJobController::class, 'edit'])->name('jobs.edit');
+    // Route::put('/jobs/{id}', [cJobController::class, 'update'])->name('jobs.update');
+    // Route::delete('/jobs/{id}', [cJobController::class, 'destroy'])->name('jobs.destroy');
+
+    // API untuk wilayah (jika perlu akses terproteksi)
+    Route::get('/api/regencies/{id}', [cJobController::class, 'getRegencies']);
+    Route::get('/api/districts/{id}', [cJobController::class, 'getDistricts']);
+    Route::get('/api/villages/{id}', [cJobController::class, 'getVillages']);
+
+    // Profil
+    Route::get('/profile', [cProfileController::class, 'index'])->name('profile');
+    Route::post('/profile', [cProfileController::class, 'index'])->name('profile');
+    Route::get('/company/profile', [\App\Http\Controllers\Company\cProfileController::class, 'index'])
+        ->name('company.profile');
+
+    Route::post('/company/profile/update', [\App\Http\Controllers\Company\cProfileController::class, 'update'])
+        ->name('company.profile.update');
+        Route::put('/company/profile/update', [cProfileController::class, 'update'])
+    ->name('company.profile.update');
+
+        // Profile Delete
+    Route::delete('/company/profile/destroy', [\App\Http\Controllers\Company\cProfileController::class, 'destroy'])
+        ->name('company.profile.destroy');
+
+    // CRUD Magang
+    Route::get('magang', [CMagangController::class, 'index'])->name('company.magang.index');
+    Route::get('magang/create', [CMagangController::class, 'create'])->name('company.magang.create');
+    Route::post('magang', [CMagangController::class, 'store'])->name('company.magang.store');
+    Route::get('magang/{id}', [CMagangController::class, 'show'])->name('company.magang.show');
+    Route::get('magang/{id}/edit', [CMagangController::class, 'edit'])->name('company.magang.edit');
+    Route::put('magang/{id}', [CMagangController::class, 'update'])->name('company.magang.update');
+    Route::delete('magang/{id}', [CMagangController::class, 'destroy'])->name('company.magang.destroy');
+
+    // Route jobs dengan nama berbeda (perhatikan duplikasi)
+    Route::get('jobs', [cJobController::class, 'index'])->name('companiesjobs.index');
+    Route::get('jobs/create', [cJobController::class, 'create'])->name('companiesjobs.create');
+    Route::post('jobs', [cJobController::class, 'store'])->name('companiesjobs.store');
+    Route::get('jobs/{id}/edit', [cJobController::class, 'edit'])->name('companiesjobs.edit');
+    Route::put('jobs/{id}', [cJobController::class, 'update'])->name('companiesjobs.update');
+    Route::delete('jobs/{id}', [cJobController::class, 'destroy'])->name('companiesjobs.destroy');
+    // Halaman daftar pelamar
+Route::get('jobs/pelamar', function () {
+    return view('company.jobs.pelamar');
+})->name('companiesjobs.pelamar');
+
+    Route::get('jobs/{id}', [cJobController::class, 'show'])->name('companiesjobs.show');
+});
+
+
+});
+
+// ===========================================================================
+// ✅ ROUTE PUBLIC COMPANY DENGAN SLUG - HARUS SETELAH ROUTE STATIC
+// ===========================================================================
+Route::get('/company/{company:slug}', [PublicCompanyController::class, 'show'])->name('company.detail');
+Route::get('/company/{company:slug}/culture', [PublicCompanyController::class, 'culture'])->name('company.culture');
+Route::get('/company/{company:slug}/job', [PublicCompanyController::class, 'job'])->name('company.job');
+Route::get('/company/{company:slug}/salary', [PublicCompanyController::class, 'salary'])->name('company.salary');
+
+// Routes untuk kampus (tetap seperti sebelumnya)
+Route::get('/campus/{campus:slug}', [PublicCampusController::class, 'show'])->name('campus.detail');
+Route::get('/campus/{campus:slug}/culture', [PublicCampusController::class, 'culture'])->name('campus.culture');
+Route::get('/campus/{campus:slug}/prodi', [PublicCampusController::class, 'prodi'])->name('campus.prodi');
+Route::get('/campus/{campus:slug}/facility', [PublicCampusController::class, 'facility'])->name('campus.facility');
+
 Route::get('/open-intership', fn() => view('open_intership'));
 Route::get('/registrasi-perusahaan', fn() => view('daftar_perusahaan'));
 Route::get('/registrasi-kampus', fn() => view('daftar_kampus'));
@@ -102,9 +204,6 @@ Route::middleware(['auth'])->group(function () {
     // Update profil
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
-
-
-    
     Route::get('/pengaturan/detail', [AccountSettingsController::class, 'index'])->name('account.settings');
 
     // RUTE BARU: Halaman Kontak Saya
@@ -149,7 +248,7 @@ Route::post('/notifications/read/{id}', [UserNotifController::class, 'markAsRead
     ->name('notifications.markRead');
     // ❌ RUTE DELETE SATU NOTIFIKASI (DELETE /notifications/{id})
     Route::delete('/notifications/delete/{id}', [UserNotifController::class, 'delete'])->name('notifications.delete');
-    
+
     // ❌ RUTE DELETE SEMUA NOTIFIKASI (DELETE /notifications/delete-all)
     Route::delete('/notifications/delete-all', [UserNotifController::class, 'deleteAll'])->name('notifications.deleteAll');
     Route::get('/notifications/{id}', [UserNotifController::class, 'show'])->name('notifications.show');
@@ -161,88 +260,6 @@ Route::post('/notifications/read/{id}', [UserNotifController::class, 'markAsRead
 
 // Halaman tipe pekerjaan
 Route::get('/tipe-pekerjaan', fn() => view('job_type'))->name('job.type');
-
-
-// Group untuk route perusahaan
-Route::prefix('company')->group(function () {
-    // Halaman utama perusahaan
-    Route::get('/', fn() => view('company.company'))->name('company');
-
-    // Auth routes
-    Route::get('/login', [App\Http\Controllers\Company\LoginController::class, 'showLoginForm'])->name('company.login');
-    Route::post('/login', [App\Http\Controllers\Company\LoginController::class, 'login'])->name('company.login.submit');
-    Route::post('/logout', [App\Http\Controllers\Company\LoginController::class, 'logout'])->name('company.logout');
-
-    // Registration routes
-    Route::get('/daftar', [App\Http\Controllers\Company\RegisterController::class, 'showStep1'])->name('company.register');
-    Route::post('/daftar/step1', [App\Http\Controllers\Company\RegisterController::class, 'processStep1'])->name('company.register.step1');
-    Route::get('/daftar/proses', [App\Http\Controllers\Company\RegisterController::class, 'showStep2'])->name('company.register.process');
-    Route::post('/daftar/proses/step2', [App\Http\Controllers\Company\RegisterController::class, 'processStep2'])->name('company.register.step2');
-    Route::get('/daftar/lokasi', [App\Http\Controllers\Company\RegisterController::class, 'showStep3'])->name('company.register.location');
-    Route::post('/daftar/lokasi/step3', [App\Http\Controllers\Company\RegisterController::class, 'processStep3'])->name('company.register.step3');
-    Route::get('/daftar/batal', [App\Http\Controllers\Company\RegisterController::class, 'cancelRegistration'])->name('company.register.cancel');
-
-    // Semua route dalam group ini akan dilindungi middleware 'auth.company'
-Route::middleware(['auth.company'])->group(function () {
-    
-    // Dashboard
-    Route::get('/dashboard', fn() => view('company.company_dashboard'))->name('company.dashboard');
-    
-    // // Lowongan
-    // Route::get('/jobs', [cJobController::class, 'index'])->name('company.jobs.index');
-    // Route::get('/jobs/create', [cJobController::class, 'create'])->name('company.jobs.create');
-    // Route::post('/jobs', [cJobController::class, 'store'])->name('jobs.store');
-    // Route::get('/jobs/{id}/edit', [cJobController::class, 'edit'])->name('jobs.edit');
-    // Route::put('/jobs/{id}', [cJobController::class, 'update'])->name('jobs.update');
-    // Route::delete('/jobs/{id}', [cJobController::class, 'destroy'])->name('jobs.destroy');
-    
-    // API untuk wilayah (jika perlu akses terproteksi)
-    Route::get('/api/regencies/{id}', [cJobController::class, 'getRegencies']);
-    Route::get('/api/districts/{id}', [cJobController::class, 'getDistricts']);
-    Route::get('/api/villages/{id}', [cJobController::class, 'getVillages']);
-
-    // Profil
-    Route::get('/profile', [cProfileController::class, 'index'])->name('profile');
-    Route::post('/profile', [cProfileController::class, 'index'])->name('profile');
-    Route::get('/company/profile', [\App\Http\Controllers\Company\cProfileController::class, 'index'])
-        ->name('company.profile');
-
-    Route::post('/company/profile/update', [\App\Http\Controllers\Company\cProfileController::class, 'update'])
-        ->name('company.profile.update');
-        Route::put('/company/profile/update', [cProfileController::class, 'update'])
-    ->name('company.profile.update');
-
-        // Profile Delete
-    Route::delete('/company/profile/destroy', [\App\Http\Controllers\Company\cProfileController::class, 'destroy'])
-        ->name('company.profile.destroy');
-
-    // CRUD Magang
-    Route::get('magang', [CMagangController::class, 'index'])->name('company.magang.index');
-    Route::get('magang/create', [CMagangController::class, 'create'])->name('company.magang.create');
-    Route::post('magang', [CMagangController::class, 'store'])->name('company.magang.store');
-    Route::get('magang/{id}', [CMagangController::class, 'show'])->name('company.magang.show');
-    Route::get('magang/{id}/edit', [CMagangController::class, 'edit'])->name('company.magang.edit');
-    Route::put('magang/{id}', [CMagangController::class, 'update'])->name('company.magang.update');
-    Route::delete('magang/{id}', [CMagangController::class, 'destroy'])->name('company.magang.destroy');
-
-    // Route jobs dengan nama berbeda (perhatikan duplikasi)
-    Route::get('jobs', [cJobController::class, 'index'])->name('companiesjobs.index');
-    Route::get('jobs/create', [cJobController::class, 'create'])->name('companiesjobs.create');
-    Route::post('jobs', [cJobController::class, 'store'])->name('companiesjobs.store');
-    Route::get('jobs/{id}/edit', [cJobController::class, 'edit'])->name('companiesjobs.edit');
-    Route::put('jobs/{id}', [cJobController::class, 'update'])->name('companiesjobs.update');
-    Route::delete('jobs/{id}', [cJobController::class, 'destroy'])->name('companiesjobs.destroy');
-    // Halaman daftar pelamar
-Route::get('jobs/pelamar', function () {
-    return view('company.jobs.pelamar');
-})->name('companiesjobs.pelamar');
-
-    Route::get('jobs/{id}', [cJobController::class, 'show'])->name('companiesjobs.show');
-});
-    
-    
-});
-
 
 
 // Group untuk routes kampus
@@ -361,14 +378,17 @@ Route::get('/api/magang/villages/{districtId}', [MagangController::class, 'getVi
     Route::resource('applicants', ApplicantController::class)->only(['index', 'show', 'destroy']);
     Route::put('applicants/{applicant}/status', [ApplicantController::class, 'updateStatus'])->name('applicants.update_status');
 
+
     // Halaman Manajemen Perusahaan (Admin)
     Route::get('companies', [CompanyController::class, 'index'])->name('companies.index');
     Route::post('companies', [CompanyController::class, 'store'])->name('companies.store');
-    Route::get('companies/{company}', [CompanyController::class, 'show'])->name('companies.show');
-    Route::delete('companies/{company}', [CompanyController::class, 'destroy'])->name('companies.destroy');
+    Route::get('companies/{company:slug}', [CompanyController::class, 'show'])->name('companies.show'); // Gunakan slug
+    Route::delete('companies/{company:slug}', [CompanyController::class, 'destroy'])->name('companies.destroy'); // Gunakan slug
 
     // Halaman Manajemen Kampus/Sekolah (Admin)
-    Route::resource('campus', CampusController::class)->only(['index', 'show', 'destroy']);
+    Route::get('campus', [CampusController::class, 'index'])->name('campus.index');
+    Route::get('campus/{campus:slug}', [CampusController::class, 'show'])->name('campus.show'); // Gunakan slug
+    Route::delete('campus/{campus:slug}', [CampusController::class, 'destroy'])->name('campus.destroy'); // Gunakan slug
 
     // TAMBAHAN: Routes untuk Pemagang (Interns)
     Route::prefix('interns')->name('interns.')->group(function () {
@@ -416,6 +436,6 @@ Route::prefix('wawancara')->name('wawancara.')->middleware(['auth', 'wawancara']
     Route::prefix('jadwal')->name('jadwal.')->group(function () {
         Route::get('/', fn() => view('admin.calendar.index'))->name('index');
         Route::get('/events', [CalendarController::class, 'fetchEvents'])->name('index.events');
-        
+
     });
 });

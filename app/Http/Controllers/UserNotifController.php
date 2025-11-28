@@ -13,9 +13,10 @@ class UserNotifController extends Controller
      */
     public function myNotifications(Request $request)
     {
-        $user = auth()->user();
+
+        $user = request()->user();
         $filter = $request->get('filter', 'all'); // all, unread, read
-        
+
         $notifications = $user->notifications()
             ->when($filter === 'unread', function ($query) {
                 return $query->whereNull('read_at');
@@ -37,7 +38,7 @@ class UserNotifController extends Controller
      */
     public function getMyNotificationsApi(Request $request)
     {
-        $user = auth()->user();
+        $user = request()->user();
         $limit = $request->get('limit', 10);
         $offset = $request->get('offset', 0);
 
@@ -71,7 +72,7 @@ class UserNotifController extends Controller
      */
     public function show($id)
     {
-        $notification = auth()->user()->notifications()->where('id', $id)->firstOrFail();
+        $notification = request()->user()->notifications()->where('id', $id)->firstOrFail();
 
         // Tandai sebagai dibaca jika belum
         if (is_null($notification->read_at)) {
@@ -95,7 +96,7 @@ class UserNotifController extends Controller
     public function markRead($id)
     {
         DB::transaction(function () use ($id) {
-            $notification = auth()->user()->notifications()->where('id', $id)->firstOrFail();
+            $notification = request()->user()->notifications()->where('id', $id)->firstOrFail();
 
             if (is_null($notification->read_at)) {
                 $notification->update(['read_at' => now()]);
@@ -106,7 +107,7 @@ class UserNotifController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Notifikasi ditandai sebagai dibaca.',
-                'unread_count' => auth()->user()->unreadNotifications()->count()
+                'unread_count' => request()->user()->unreadNotifications()->count()
             ]);
         }
 
@@ -118,7 +119,7 @@ class UserNotifController extends Controller
      */
     public function markAllRead()
     {
-        $user = auth()->user();
+        $user = request()->user();
         $unreadCount = $user->unreadNotifications()->count();
 
         DB::transaction(function () use ($user) {
@@ -144,7 +145,7 @@ class UserNotifController extends Controller
     public function delete($id)
     {
         DB::transaction(function () use ($id) {
-            $notification = auth()->user()->notifications()->where('id', $id)->firstOrFail();
+            $notification = request()->user()->notifications()->where('id', $id)->firstOrFail();
             $notification->delete();
         });
 
@@ -152,7 +153,7 @@ class UserNotifController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Notifikasi berhasil dihapus.',
-                'unread_count' => auth()->user()->unreadNotifications()->count()
+                'unread_count' => request()->user()->unreadNotifications()->count()
             ]);
         }
 
@@ -164,7 +165,7 @@ class UserNotifController extends Controller
      */
     public function deleteAll()
     {
-        $user = auth()->user();
+        $user = request()->user();
         $totalCount = $user->notifications()->count();
 
         DB::transaction(function () use ($user) {
@@ -188,7 +189,7 @@ class UserNotifController extends Controller
     public function markUnread($id)
     {
         DB::transaction(function () use ($id) {
-            $notification = auth()->user()->notifications()->where('id', $id)->firstOrFail();
+            $notification = request()->user()->notifications()->where('id', $id)->firstOrFail();
             $notification->update(['read_at' => null]);
         });
 
@@ -196,7 +197,7 @@ class UserNotifController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Notifikasi ditandai sebagai belum dibaca.',
-                'unread_count' => auth()->user()->unreadNotifications()->count()
+                'unread_count' => request()->user()->unreadNotifications()->count()
             ]);
         }
 
@@ -208,8 +209,8 @@ class UserNotifController extends Controller
      */
     public function getNotificationStats()
     {
-        $user = auth()->user();
-        
+        $user = request()->user();
+
         $stats = [
             'total' => $user->notifications()->count(),
             'unread' => $user->unreadNotifications()->count(),
@@ -236,8 +237,8 @@ class UserNotifController extends Controller
     public function searchNotifications(Request $request)
     {
         $search = $request->get('q');
-        
-        $notifications = auth()->user()
+
+        $notifications = request()->user()
             ->notifications()
             ->where('data', 'like', "%{$search}%")
             ->orderBy('created_at', 'desc')
@@ -260,8 +261,8 @@ class UserNotifController extends Controller
     public function clearOldNotifications()
     {
         $days = request()->get('days', 30); // Default 30 hari
-        
-        $deletedCount = auth()->user()
+
+        $deletedCount = request()->user()
             ->notifications()
             ->where('created_at', '<', now()->subDays($days))
             ->delete();

@@ -18,7 +18,7 @@ class ProfileController extends Controller
     {
         // Ambil data user yang sedang login
         $user = Auth::user();
-        
+
         // Kirim data ke view 'profile.show' (pastikan view ini ada)
         return view('profile.show', compact('user'));
     }
@@ -31,7 +31,7 @@ class ProfileController extends Controller
     {
         // Ambil data user yang sedang login
         $user = Auth::user();
-        
+
         // Kirim data ke view 'profile.edit' (pastikan view ini ada)
         return view('profile.edit', compact('user'));
     }
@@ -42,9 +42,10 @@ class ProfileController extends Controller
      */
     public function update(Request $request)
     {
-        // Ambil data user yang sedang login
+
+        /** @var \App\Models\User $user */
         $user = Auth::user();
-        
+
         // Validasi input berdasarkan atribut yang ada di model
         $request->validate([
             'name' => 'required|string|max:255',
@@ -64,7 +65,7 @@ class ProfileController extends Controller
             'tentang_anda' => 'nullable|string',
             'asal_sekolah' => 'nullable|string|max:255',
         ]);
-        
+
         // Update data user
         $user->name = $request->name;
         $user->email = $request->email;
@@ -78,12 +79,12 @@ class ProfileController extends Controller
         $user->skills = $request->skills;
         $user->tentang_anda = $request->tentang_anda;
         $user->asal_sekolah = $request->asal_sekolah;
-        
+
         // Jika password diisi, hash dan update
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
         }
-        
+
         // Handle upload avatar (jika ada file baru)
         if ($request->hasFile('avatar')) {
             // Hapus avatar lama jika ada
@@ -94,7 +95,7 @@ class ProfileController extends Controller
             $avatarPath = $request->file('avatar')->store('public/avatars');
             $user->avatar = basename($avatarPath); // Simpan nama file saja
         }
-        
+
         // Handle upload CV (jika ada file baru)
         if ($request->hasFile('upload_cv')) {
             // Hapus CV lama jika ada
@@ -105,7 +106,7 @@ class ProfileController extends Controller
             $cvPath = $request->file('upload_cv')->store('public/cvs');
             $user->upload_cv = basename($cvPath);
         }
-        
+
         // Handle upload ijazah (jika ada file baru)
         if ($request->hasFile('upload_ijazah')) {
             // Hapus ijazah lama jika ada
@@ -116,10 +117,10 @@ class ProfileController extends Controller
             $ijazahPath = $request->file('upload_ijazah')->store('public/ijazahs');
             $user->upload_ijazah = basename($ijazahPath);
         }
-        
+
         // Simpan perubahan
         $user->save();
-        
+
         // Redirect kembali ke halaman profil dengan pesan sukses
         return redirect()->route('profile.show')->with('success', 'Profil berhasil diperbarui!');
     }
