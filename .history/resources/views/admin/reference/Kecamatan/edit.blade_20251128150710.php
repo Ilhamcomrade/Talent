@@ -122,7 +122,6 @@
         kabupatenEl.disabled = true;
 
         if (!provinceId) {
-            kabupatenEl.disabled = true;
             return;
         }
 
@@ -135,7 +134,7 @@
             }
 
             const url = `/api/reference/kabupaten/by-provinsi?parent_id=${provinceId}`;
-            console.log('Fetching kabupaten from URL:', url);
+            console.log('Fetching kabupaten from:', url);
             const response = await fetch(url);
             console.log('Response status:', response.status);
             
@@ -144,15 +143,10 @@
             }
             
             const responseData = await response.json();
-            console.log('Received full response:', responseData);
-            console.log('Response type:', typeof responseData);
-            console.log('Is array?', Array.isArray(responseData));
+            console.log('Received kabupaten data:', responseData);
             
             // Handle response format - could be array or object with data property
             const data = Array.isArray(responseData) ? responseData : (responseData.data || []);
-            console.log('Extracted data:', data);
-            console.log('Data type:', typeof data);
-            console.log('Is data array?', Array.isArray(data));
             
             cache.kabupaten[provinceId] = data;
             populateKabupaten(data, selectValue);
@@ -166,20 +160,7 @@
     function populateKabupaten(data, selectValue = null) {
         kabupatenEl.innerHTML = '<option value="">-- Pilih Kabupaten/Kota --</option>';
         
-        if (!data) {
-            console.warn('populateKabupaten: data is null or undefined');
-            kabupatenEl.disabled = false;
-            return;
-        }
-        
         if (!Array.isArray(data)) {
-            console.warn('populateKabupaten: data is not an array. Type:', typeof data, 'Value:', data);
-            kabupatenEl.disabled = false;
-            return;
-        }
-        
-        if (data.length === 0) {
-            kabupatenEl.innerHTML = '<option value="">-- Tidak ada data Kabupaten --</option>';
             kabupatenEl.disabled = false;
             return;
         }

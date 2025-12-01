@@ -239,8 +239,6 @@
     // Auto-load cascade on page load for edit mode
     window.addEventListener('DOMContentLoaded', function() {
         if (initialValues.provinsiId) {
-            console.log('Auto-loading cascade with initial values:', initialValues);
-            
             // Set provinsi value
             provinsiEl.value = initialValues.provinsiId;
             
@@ -249,20 +247,18 @@
             
             // Wait for kabupaten to load, then set and trigger kabupaten change
             setTimeout(() => {
-                console.log('Setting kabupaten value:', initialValues.kabupatenId, 'Options:', kabupatenEl.options.length);
                 if (initialValues.kabupatenId && kabupatenEl.options.length > 1) {
                     kabupatenEl.value = initialValues.kabupatenId;
                     kabupatenEl.dispatchEvent(new Event('change'));
                 }
-            }, 800);
+            }, 600);
             
             // Wait for kecamatan to load, then set kecamatan value
             setTimeout(() => {
-                console.log('Setting kecamatan value:', initialValues.kecamatanId, 'Options:', kecamatanEl.options.length);
                 if (initialValues.kecamatanId && kecamatanEl.options.length > 1) {
                     kecamatanEl.value = initialValues.kecamatanId;
                 }
-            }, 1600);
+            }, 1200);
         }
     });
 </script>

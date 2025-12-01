@@ -41,7 +41,7 @@
                         <select id="provinsi" class="form-select form-select-sm" required>
                             <option value="">-- Pilih Provinsi --</option>
                             @foreach ($provinces as $province)
-                                <option value="{{ $province->id }}" {{ old('provinsi_id', optional(optional(optional($desa)->kecamatan)->kabupaten)->provinsi_id ?? '') == $province->id ? 'selected' : '' }}>
+                                <option value="{{ $province->id }}" {{ old('provinsi_id', $desa->kecamatan->kabupaten->provinsi_id ?? '') == $province->id ? 'selected' : '' }}>
                                     {{ $province->nama_provinsi }}
                                 </option>
                             @endforeach
@@ -135,25 +135,40 @@
     const provinsiEl = document.getElementById('provinsi');
     const kabupatenEl = document.getElementById('kabupaten');
     const kecamatanEl = document.getElementById('kecamatan');
+    const provinsiIdInput = document.getElementById('provinsi_id');
+    const kabupatenIdInput = document.getElementById('kabupaten_id');
+    const kecamatanIdInput = document.getElementById('kecamatan_id');
     const loadingIndicator = document.getElementById('loading-indicator');
 
-    // Store initial values for reset
+    // Store initial values
     const initialValues = {
-        provinsiId: '{{ old("provinsi_id", optional(optional(optional($desa)->kecamatan)->kabupaten)->provinsi_id ?? "") }}',
-        kabupatenId: '{{ old("kabupaten_id", optional(optional($desa)->kecamatan)->kabupaten_id ?? "") }}',
-        kecamatanId: '{{ old("kecamatan_id", $desa->kecamatan_id ?? "") }}',
-        kodeDesa: '{{ old("kode_desa", $desa->kode_desa ?? "") }}',
-        namaDesa: '{{ old("nama_desa", $desa->nama_desa ?? "") }}',
-        jenis: '{{ old("jenis", $desa->jenis ?? "") }}',
-        status: '{{ old("status", $desa->status ?? "") }}'
+        provinsiId: '{{ old("provinsi_id", $desa->kecamatan->kabupaten->provinsi_id ?? "") }}',
+        kabupatenId: '{{ old("kabupaten_id", $desa->kecamatan->kabupaten_id) }}',
+        kecamatanId: '{{ old("kecamatan_id", $desa->kecamatan_id) }}',
+        namaDesa: '{{ old("nama_desa", $desa->nama_desa) }}',
+        jenis: '{{ old("jenis", $desa->jenis) }}',
+        status: '{{ old("status", $desa->status) }}'
     };
+
+    // Pre-populated values for edit mode
+    const editProvinsiId = '{{ old("provinsi_id", $desa->kecamatan->kabupaten->provinsi_id ?? "") }}';
+    const editKabupatenId = '{{ old("kabupaten_id", $desa->kecamatan->kabupaten_id) }}';
+    const editKecamatanId = '{{ old("kecamatan_id", $desa->kecamatan_id) }}';
 
     function resetDependentDropdowns(level) {
         if (level === 'provinsi') {
             kabupatenEl.innerHTML = '<option value="">-- Pilih Kabupaten --</option>';
             kecamatanEl.innerHTML = '<option value="">-- Pilih Kecamatan --</option>';
+            kabupatenEl.disabled = true;
+            kecamatanEl.disabled = true;
+            
+            kabupatenIdInput.value = '';
+            kecamatanIdInput.value = '';
         } else if (level === 'kabupaten') {
             kecamatanEl.innerHTML = '<option value="">-- Pilih Kecamatan --</option>';
+            kecamatanEl.disabled = true;
+            
+            kecamatanIdInput.value = '';
         }
     }
 
@@ -170,27 +185,14 @@
         try {
             const response = await fetch(url);
             if (!response.ok) throw new Error('Network response was not ok');
-            const result = await response.json();
-            
-            console.log('Wilayah load response:', {url, level, result});
+            const data = await response.json();
             
             targetElement.innerHTML = `<option value="">-- Pilih ${level} --</option>`;
-            
-            // Handle different response formats
-            let data = result.data || result;
-            if (!Array.isArray(data)) {
-                data = [];
-            }
-            
-            if (data.length === 0) {
-                targetElement.innerHTML += `<option disabled>Tidak ada ${level}</option>`;
-            } else {
-                data.forEach(item => {
-                    const selected = selectValue && selectValue == item.id ? 'selected' : '';
-                    const itemName = item.name || item.nama_kabupaten || item.nama_kecamatan || item.nama_desa || '';
-                    targetElement.innerHTML += `<option value="${item.id}" ${selected}>${itemName}</option>`;
-                });
-            }
+            data.forEach(item => {
+                const selected = selectValue && selectValue == item.id ? 'selected' : '';
+                targetElement.innerHTML += `<option value="${item.id}" ${selected}>${item.name}</option>`;
+            });
+            targetElement.disabled = false;
         } catch (error) {
             console.error('Error loading wilayah:', error);
             targetElement.innerHTML = `<option value="">-- Error loading data --</option>`;
@@ -201,24 +203,21 @@
 
     function resetForm() {
         document.getElementById('provinsi').value = initialValues.provinsiId;
-        document.getElementById('kode_desa').value = initialValues.kodeDesa;
         document.getElementById('nama_desa').value = initialValues.namaDesa;
         document.getElementById('jenis').value = initialValues.jenis;
         document.getElementById('status').value = initialValues.status;
         
         // Reload cascade
-        if (initialValues.provinsiId) {
-            provinsiEl.dispatchEvent(new Event('change'));
-        }
+        provinsiEl.dispatchEvent(new Event('change'));
     }
 
     provinsiEl.addEventListener('change', function() {
         const provinsiId = this.value;
+        provinsiIdInput.value = provinsiId;
         
         if (provinsiId) {
             resetDependentDropdowns('provinsi');
-            // Use OLD system API for kabupaten
-            loadWilayah(`/api/reference/kabupaten/by-provinsi?parent_id=${provinsiId}`, kabupatenEl, 'Kabupaten/Kota', initialValues.kabupatenId);
+            loadWilayah(`/api/reference/kabupaten/by-provinsi?parent_id=${provinsiId}`, kabupatenEl, 'Kabupaten/Kota', editKabupatenId);
         } else {
             resetDependentDropdowns('provinsi');
         }
@@ -226,43 +225,45 @@
 
     kabupatenEl.addEventListener('change', function() {
         const kabupatenId = this.value;
+        kabupatenIdInput.value = kabupatenId;
         
         if (kabupatenId) {
             resetDependentDropdowns('kabupaten');
-            // Use OLD system API for kecamatan
-            loadWilayah(`/api/reference/kecamatan/by-kabupaten-old?parent_id=${kabupatenId}`, kecamatanEl, 'Kecamatan', initialValues.kecamatanId);
+            loadWilayah(`/api/reference/kecamatan/by-kabupaten?parent_id=${kabupatenId}`, kecamatanEl, 'Kecamatan', editKecamatanId);
         } else {
             resetDependentDropdowns('kabupaten');
         }
     });
 
+    kecamatanEl.addEventListener('change', function() {
+        const kecamatanId = this.value;
+        kecamatanIdInput.value = kecamatanId;
+    });
+
     // Auto-load cascade on page load for edit mode
     window.addEventListener('DOMContentLoaded', function() {
-        if (initialValues.provinsiId) {
-            console.log('Auto-loading cascade with initial values:', initialValues);
-            
+        if (editProvinsiId) {
             // Set provinsi value
-            provinsiEl.value = initialValues.provinsiId;
+            provinsiEl.value = editProvinsiId;
             
             // Trigger change event to load kabupaten
             provinsiEl.dispatchEvent(new Event('change'));
             
             // Wait for kabupaten to load, then set and trigger kabupaten change
             setTimeout(() => {
-                console.log('Setting kabupaten value:', initialValues.kabupatenId, 'Options:', kabupatenEl.options.length);
-                if (initialValues.kabupatenId && kabupatenEl.options.length > 1) {
-                    kabupatenEl.value = initialValues.kabupatenId;
+                if (editKabupatenId) {
+                    kabupatenEl.value = editKabupatenId;
                     kabupatenEl.dispatchEvent(new Event('change'));
                 }
-            }, 800);
+            }, 500);
             
             // Wait for kecamatan to load, then set kecamatan value
             setTimeout(() => {
-                console.log('Setting kecamatan value:', initialValues.kecamatanId, 'Options:', kecamatanEl.options.length);
-                if (initialValues.kecamatanId && kecamatanEl.options.length > 1) {
-                    kecamatanEl.value = initialValues.kecamatanId;
+                if (editKecamatanId) {
+                    kecamatanEl.value = editKecamatanId;
+                    kecamatanEl.dispatchEvent(new Event('change'));
                 }
-            }, 1600);
+            }, 1000);
         }
     });
 </script>

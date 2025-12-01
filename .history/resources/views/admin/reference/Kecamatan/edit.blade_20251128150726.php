@@ -166,20 +166,7 @@
     function populateKabupaten(data, selectValue = null) {
         kabupatenEl.innerHTML = '<option value="">-- Pilih Kabupaten/Kota --</option>';
         
-        if (!data) {
-            console.warn('populateKabupaten: data is null or undefined');
-            kabupatenEl.disabled = false;
-            return;
-        }
-        
         if (!Array.isArray(data)) {
-            console.warn('populateKabupaten: data is not an array. Type:', typeof data, 'Value:', data);
-            kabupatenEl.disabled = false;
-            return;
-        }
-        
-        if (data.length === 0) {
-            kabupatenEl.innerHTML = '<option value="">-- Tidak ada data Kabupaten --</option>';
             kabupatenEl.disabled = false;
             return;
         }

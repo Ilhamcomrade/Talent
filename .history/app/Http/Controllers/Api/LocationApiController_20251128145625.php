@@ -108,7 +108,7 @@ class LocationApiController extends Controller
         $parentId = $request->query('parent_id');
 
         if (!$parentId) {
-            return response()->json(['data' => [], 'error' => 'parent_id is required'], 400);
+            return response()->json([], 400);
         }
 
         $kabupaten = Kabupaten::where('provinsi_id', $parentId)
@@ -119,13 +119,10 @@ class LocationApiController extends Controller
         Log::info('Kabupaten (Old System) query', [
             'provinsi_id' => $parentId,
             'count' => $kabupaten->count(),
-            'data' => $kabupaten->toArray()
+            'sample' => $kabupaten->first() ? $kabupaten->first()->toArray() : null
         ]);
 
-        return response()->json([
-            'data' => $kabupaten,
-            'count' => $kabupaten->count()
-        ]);
+        return response()->json($kabupaten);
     }
 
     /**
@@ -140,22 +137,20 @@ class LocationApiController extends Controller
         $parentId = $request->query('parent_id');
 
         if (!$parentId) {
-            return response()->json(['error' => 'parent_id is required'], 400);
+            return response()->json([], 400);
         }
 
         $kecamatan = \App\Models\Kecamatan::where('kabupaten_id', $parentId)
+            ->where('status', true)
             ->orderBy('nama_kecamatan')
             ->get(['id', 'nama_kecamatan as name', 'kabupaten_id']);
 
         Log::info('Kecamatan (Old System) query', [
             'kabupaten_id' => $parentId,
             'count' => $kecamatan->count(),
-            'data' => $kecamatan->toArray()
+            'sample' => $kecamatan->first() ? $kecamatan->first()->toArray() : null
         ]);
 
-        return response()->json([
-            'data' => $kecamatan,
-            'count' => $kecamatan->count()
-        ]);
+        return response()->json($kecamatan);
     }
 }

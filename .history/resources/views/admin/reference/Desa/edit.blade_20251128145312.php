@@ -41,7 +41,7 @@
                         <select id="provinsi" class="form-select form-select-sm" required>
                             <option value="">-- Pilih Provinsi --</option>
                             @foreach ($provinces as $province)
-                                <option value="{{ $province->id }}" {{ old('provinsi_id', optional(optional(optional($desa)->kecamatan)->kabupaten)->provinsi_id ?? '') == $province->id ? 'selected' : '' }}>
+                                <option value="{{ $province->id }}" {{ old('provinsi_id', $desa->kecamatan->kabupaten->provinsi_id ?? '') == $province->id ? 'selected' : '' }}>
                                     {{ $province->nama_provinsi }}
                                 </option>
                             @endforeach
@@ -139,13 +139,13 @@
 
     // Store initial values for reset
     const initialValues = {
-        provinsiId: '{{ old("provinsi_id", optional(optional(optional($desa)->kecamatan)->kabupaten)->provinsi_id ?? "") }}',
-        kabupatenId: '{{ old("kabupaten_id", optional(optional($desa)->kecamatan)->kabupaten_id ?? "") }}',
-        kecamatanId: '{{ old("kecamatan_id", $desa->kecamatan_id ?? "") }}',
-        kodeDesa: '{{ old("kode_desa", $desa->kode_desa ?? "") }}',
-        namaDesa: '{{ old("nama_desa", $desa->nama_desa ?? "") }}',
-        jenis: '{{ old("jenis", $desa->jenis ?? "") }}',
-        status: '{{ old("status", $desa->status ?? "") }}'
+        provinsiId: '{{ old("provinsi_id", $desa->kecamatan->kabupaten->provinsi_id ?? "") }}',
+        kabupatenId: '{{ old("kabupaten_id", $desa->kecamatan->kabupaten_id) }}',
+        kecamatanId: '{{ old("kecamatan_id", $desa->kecamatan_id) }}',
+        kodeDesa: '{{ old("kode_desa", $desa->kode_desa) }}',
+        namaDesa: '{{ old("nama_desa", $desa->nama_desa) }}',
+        jenis: '{{ old("jenis", $desa->jenis) }}',
+        status: '{{ old("status", $desa->status) }}'
     };
 
     function resetDependentDropdowns(level) {
@@ -170,25 +170,18 @@
         try {
             const response = await fetch(url);
             if (!response.ok) throw new Error('Network response was not ok');
-            const result = await response.json();
-            
-            console.log('Wilayah load response:', {url, level, result});
+            const data = await response.json();
             
             targetElement.innerHTML = `<option value="">-- Pilih ${level} --</option>`;
-            
-            // Handle different response formats
-            let data = result.data || result;
-            if (!Array.isArray(data)) {
-                data = [];
-            }
-            
-            if (data.length === 0) {
-                targetElement.innerHTML += `<option disabled>Tidak ada ${level}</option>`;
-            } else {
+            if (data.data && Array.isArray(data.data)) {
+                data.data.forEach(item => {
+                    const selected = selectValue && selectValue == item.id ? 'selected' : '';
+                    targetElement.innerHTML += `<option value="${item.id}" ${selected}>${item.name || item.nama_kabupaten || item.nama_kecamatan}</option>`;
+                });
+            } else if (Array.isArray(data)) {
                 data.forEach(item => {
                     const selected = selectValue && selectValue == item.id ? 'selected' : '';
-                    const itemName = item.name || item.nama_kabupaten || item.nama_kecamatan || item.nama_desa || '';
-                    targetElement.innerHTML += `<option value="${item.id}" ${selected}>${itemName}</option>`;
+                    targetElement.innerHTML += `<option value="${item.id}" ${selected}>${item.name || item.nama_kabupaten || item.nama_kecamatan}</option>`;
                 });
             }
         } catch (error) {
@@ -217,7 +210,6 @@
         
         if (provinsiId) {
             resetDependentDropdowns('provinsi');
-            // Use OLD system API for kabupaten
             loadWilayah(`/api/reference/kabupaten/by-provinsi?parent_id=${provinsiId}`, kabupatenEl, 'Kabupaten/Kota', initialValues.kabupatenId);
         } else {
             resetDependentDropdowns('provinsi');
@@ -229,8 +221,7 @@
         
         if (kabupatenId) {
             resetDependentDropdowns('kabupaten');
-            // Use OLD system API for kecamatan
-            loadWilayah(`/api/reference/kecamatan/by-kabupaten-old?parent_id=${kabupatenId}`, kecamatanEl, 'Kecamatan', initialValues.kecamatanId);
+            loadWilayah(`/api/reference/kecamatan/by-kabupaten?parent_id=${kabupatenId}`, kecamatanEl, 'Kecamatan', initialValues.kecamatanId);
         } else {
             resetDependentDropdowns('kabupaten');
         }
@@ -239,8 +230,6 @@
     // Auto-load cascade on page load for edit mode
     window.addEventListener('DOMContentLoaded', function() {
         if (initialValues.provinsiId) {
-            console.log('Auto-loading cascade with initial values:', initialValues);
-            
             // Set provinsi value
             provinsiEl.value = initialValues.provinsiId;
             
@@ -249,20 +238,18 @@
             
             // Wait for kabupaten to load, then set and trigger kabupaten change
             setTimeout(() => {
-                console.log('Setting kabupaten value:', initialValues.kabupatenId, 'Options:', kabupatenEl.options.length);
                 if (initialValues.kabupatenId && kabupatenEl.options.length > 1) {
                     kabupatenEl.value = initialValues.kabupatenId;
                     kabupatenEl.dispatchEvent(new Event('change'));
                 }
-            }, 800);
+            }, 600);
             
             // Wait for kecamatan to load, then set kecamatan value
             setTimeout(() => {
-                console.log('Setting kecamatan value:', initialValues.kecamatanId, 'Options:', kecamatanEl.options.length);
                 if (initialValues.kecamatanId && kecamatanEl.options.length > 1) {
                     kecamatanEl.value = initialValues.kecamatanId;
                 }
-            }, 1600);
+            }, 1200);
         }
     });
 </script>
