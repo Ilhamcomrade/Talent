@@ -131,7 +131,7 @@
                         </li>
 
                         <li>
-                            <a class="dropdown-item" href="{{ url('company/applications') }}">
+                            <a class="dropdown-item" href="{{ url('company/applicants') }}">
                                 Pelamar
                             </a>
                         </li>

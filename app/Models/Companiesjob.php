@@ -32,12 +32,14 @@ class CompaniesJob extends Model
         'kabupaten_id',
         'kecamatan_id',
         'desa_id',
+        'is_public',
     ];
 
     // 🔥 Supaya kolom JSON otomatis berubah menjadi array
     protected $casts = [
         'skills' => 'array',
         'show_salary' => 'boolean',
+        'is_public' => 'boolean',
     ];
 
     /**

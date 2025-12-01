@@ -333,13 +333,13 @@
                     <h1>Dashboard Perusahaan</h1>
                     <p>Selamat datang di panel perusahaan Anda</p>
                 </div>
-                <div class="col-md-4 text-md-end">
+                {{-- <div class="col-md-4 text-md-end">
                     <div class="btn-group">
                         <button class="btn btn-light">Hari ini</button>
                         <button class="btn btn-outline-light">Minggu ini</button>
                         <button class="btn btn-outline-light">Bulan ini</button>
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
 

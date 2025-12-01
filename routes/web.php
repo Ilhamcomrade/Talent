@@ -29,6 +29,7 @@ use App\Http\Controllers\Company\cProfileController;
 use App\Http\Controllers\Company\cNotificationController;
 use App\Http\Controllers\Company\cMagangController;
 // use App\Http\Controllers\Company\cDashboardController;
+use App\Http\Controllers\Company\cApplicantController;
 
 
 // Campus Controllers
@@ -238,6 +239,26 @@ Route::get('jobs/pelamar', function () {
 })->name('companiesjobs.pelamar');
 
     Route::get('jobs/{id}', [cJobController::class, 'show'])->name('companiesjobs.show');
+
+    // Semua pelamar di semua lowongan perusahaan
+    Route::get('/applicants', [cApplicantController::class, 'index'])
+        ->name('applicants.index');
+
+    // Pelamar berdasarkan 1 lowongan (job)
+    Route::get('/applicants/job/{id}', [cApplicantController::class, 'pelamarByJob'])
+        ->name('applicants.byJob');
+
+    // Detail pelamar
+    Route::get('/applicants/show/{id}', [cApplicantController::class, 'show'])
+        ->name('applicants.show');
+
+    // Update status pelamar (POST/PUT)
+    Route::post('/applicants/status/{id}', [cApplicantController::class, 'updateStatus'])
+        ->name('applicants.updateStatus');
+
+    // Lihat / Download CV pelamar
+    Route::get('/applicants/cv/{id}', [cApplicantController::class, 'cv'])
+        ->name('applicants.cv');
 });
     
     
