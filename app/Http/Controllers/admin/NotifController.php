@@ -45,7 +45,7 @@ class NotifController extends Controller
      */
     public function myNotifications()
     {
-        $user = auth()->user();
+        $user = request()->user();
         $notifications = $user->notifications()->latest()->get();
 
         return view('admin.notif.my', compact('notifications'));
@@ -57,7 +57,7 @@ class NotifController extends Controller
     public function getMyNotificationsApi()
     {
         try {
-            $user = auth()->user();
+            $user = request()->user();
             $notifications = $user->notifications()
                 ->latest()
                 ->take(10)
@@ -91,7 +91,7 @@ class NotifController extends Controller
      */
     public function markAsRead($id)
     {
-        $notification = auth()->user()->notifications()->findOrFail($id);
+        $notification = request()->user()->notifications()->findOrFail($id);
         $notification->update(['read_at' => now()]);
 
         return redirect()->back()->with('success', 'Notifikasi ditandai sebagai dibaca.');
@@ -103,7 +103,7 @@ class NotifController extends Controller
     public function markAsReadApi($id)
     {
         try {
-            $notification = auth()->user()->notifications()->findOrFail($id);
+            $notification = request()->user()->notifications()->findOrFail($id);
             $notification->markAsRead();
 
             return response()->json([

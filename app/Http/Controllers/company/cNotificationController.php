@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Company;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
-class NotificationController extends Controller
+class cNotificationController extends Controller
 {
     public function index()
     {
