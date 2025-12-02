@@ -11,7 +11,6 @@ class Company extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-
     protected $guard = 'company';
     protected $fillable = [
         'nama_lengkap',
@@ -28,9 +27,10 @@ class Company extends Authenticatable
         'kecamatan',
         'desa_kelurahan',
         'alamat_lengkap',
-        'visi',
-        'misi',
-        'alasan',
+        'visi', // Tambahan baru
+        'misi', // Tambahan baru
+        'alasan', // Tambahan baru
+        'deskripsi_perusahaan', // Tambahan baru
         'is_active',
         'slug', // Tambahkan slug
     ];
@@ -77,4 +77,13 @@ class Company extends Authenticatable
     {
         return 'slug';
     }
+
+       /**
+     * Relasi ke tabel companiesjobs
+     */
+    public function jobs()
+    {
+        return $this->hasMany(CompaniesJob::class, 'company_id');
+    }
+    
 }

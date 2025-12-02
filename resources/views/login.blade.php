@@ -11,7 +11,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    
+
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -24,15 +24,6 @@
             margin-top: 20px;
         }
 
-           /* .title-glints {
-            font-size: 30px;
-            font-weight: 700;
-            line-height: 1.2;
-            color: #2c2c2c;
-            text-align: center;
-            margin-bottom: 24px;
-        }*/
-            
         .sub-title{
             font-size: 28px;
             font-weight: 700;
@@ -40,7 +31,7 @@
             color: #2c2c2c;
             text-align: center;
             margin-bottom: 5px;
-        } 
+        }
 
         .social-buttons {
             display: flex;
@@ -178,6 +169,19 @@
             background-color: #c70000;
         }
 
+        .forgot-password {
+            text-align: left;
+            margin-top: -5px;
+            margin-bottom: 5px;
+        }
+
+        .forgot-password a {
+            color: #007AFF;
+            text-decoration: underline;
+            font-weight: 500;
+            font-size: 15px;
+        }
+
         .glints-toast {
             border: none;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -260,6 +264,10 @@
                         <i class="fa-regular fa-eye password-toggle"></i>
                     </div>
                 </div>
+                <!-- Tambahkan link Lupa Password di sini -->
+                <div class="forgot-password">
+                    <a href="{{ url('/lupa-kata-sandi') }}">Lupa Kata Sandi?</a>
+                </div>
                 <div class="d-grid gap-2 mb-2"> <!-- Dikurangi margin bottom dari mb-3 ke mb-2 -->
                     <button type="submit" class="btn btn-masuk">Masuk</button>
                 </div>
@@ -273,12 +281,12 @@
                 </a>
                  <!-- <a href="#">
                     <img src="{{ asset('images/logo facebook.png') }}" alt="Facebook" class="facebook-logo">
-                </a> 
+                </a>
                  <a href="#">
                     <img src="{{ asset('images/logo linkedin.png') }}" alt="linkedin" class="linkedin-logo">
                 </a>  -->
             </div>
-            
+
             <hr class="my-3"> <!-- Dikurangi margin dari my-4 ke my-3 -->
 
             <div class="footer-line">
@@ -326,7 +334,7 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             const showFlag = document.getElementById('showDeletedAccountToastFlag');
-            
+
             if (showFlag) {
                 const toastEl = document.getElementById('deletedAccountToast');
                 if (toastEl) {

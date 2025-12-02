@@ -30,6 +30,7 @@ use App\Http\Controllers\Company\cNotificationController;
 use App\Http\Controllers\Company\cMagangController;
 // use App\Http\Controllers\Company\cDashboardController;
 use App\Http\Controllers\Company\CompanyController as PublicCompanyController;
+use App\Http\Controllers\Company\CompanyJobController;
 
 
 // Campus Controllers
@@ -163,7 +164,7 @@ Route::get('jobs/pelamar', function () {
 // ===========================================================================
 Route::get('/company/{company:slug}', [PublicCompanyController::class, 'show'])->name('company.detail');
 Route::get('/company/{company:slug}/culture', [PublicCompanyController::class, 'culture'])->name('company.culture');
-Route::get('/company/{company:slug}/job', [PublicCompanyController::class, 'job'])->name('company.job');
+Route::get('/company/{company:slug}/job', [CompanyJobController::class, 'index'])->name('company.job'); // <-- UBAH INI
 Route::get('/company/{company:slug}/salary', [PublicCompanyController::class, 'salary'])->name('company.salary');
 
 // Routes untuk kampus (tetap seperti sebelumnya)

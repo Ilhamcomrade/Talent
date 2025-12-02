@@ -23,15 +23,16 @@ class cProfileController extends Controller
         $request->validate([
             'nama_perusahaan' => 'required|max:255',
             'nama_lengkap' => 'required|max:255',
-            'alamat_lengkap' => 'nullable|string|max:255',
+            'alamat_lengkap' => 'nullable|string',
             'jabatan' => 'required|max:255',
             'no_hp' => 'nullable|string|max:20',
             'email' => 'required|email|unique:companies,email',
             'password' => 'required|min:6',
-            'visi' => 'nullable|max:255',
-            'misi' => 'nullable|max:255',
-            'alasan' => 'nullable|max:255',
-            'jumlah_karyawan' => 'nullable|integer',
+            'visi' => 'nullable|string', // Hapus max:255
+            'misi' => 'nullable|string', // Hapus max:255
+            'alasan' => 'nullable|string',
+            'deskripsi_perusahaan' => 'nullable|string',
+            'jumlah_karyawan' => 'required|string|max:255',
             'logo' => 'nullable|image|max:2048',
             'provinsi' => 'nullable|string|max:255',
             'kota' => 'nullable|string|max:255',
@@ -41,9 +42,6 @@ class cProfileController extends Controller
 
         $company = new Company($request->except(['password', 'logo']));
         $company->password = Hash::make($request->password);
-
-        // Set default jika jumlah_karyawan tidak diisi
-        $company->jumlah_karyawan = $request->jumlah_karyawan ?? 0;
 
         if ($request->hasFile('logo')) {
             $company->logo = $request->file('logo')->store('company_logo', 'public');
@@ -63,13 +61,14 @@ class cProfileController extends Controller
         $request->validate([
             'nama_perusahaan' => 'required|max:255',
             'nama_lengkap' => 'required|max:255',
-            'alamat_lengkap' => 'nullable|string|max:255',
+            'alamat_lengkap' => 'nullable|string',
             'jabatan' => 'required|max:255',
             'no_hp' => 'nullable|string|max:20',
-            'visi' => 'nullable|max:255',
-            'misi' => 'nullable|max:255',
-            'alasan' => 'nullable|max:255',
-            'jumlah_karyawan' => 'nullable|integer',
+            'visi' => 'nullable|string', // Hapus max:255
+            'misi' => 'nullable|string', // Hapus max:255
+            'alasan' => 'nullable|string',
+            'deskripsi_perusahaan' => 'nullable|string',
+            'jumlah_karyawan' => 'required|string|max:255',
             'logo' => 'nullable|image|max:2048',
             'provinsi' => 'nullable|string|max:255',
             'kota' => 'nullable|string|max:255',
@@ -80,9 +79,6 @@ class cProfileController extends Controller
 
         // Update semua kecuali password & logo
         $company->fill($request->except(['password', 'logo']));
-
-        // FIX: jumlah_karyawan tidak boleh NULL
-        $company->jumlah_karyawan = $request->jumlah_karyawan ?? $company->jumlah_karyawan ?? 0;
 
         // Update logo jika ada upload baru
         if ($request->hasFile('logo')) {

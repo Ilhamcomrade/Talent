@@ -21,16 +21,23 @@
             padding: 12px 28px;
             font-weight: bold;
             cursor: pointer;
-            background:  #80868b;
+            background: #80868b;
             border: none;
             color: white;
             border-radius: 12px 12px 0 0;
             margin-right: 0;
+            /* Ganti margin-top dengan top dan transform */
+            position: relative;
+            top: -100px;
             transition: 0.3s;
             border-right: 2px solid rgba(255, 255, 255, 0.3);
             text-decoration: none;
             display: inline-block;
             text-align: center;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         #detail-page-content .detail-nav-item:last-child {
@@ -62,14 +69,6 @@
             padding: 0 20px;
         }
 
-        #detail-page-content .detail-header {
-            padding: 40px 0 10px 0;
-            border-bottom: 1px solid #e0e0e0;
-            /* PERUBAHAN: Mengurangi margin-top untuk menaikkan konten */
-            margin-top: -45px;
-        }
-
-        /* PERUBAHAN UTAMA: Layout header dengan flexbox */
         #detail-page-content .detail-header-content {
             display: flex;
             align-items: flex-start;
@@ -83,10 +82,9 @@
 
         #detail-page-content .detail-logo {
             width: 200px;
-            height: 200px;
+            height: 100px;
             border-radius: 12px;
             object-fit: contain;
-            /* background-color: #f5f5f5; */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -96,16 +94,13 @@
             padding: 10px;
         }
 
-        /* PERUBAHAN: Menyesuaikan layout info section */
         #detail-page-content .detail-info-section {
             flex: 1;
             display: flex;
             flex-direction: column;
-            /* PERUBAHAN: Menggunakan flex-start agar konten sejajar dengan logo */
             justify-content: flex-start;
-            /* PERUBAHAN: Menghapus padding-top dan menggunakan margin-top pada child elements */
             padding-top: 0;
-            height: 200px; /* Sesuai tinggi logo */
+            height: 200px;
         }
 
         #detail-page-content .detail-name {
@@ -113,8 +108,7 @@
             font-weight: bold;
             color: #000;
             margin-bottom: 10px;
-            /* PERUBAHAN: Menambahkan margin-top untuk posisi tengah */
-            margin-top: 20px; /* Disesuaikan agar nama berada di tengah vertikal */
+            margin-top: 20px;
         }
 
         #detail-page-content .detail-rating {
@@ -129,7 +123,10 @@
         }
 
         #detail-page-content .detail-main-content {
-            padding: 30px 0;
+                padding: 15px 0 30px 0;
+                margin-top: -90px;
+                position: relative;
+                z-index: 0;
         }
 
         #detail-page-content .detail-section-title {
@@ -139,6 +136,7 @@
             color: #000;
         }
 
+        /* ===================== STYLE UNTUK INFORMASI PERUSAHAAN ===================== */
         #detail-page-content .detail-info-table {
             width: 100%;
             margin-bottom: 35px;
@@ -173,10 +171,71 @@
         }
 
         #detail-page-content .detail-description p {
+            margin-top: -20px;
             margin-bottom: 12px;
             text-align: justify;
             color: #555;
             line-height: 1.7;
+            white-space: pre-line;
+        }
+
+        /* Style khusus untuk data dari database - line height lebih rapat */
+        #detail-page-content .database-content {
+            line-height: 1.2 !important;
+        }
+
+        /* Style khusus untuk deskripsi perusahaan - line height lebih longgar */
+        #detail-page-content .description-content {
+            line-height: 1.8 !important;
+        }
+
+        #detail-page-content .vision {
+            margin-top: 25px;
+        }
+
+        #detail-page-content .vision h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        #detail-page-content .vision p {
+            margin-top: -10px;
+            margin-bottom: 12px;
+            text-align: justify;
+            color: #555;
+            line-height: 1.7;
+            white-space: pre-line;
+        }
+
+        #detail-page-content .mission {
+            margin-top: 25px;
+        }
+
+        #detail-page-content .mission h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        #detail-page-content .mission p {
+            margin-top: -10px;
+            margin-bottom: 12px;
+            text-align: justify;
+            color: #555;
+            line-height: 1.7;
+            white-space: pre-line;
+        }
+
+        /* ===================== GARIS PEMBATAS BARU ===================== */
+        #detail-page-content .separator-line {
+            height: 2px;
+            background-color: #e0e0e0;
+            margin: 20px 0;
+            margin-top: -10px;
+            width: 100%;
         }
 
         /* Responsive */
@@ -251,7 +310,7 @@
 
         </div>
 
-        <!-- TAB NAVIGATION (Sekarang berada di bawah logo dan info) -->
+        <!-- TAB NAVIGATION -->
         <div class="detail-nav-menu">
             <a href="{{ route('company.detail', ['company' => $company->slug]) }}" class="detail-nav-item active">Tentang</a>
             <a href="{{ route('company.culture', ['company' => $company->slug]) }}" class="detail-nav-item">Kehidupan dan Budaya</a>
@@ -261,8 +320,11 @@
         </div>
     </div>
 
-    <!-- CONTENT -->
+    <!-- CONTENT BARU -->
     <div class="detail-main-content">
+
+        <!-- GARIS PEMBATAS BARU - DIPINDAHKAN KE POSISI YANG TEPAT -->
+        <div class="separator-line"></div>
 
         <h2 class="detail-section-title">Sekilas tentang perusahaan</h2>
 
@@ -304,12 +366,44 @@
 
         </div>
 
-          <div class="detail-description">
-                <h3>Deskripsi Perusahaan</h3>
-                <p>
+        <!-- Deskripsi Perusahaan dari Database -->
+        <div class="detail-description">
+            <h3>Deskripsi Perusahaan</h3>
+            <p class="@if($company->deskripsi_perusahaan) description-content @endif">
+                @if($company->deskripsi_perusahaan)
+                    {{ $company->deskripsi_perusahaan }}
+                @else
                     Sinar Mas Land Limited (sebelumnya dikenal sebagai AFP Properties Limited), terdaftar di Bursa Efek Singapura dan berkantor pusat di Singapura, bergerak di bisnis properti melalui operasinya di Indonesia, Tiongkok, Malaysia, dan Singapura. Sinar Mas Land memiliki investasi jangka panjang di gedung-gedung komersial besar, hotel, dan resor, serta terlibat dalam pengembangan dan penyewaan properti di Indonesia, Tiongkok, Malaysia, dan Singapura.
-                </p>
-            </div>
+                @endif
+            </p>
+        </div>
+
+        <!-- Visi dari Database -->
+        <div class="vision">
+            <h3>Visi</h3>
+            <p class="@if($company->visi) database-content @endif">
+                @if($company->visi)
+                    {{ $company->visi }}
+                @else
+                    Menjadi sumber pembiayaan produk-produk Indomobil Group, yang terbaik dalam hal kepuasan pelanggan, terbesar dalam jumlah pembiayaan dan perolehan tingkat keuntungan bagi para pemegang saham
+                @endif
+            </p>
+        </div>
+
+        <!-- Misi dari Database -->
+        <div class="mission">
+            <h3>Misi</h3>
+            <p class="@if($company->misi) database-content @endif">
+                @if($company->misi)
+                    {{ $company->misi }}
+                @else
+1. Mengembangkan produk teknologi inovatif yang relevan dengan kebutuhan pasar.
+2. Meningkatkan kualitas layanan dengan standar internasional.
+3. Menciptakan lingkungan kerja kolaboratif yang mendukung kreativitas dan pertumbuhan karyawan.
+4. Berperan aktif dalam pembangunan berkelanjutan melalui solusi digital ramah lingkungan.
+                @endif
+            </p>
+        </div>
 
     </div>
 

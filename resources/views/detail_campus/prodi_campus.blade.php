@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
     <style>
-        /* ================= TAB STYLE ================= */
+        /* ======================= TAB STYLE BARU (SAMA SEPERTI KAMPUS) ======================= */
         #detail-page-content .detail-nav-menu {
             display: flex;
             gap: 0;
@@ -21,16 +21,23 @@
             padding: 12px 28px;
             font-weight: bold;
             cursor: pointer;
-            background:  #80868b;
+            background: #80868b;
             border: none;
             color: white;
             border-radius: 12px 12px 0 0;
             margin-right: 0;
+            /* Ganti margin-top dengan top dan transform */
+            position: relative;
+            top: -100px;
             transition: 0.3s;
             border-right: 2px solid rgba(255, 255, 255, 0.3);
             text-decoration: none;
             display: inline-block;
             text-align: center;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         #detail-page-content .detail-nav-item:last-child {
@@ -48,7 +55,7 @@
             text-decoration: none;
         }
 
-        /* ==================== GENERAL STYLES ==================== */
+        /* ===================== STYLE LAMA KAMU (DIBIARKAN UTUH TANPA DIUBAH) ===================== */
         #detail-page-content * {
             margin: 0;
             padding: 0;
@@ -60,12 +67,6 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
-        }
-
-        #detail-page-content .detail-header {
-            padding: 40px 0 10px 0;
-            border-bottom: 1px solid #e0e0e0;
-            margin-top: -45px;
         }
 
         #detail-page-content .detail-header-content {
@@ -81,7 +82,7 @@
 
         #detail-page-content .detail-logo {
             width: 200px;
-            height: 200px;
+            height: 100px;
             border-radius: 12px;
             object-fit: contain;
             display: flex;
@@ -122,7 +123,17 @@
         }
 
         #detail-page-content .detail-main-content {
-            padding: 30px 0;
+                padding: 15px 0 30px 0;
+                margin-top: -90px;
+                position: relative;
+                z-index: 0;
+        }
+
+        #detail-page-content .detail-section-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 25px;
+            color: #000;
         }
 
         /* ===================== STYLE UNTUK FILTER SECTION ===================== */
@@ -191,7 +202,7 @@
         #detail-page-content .program-title {
             font-size: 18px;
             font-weight: bold;
-            color: #000; /* Diubah dari #1a73e8 (biru) menjadi #000 (hitam) */
+            color: #000;
             margin-bottom: 12px;
             text-decoration: none;
             display: block;
@@ -202,7 +213,7 @@
         #detail-page-content .program-title:hover {
             text-decoration: underline;
             text-decoration-color: black;
-            color: #000; /* Tetap hitam saat hover */
+            color: #000;
         }
 
         #detail-page-content .program-faculty {
@@ -252,6 +263,15 @@
             top: 50%;
             transform: translateY(-50%);
             color: #6b7280;
+        }
+
+        /* ===================== GARIS PEMBATAS BARU ===================== */
+        #detail-page-content .separator-line {
+            height: 2px;
+            background-color: #e0e0e0;
+            margin: 20px 0;
+            margin-top: -10px;
+            width: 100%;
         }
 
         /* Responsive */
@@ -328,7 +348,7 @@
 
         </div>
 
-        <!-- TAB NAV -->
+        <!-- TAB NAVIGATION -->
         <div class="detail-nav-menu">
             <a href="{{ route('campus.detail', ['campus' => $campus->slug]) }}" class="detail-nav-item">Tentang</a>
             <a href="{{ route('campus.culture', ['campus' => $campus->slug]) }}" class="detail-nav-item">Kehidupan dan Budaya</a>
@@ -338,8 +358,11 @@
         </div>
     </div>
 
-    <!-- CONTENT BARU - FILTER DAN PROGRAMS -->
+    <!-- CONTENT BARU -->
     <div class="detail-main-content">
+
+        <!-- GARIS PEMBATAS BARU - DIPINDAHKAN KE POSISI YANG TEPAT -->
+        <div class="separator-line"></div>
 
         <!-- FILTER SECTION -->
         <div class="filter-section">
