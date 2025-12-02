@@ -20,7 +20,6 @@ class cJobController extends Controller
     public function index(Request $request)
     {
         $company = Auth::guard('company')->user();
-
         $search = $request->input('search');
 
         $jobs = CompaniesJob::where('company_id', $company->id)
@@ -73,6 +72,7 @@ class cJobController extends Controller
             'kecamatan_id'      => 'nullable|string',
             'desa_id'           => 'nullable|string',
             'location'          => 'nullable|string',
+            'is_public'         => 'nullable|boolean',
         ]);
 
         // Upload Logo
@@ -84,8 +84,8 @@ class cJobController extends Controller
         $skills = $request->skills ? array_map('trim', explode(',', $request->skills)) : [];
 
         CompaniesJob::create([
-            'company_id'        => $company->id, // FIX
-            'company_name'      => $company->nama_perusahaan, // FIX
+            'company_id'        => $company->id,
+            'company_name'      => $company->nama_perusahaan,
             'industry'          => $request->industry,
             'company_logo'      => $logoPath,
             'title'             => $request->title,
@@ -108,6 +108,7 @@ class cJobController extends Controller
             'kecamatan_id'      => $request->kecamatan_id,
             'desa_id'           => $request->desa_id,
             'location'          => $request->location,
+            'is_public'         => $request->is_public ? true : false,
         ]);
 
         return redirect()->route('companiesjobs.index')->with('success', 'Job berhasil dibuat!');
@@ -121,7 +122,6 @@ class cJobController extends Controller
         $company = Auth::guard('company')->user();
         $job = CompaniesJob::findOrFail($id);
 
-        // Cegah edit job milik perusahaan lain
         if ($job->company_id != $company->id) {
             abort(403);
         }
@@ -142,7 +142,6 @@ class cJobController extends Controller
         $company = Auth::guard('company')->user();
         $job = CompaniesJob::findOrFail($id);
 
-        // Cegah update job milik perusahaan lain
         if ($job->company_id != $company->id) {
             abort(403);
         }
@@ -157,6 +156,7 @@ class cJobController extends Controller
             'kecamatan_id'      => 'nullable|string',
             'desa_id'           => 'nullable|string',
             'location'          => 'nullable|string',
+            'is_public'         => 'nullable|boolean',
         ]);
 
         if ($request->hasFile('company_logo')) {
@@ -169,8 +169,8 @@ class cJobController extends Controller
         $skills = $request->skills ? array_map('trim', explode(',', $request->skills)) : [];
 
         $job->update([
-            'company_id'        => $company->id, // FIX
-            'company_name'      => $company->nama_perusahaan, // FIX
+            'company_id'        => $company->id,
+            'company_name'      => $company->nama_perusahaan,
             'industry'          => $request->industry,
             'title'             => $request->title,
             'job_level'         => $request->job_level,
@@ -192,6 +192,7 @@ class cJobController extends Controller
             'kecamatan_id'      => $request->kecamatan_id,
             'desa_id'           => $request->desa_id,
             'location'          => $request->location,
+            'is_public'         => $request->is_public ? true : false,
         ]);
 
         return redirect()->route('companiesjobs.index')->with('success', 'Job berhasil diperbarui!');

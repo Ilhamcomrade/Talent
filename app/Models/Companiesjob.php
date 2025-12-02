@@ -33,11 +33,13 @@ class CompaniesJob extends Model
         'kabupaten_id',
         'kecamatan_id',
         'desa_id',
+        'is_public',
     ];
 
     protected $casts = [
         'skills' => 'array',
         'show_salary' => 'boolean',
+        'is_public' => 'boolean',
     ];
 
     /**

@@ -2,165 +2,94 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\JobListing;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
-use NumberFormatter;
+use App\Models\CompaniesJob;
+use App\Models\Province;
+use App\Models\Regency;
+use App\Models\District;
+use App\Models\Village;
 
 class JobController extends Controller
 {
-    public function index()
+    /**
+     * PUBLIC JOB LIST
+     */
+    public function index(Request $request)
     {
-        $jobs = JobListing::where('is_public', true)
-            ->latest()
-            ->paginate(10);
+        $search       = $request->search;
+        $province_id  = $request->provinsi_id;
+        $regency_id   = $request->kabupaten_id;
+        $district_id  = $request->kecamatan_id;
+        $village_id   = $request->desa_id;
+        $industry     = $request->industry;
+        $work_mode    = $request->work_mode;
 
-        return view('jobs.index', compact('jobs'));
+        $jobs = CompaniesJob::where('is_public', true) // hanya loker publik
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('title', 'ILIKE', "%$search%")
+                      ->orWhere('company_name', 'ILIKE', "%$search%")
+                      ->orWhere('industry', 'ILIKE', "%$search%");
+                });
+            })
+            ->when($industry, fn($q) => $q->where('industry', $industry))
+            ->when($work_mode, fn($q) => $q->where('work_mode', $work_mode))
+            ->when($province_id, fn($q) => $q->where('provinsi_id', $province_id))
+            ->when($regency_id, fn($q) => $q->where('kabupaten_id', $regency_id))
+            ->when($district_id, fn($q) => $q->where('kecamatan_id', $district_id))
+            ->when($village_id, fn($q) => $q->where('desa_id', $village_id))
+            ->orderBy('created_at', 'desc')
+            ->paginate(12)
+            ->withQueryString();
+
+        $provinces = Province::orderBy('name')->get();
+
+        return view('jobs.index', compact(
+            'jobs',
+            'search',
+            'provinces',
+            'province_id',
+            'regency_id',
+            'district_id',
+            'village_id',
+            'industry',
+            'work_mode'
+        ));
     }
 
-    public function show($id)
+    public function getRegencies($provinceId)
     {
-        // Ambil job utama
-        $job = JobListing::where('is_public', true)->findOrFail($id);
-
-        // ============================
-        // PROSES DATA JOB UTAMA
-        // ============================
-        $job->formatted_salary = $this->formatSalary($job->salary_min, $job->salary_max);
-        $job->skills_list = $this->explodeValues($job->skills);
-        $job->custom_requirements_list = $this->explodeValues($job->requirements);
-        $job->location_string = $this->getLocationString($job);
-        $job->formatted_education = $this->formatEducationLevel($job->education_level ?? 'Tidak Diketahui');
-
-        // Fix Carbon
-        $job->created_at = Carbon::parse($job->created_at);
-        $job->updated_at = Carbon::parse($job->updated_at);
-
-        // ============================
-        // 🔥 AMBIL LOWONGAN LAIN
-        // ============================
-        $relatedJobs = JobListing::where('is_public', true)
-            ->where('id', '!=', $job->id)
-            ->inRandomOrder()
-            ->limit(6)
-            ->get();
-
-        // ============================
-        // 🔥 PROSES DATA RELATED JOBS
-        // ============================
-        foreach ($relatedJobs as $r) {
-            $r->formatted_salary = $this->formatSalary($r->salary_min, $r->salary_max);
-            $r->skills_list = $this->explodeValues($r->skills);
-            $r->custom_requirements_list = $this->explodeValues($r->requirements);
-            $r->location_string = $this->getLocationString($r);
-            $r->formatted_education = $this->formatEducationLevel($r->education_level ?? 'Tidak Diketahui');
-        }
-
-        return view('jobs.show', compact('job', 'relatedJobs'));
+        return Regency::where('province_id', $provinceId)
+            ->orderBy('name')
+            ->get(['id', 'name']);
     }
 
-    public function apply($id)
+    public function getDistricts($regencyId)
     {
-        return redirect()->back()->with('success', 'Halaman lamar kerja akan segera tersedia!');
+        return District::where('regency_id', $regencyId)
+            ->orderBy('name')
+            ->get(['id', 'name']);
     }
 
-    // ============================================================
-    // HELPER FUNCTIONS
-    // ============================================================
-
-    private function explodeValues($value)
+    public function getVillages($districtId)
     {
-        if (empty(trim($value))) {
-            return [];
-        }
-
-        $parts = str_contains($value, ',')
-            ? explode(',', $value)
-            : explode(' ', $value);
-
-        return array_map(fn($v) => trim($v), array_filter($parts));
+        return Village::where('district_id', $districtId)
+            ->orderBy('name')
+            ->get(['id', 'name']);
     }
 
-    private function formatSalary($min, $max)
+    /**
+     * JOB DETAIL PUBLIC
+     */
+    public function show($slugOrId)
     {
-        if (empty($min) && empty($max)) {
-            return 'Gaji Tidak Ditampilkan';
-        }
+        $job = CompaniesJob::where('is_public', true)
+            ->where(function($q) use ($slugOrId) {
+                $q->where('id', $slugOrId)
+                  ->orWhere('title', 'ILIKE', str_replace('-', ' ', $slugOrId)); 
+            })
+            ->firstOrFail();
 
-        if (!class_exists('NumberFormatter')) {
-            $min = (int) $min;
-            $max = (int) $max;
-
-            if ($min > 0 && $max > 0 && $min !== $max) {
-                return "Rp " . number_format($min, 0, ',', '.') .
-                       " - Rp " . number_format($max, 0, ',', '.');
-            }
-            return 'Gaji Negosiasi';
-        }
-
-        $formatter = new NumberFormatter('id_ID', NumberFormatter::CURRENCY);
-        $min = (int) $min;
-        $max = (int) $max;
-
-        if ($min > 0 && $max > 0 && $min !== $max) {
-            $formatted_min = $formatter->formatCurrency($min, 'IDR');
-            $formatted_max = $formatter->formatCurrency($max, 'IDR');
-
-            $clean_min = trim(str_replace(['Rp', ' ', ',00'], '', $formatted_min));
-            $clean_max = trim(str_replace(['Rp', ' ', ',00'], '', $formatted_max));
-
-            return "Rp $clean_min - Rp $clean_max";
-        }
-
-        if ($min > 0) {
-            $formatted_min = $formatter->formatCurrency($min, 'IDR');
-            $clean_min = trim(str_replace([',00'], '', $formatted_min));
-            return $clean_min . ' (Minimal)';
-        }
-
-        return 'Gaji Negosiasi';
-    }
-
-    private function getLocationString($job)
-    {
-        $parts = [];
-
-        if ($job->desa_id) {
-            $village = DB::table('villages')->where('id', $job->desa_id)->value('name');
-            if ($village) $parts[] = $village;
-        }
-
-        if ($job->kecamatan_id) {
-            $district = DB::table('districts')->where('id', $job->kecamatan_id)->value('name');
-            if ($district) $parts[] = $district;
-        }
-
-        if ($job->kabupaten_id) {
-            $regency = DB::table('regencies')->where('id', $job->kabupaten_id)->value('name');
-            if ($regency) $parts[] = $regency;
-        }
-
-        if ($job->provinsi_id) {
-            $province = DB::table('provinces')->where('id', $job->provinsi_id)->value('name');
-            if ($province) $parts[] = $province;
-        }
-
-        return implode(', ', $parts) ?: 'Lokasi Tidak Diketahui';
-    }
-
-    private function formatEducationLevel(string $level)
-    {
-        $map = [
-            'sma_smk' => 'SMA/SMK',
-            's1' => 'S1',
-            's2' => 'S2',
-            's3' => 'S3',
-            'sd' => 'SD',
-            'smp' => 'SMP',
-            'diploma' => 'D3/D4'
-        ];
-
-        return $map[strtolower($level)] ?? strtoupper(str_replace('_', ' ', $level));
+        return view('jobs.show', compact('job'));
     }
 }
