@@ -47,18 +47,18 @@
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        
+
         /* PERUBAHAN UTAMA: Hapus background color dan box-shadow */
         background-color: transparent; /* Menghapus warna latar belakang */
         box-shadow: none; /* Menghapus bayangan (bingkai) */
-        
+
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 1rem;
         color: #333;
         /* Dipertahankan 0rem agar hemat ruang di kiri */
-        margin-left: 0rem; 
+        margin-left: 0rem;
         position: relative;
     }
 
@@ -66,19 +66,19 @@
         font-weight: 600;
         color: #2c2c2c;
         /* Jarak yang nyaman antara ikon dan nama */
-        margin: 0 0.2rem 0 0.8rem; 
+        margin: 0 0.2rem 0 0.8rem;
         /* Penting: white-space: nowrap; dipertahankan agar teks tetap dalam satu baris */
         white-space: nowrap;
-        
+
         /* Hapus batasan lebar (max-width) dan pemotongan teks */
-        max-width: none; 
-        overflow: visible; 
+        max-width: none;
+        overflow: visible;
         text-overflow: clip;
     }
-    
+
     .navbar-collapse > .d-flex.align-items-center {
         /* Mengurangi margin di sisi kanan untuk memberikan lebih banyak ruang di tengah */
-        margin-right: -10px; 
+        margin-right: -10px;
     }
 
 
@@ -96,7 +96,7 @@
 
     /* Menampilkan ikon chevron pada dropdown (default Bootstrap) */
     .dropdown-toggle::after {
-        display: inline-block; 
+        display: inline-block;
         margin-left: 0.255em;
         vertical-align: 0.255em;
         content: "";
@@ -196,7 +196,7 @@
         .nav-dropdown-chevron {
             display: none !important;
         }
-        
+
         .navbar-nav-right {
             margin-right: 0;
             width: 100%;
@@ -231,13 +231,13 @@
                     <ul class="dropdown-menu glints-dropdown" aria-labelledby="kerjasamaDropdown">
                         <li>
                             <a class="dropdown-item" href="{{ url('/mou-kampus') }}">
-                                <i class="fas fa-file-contract"></i> MOU
+                                <i class="fas fa-handshake"></i> MOU
                             </a>
                         </li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item" href="{{ url('/pengajuan-proposal-kampus') }}">
-                                <i class="fas fa-handshake"></i> Pengajuan Proposal
+                                <i class="fas fa-file-contract"></i> Pengajuan Proposal
                             </a>
                         </li>
                     </ul>
@@ -273,11 +273,11 @@
 
                             <div class="campus-profile-icon">
                                 @if (Auth::guard('campus')->user()->logo_path)
-                                    <img src="{{ asset('storage/' . Auth::guard('campus')->user()->logo_path) }}" 
-                                            alt="Campus Logo" 
+                                    <img src="{{ asset('storage/' . Auth::guard('campus')->user()->logo_path) }}"
+                                            alt="Campus Logo"
                                             style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
                                 @else
-                                    <i class="fas fa-university"></i> 
+                                    <i class="fas fa-university"></i>
                                 @endif
                             </div>
 

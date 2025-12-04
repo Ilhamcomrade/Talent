@@ -4,103 +4,62 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 
-class Campus extends Model
+class Campus extends Authenticatable
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, Notifiable;
+
+    protected $guard = 'campus';
 
     protected $fillable = [
-        'name',
-        'code',
-        'address',
-        'phone',
+        'nama_lengkap',
+        'no_hp',
+        'jabatan',
         'email',
-        'description',
+        'password',
+        'nama_kampus',
+        'jumlah_pegawai',
+        'jenis_institusi',
+        'logo_path',
+        'provinsi',
+        'kota',
+        'kecamatan',
+        'desa_kelurahan',
+        'alamat_lengkap',
         'is_active',
-        'established_date',
-        'website',
-        'logo',
-        'city',
-        'province',
-        'postal_code',
-        'country',
-        'latitude',
-        'longitude',
-        'metadata',
+        'slug', // Tambahkan slug
+    ];
+
+    protected $hidden = [
+        'password',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
-        'established_date' => 'date',
-        'latitude' => 'decimal:8',
-        'longitude' => 'decimal:8',
-        'metadata' => 'array',
     ];
 
-    protected $appends = [
-        'student_count',
-        'status_label',
-    ];
-
-    /**
-     * Get the students for the campus.
-     */
-    public function students(): HasMany
+    // Boot method untuk generate slug
+    protected static function boot()
     {
-        return $this->hasMany(Student::class);
-    }
+        parent::boot();
 
-    /**
-     * Get student count attribute.
-     */
-    public function getStudentCountAttribute(): int
-    {
-        return $this->students()->count();
-    }
+        static::creating(function ($campus) {
+            $campus->slug = Str::slug($campus->nama_kampus);
+        });
 
-    /**
-     * Get status label attribute.
-     */
-    public function getStatusLabelAttribute(): string
-    {
-        return $this->is_active ? 'Aktif' : 'Tidak Aktif';
-    }
-
-    /**
-     * Scope a query to only include active campuses.
-     */
-    public function scopeActive($query)
-    {
-        return $query->where('is_active', true);
-    }
-
-    /**
-     * Scope a query to only include inactive campuses.
-     */
-    public function scopeInactive($query)
-    {
-        return $query->where('is_active', false);
-    }
-
-    /**
-     * Check if campus can be deleted.
-     */
-    public function canBeDeleted(): bool
-    {
-        return $this->students()->count() === 0;
-    }
-
-    /**
-     * Get campus with active students count.
-     */
-    public function scopeWithActiveStudentsCount($query)
-    {
-        return $query->withCount([
-            'students as active_students_count' => function ($query) {
-                $query->where('is_active', true);
+        static::updating(function ($campus) {
+            if ($campus->isDirty('nama_kampus')) {
+                $campus->slug = Str::slug($campus->nama_kampus);
             }
-        ]);
+        });
+    }
+
+    // Method untuk mendapatkan route key name (untuk route model binding)
+    public function getRouteKeyName()
+    {
+        return 'slug';
     }
 }

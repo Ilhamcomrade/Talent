@@ -36,6 +36,19 @@
                     <input type="text" name="title" class="form-control" value="{{ old('title', $jobListing->title) }}" required>
                 </div>
                 <div class="col-md-6 mb-3">
+    <label class="form-label">Pilih Perusahaan <span class="text-danger">*</span></label>
+    <select name="company_id" class="form-select" required>
+        <option value="">-- Pilih Perusahaan --</option>
+        @foreach ($companies as $company)
+            <option value="{{ $company->id }}" 
+                {{ old('company_id', $jobListing->company_id) == $company->id ? 'selected' : '' }}>
+                {{ $company->nama_lengkap }}
+            </option>
+        @endforeach
+    </select>
+</div>
+
+                <div class="col-md-6 mb-3">
                     <label class="form-label">Nama Perusahaan <span class="text-danger">*</span></label>
                     <input type="text" name="company" class="form-control" value="{{ old('company', $jobListing->company) }}" required>
                 </div>

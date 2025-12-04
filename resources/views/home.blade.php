@@ -110,9 +110,9 @@
                 </div>
             </form>
 
-            <div class="search-options-wrapper">
+            {{-- <div class="search-options-wrapper">
                 <a href="#" class="more-options">Opsi lainnya <i class="bi bi-sliders"></i></a>
-            </div>
+            </div> --}}
         </div>
     </section>
 
@@ -229,61 +229,46 @@
                 </div>
 
                     <div class="col-md-7 trusted-companies">
-                    <h2 class="fs-4 fw-bold mb-4 text-dark-gray">Perusahaan terpercaya, merekrut</h2>
-                    <div class="logo-container">
+                        <h2 class="fs-4 fw-bold mb-4 text-dark-gray">Perusahaan terpercaya, merekrut</h2>
+
                         @php
                             // Ambil 8 perusahaan aktif pertama dari database
                             $trustedCompanies = App\Models\Company::aktif()->take(8)->get();
                         @endphp
 
-                        @if($trustedCompanies->count() > 0)
-                            @foreach($trustedCompanies as $company)
-                                <div class="logo-wrapper">
-                                    <div class="logo-card">
-                                        @if($company->logo)
-                                            <img src="{{ asset('storage/' . $company->logo) }}" 
-                                                alt="{{ $company->nama_perusahaan }}" 
-                                                class="logo"
-                                                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                            <div class="default-logo" style="display: none;">
-                                                {{ substr($company->nama_perusahaan, 0, 2) }}
-                                            </div>
-                                        @else
-                                            <div class="default-logo">
-                                                {{ substr($company->nama_perusahaan, 0, 2) }}
-                                            </div>
-                                        @endif
-                                    </div>
-                                </div>
-                            @endforeach
+                        {{-- Jika tidak ada perusahaan, tampilkan pesan saja --}}
+                        @if($trustedCompanies->count() === 0)
+                            <p class="text-muted">Belum ada perusahaan yang terdaftar</p>
                         @else
-                            {{-- Fallback jika tidak ada perusahaan di database --}}
-                            <div class="logo-wrapper">
-                                <div class="logo-card">
-                                    <div class="default-logo">CO</div>
-                                </div>
+                            <div class="logo-container">
+                                @foreach($trustedCompanies as $company)
+                                    <div class="logo-wrapper">
+                                        <div class="logo-card">
+                                            @if($company->logo)
+                                                <img src="{{ asset('storage/' . $company->logo) }}"
+                                                    alt="{{ $company->nama_perusahaan }}"
+                                                    class="logo"
+                                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                <div class="default-logo" style="display: none;">
+                                                    {{ substr($company->nama_perusahaan, 0, 2) }}
+                                                </div>
+                                            @else
+                                                <div class="default-logo">
+                                                    {{ substr($company->nama_perusahaan, 0, 2) }}
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endforeach
                             </div>
-                            <div class="logo-wrapper">
-                                <div class="logo-card">
-                                    <div class="default-logo">MP</div>
-                                </div>
-                            </div>
-                            <div class="logo-wrapper">
-                                <div class="logo-card">
-                                    <div class="default-logo">AN</div>
-                                </div>
-                            </div>
-                            <div class="logo-wrapper">
-                                <div class="logo-card">
-                                    <div class="default-logo">Y</div>
-                                </div>
+
+                            {{-- Link lihat lainnya hanya muncul bila perusahaan ada --}}
+                            <div class="text-start mt-3">
+                                <a href="explore-perusahaan" class="text-decoration-none see-more-offset">Lihat Lainnya.....</a>
                             </div>
                         @endif
                     </div>
-                    <div class="text-start mt-3">
-                    <a href="explore-perusahaan" class="text-decoration-none see-more-offset">Lihat Lainnya.....</a>
-                    </div>
-                </div>
+
     </section>
 
     <section class="py-5 text-center glints-section">
@@ -356,12 +341,12 @@
         </div>
     </section>
 
-        
+
      <!-- INTEGRASI WHATSAPP YANG BERFUNGSI -->
     <div class="whatsapp-float">
-        <a href="https://wa.me/6282115179879?text=Halo%2C%20saat%20ini%20saya%20sedang%20mengakses%20website%20Inotal%20dan%20saya%20butuh%20bantuan" 
-        target="_blank" 
-        rel="noopener noreferrer" 
+        <a href="https://wa.me/6282115179879?text=Halo%2C%20saat%20ini%20saya%20sedang%20mengakses%20website%20Inotal%20dan%20saya%20butuh%20bantuan"
+        target="_blank"
+        rel="noopener noreferrer"
         class="whatsapp-link">
             <img src="{{ asset('images/whatsapp.png') }}" alt="Chat via WhatsApp" class="whatsapp-logo">
         </a>

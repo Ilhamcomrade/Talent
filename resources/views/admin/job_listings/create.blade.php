@@ -1,17 +1,14 @@
 @extends('admin.layout')
 
-{{-- Hapus div class="container mt-4" di sini karena kita ingin form memenuhi lebar area konten --}}
 @section('content')
 
 {{-- 1. Area Judul Form (Area Hijau) --}}
-{{-- Menggunakan warna latar hijau (#28a745) dan padding --}}
 <div class="judul-form-area text-white p-3" style="background-color: #28a745;">
     <label class="form-label mb-0 fw-bold">Tambah Lowongan Baru</label>
 </div>
 {{-- Akhir Area Judul Form --}}
 
 {{-- 2. Area Form Isian (Area Abu-abu Muda) --}}
-{{-- Tambahkan padding di sini. Gunakan warna abu-abu muda yang sedikit berbeda dari area abu-abu konten (jika ada) --}}
 <div class="form-isian-area p-4" style="background-color: #e9ecef;"> 
 
     {{-- Notifikasi error validasi --}}
@@ -26,13 +23,32 @@
         </div>
     @endif
 
-    {{-- Bungkus semua field form dalam div abu-abu gelap (sesuai kotak di gambar) --}}
+    {{-- Bungkus semua field form dalam div abu-abu gelap --}}
     <div class="p-4 rounded shadow-sm" style="background-color: #cccccc;">
         <form action="{{ route('admin.job_listings.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
+            {{-- Informasi Pengelola --}}
+            {{-- <div class="mb-4 p-3 border rounded" style="background-color: #f8f9fa;">
+                <label class="font-weight-bold text-dark mb-2">Informasi Pengelola</label>
+                <div class="row"> --}}
+                    <div class="col-md-12 mb-3">
+                        <label class="font-weight: normal;">Loker ini dikelola oleh</label>
+                        <select name="company_id" class="form-select" required>
+                            <option value="">-- Pilih Pengelola --</option>
+                            @foreach ($companies as $company)
+                                <option value="{{ $company->id }}" {{ old('company_id') == $company->id ? 'selected' : '' }}>
+                                    {{ $company->nama_lengkap }}
+                                </option>
+                            @endforeach
+                        </select>
+                        {{-- <small class="form-text text-muted">Pilih nama lengkap yang akan mengelola lowongan ini</small> --}}
+                    </div>
+                </div>
+            </div>
+
             <div class="row">
-                {{-- Judul dan Perusahaan (Dibuat berdampingan) --}}
+                {{-- Judul dan Perusahaan --}}
                 <div class="col-md-6 mb-3">
                     <label style="font-weight: normal;">Judul Lowongan</label>
                     <input type="text" name="title" class="form-control" value="{{ old('title') }}" required>
@@ -40,10 +56,11 @@
                 <div class="col-md-6 mb-3">
                     <label class="font-weight: normal;">Nama Perusahaan</label>
                     <input type="text" name="company" class="form-control" value="{{ old('company') }}" required>
+                    {{-- <small class="form-text text-muted">Masukkan nama perusahaan tempat bekerja</small> --}}
                 </div>
             </div>
 
-            {{-- Logo dan Deadline (Dibuat berdampingan) --}}
+            {{-- Logo dan Deadline --}}
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label class="font-weight: normal;">Logo Perusahaan</label>
@@ -77,37 +94,24 @@
                                 </option>
                             @endforeach
                         </select>
-                        {{-- <div class="form-text small">Pilih provinsi terlebih dahulu</div> --}}
                     </div>
                     <div class="col-md-3">
                         <label class="font-weight: normal;">Kabupaten/Kota</label>
                         <select id="kabupaten" class="form-select form-select-sm" disabled required>
                             <option value="">-- Pilih Kabupaten --</option>
-                            @if(old('kabupaten_id') && old('provinsi_id'))
-                                {{-- Option akan diisi via JavaScript --}}
-                            @endif
                         </select>
-                        {{-- <div class="form-text small">Pilih kabupaten/kota</div> --}}
                     </div>
                     <div class="col-md-3">
                         <label class="font-weight: normal;">Kecamatan</label>
                         <select id="kecamatan" class="form-select form-select-sm" disabled required>
                             <option value="">-- Pilih Kecamatan --</option>
-                            @if(old('kecamatan_id') && old('kabupaten_id'))
-                                {{-- Option akan diisi via JavaScript --}}
-                            @endif
                         </select>
-                        {{-- <div class="form-text small">Pilih kecamatan</div> --}}
                     </div>
                     <div class="col-md-3">
                         <label class="font-weight: normal;">Desa/Kelurahan</label>
                         <select id="desa" class="form-select form-select-sm" disabled>
                             <option value="">-- Pilih Desa --</option>
-                            @if(old('desa_id') && old('kecamatan_id'))
-                                {{-- Option akan diisi via JavaScript --}}
-                            @endif
                         </select>
-                        {{-- <div class="form-text small">Pilih desa/kelurahan (opsional)</div> --}}
                     </div>
                 </div>
                 
@@ -225,10 +229,11 @@
                 <textarea name="skills" class="form-control" rows="3">{{ old('skills') }}</textarea>
             </div>
 
-            {{-- Kualifikasi --}}
+            {{-- Kualifikasi Tambahan (CKEditor) --}}
             <div class="mb-3">
                 <label class="font-weight: normal;">Kualifikasi Tambahan</label>
-                <textarea name="qualifications" class="form-control" rows="3">{{ old('qualifications') }}</textarea>
+                <textarea name="qualifications" id="qualifications" class="form-control" rows="3">{{ old('qualifications') }}</textarea>
+                <small class="form-text text-muted">Gunakan editor untuk format teks yang lebih baik</small>
             </div>
 
             {{-- Status --}}
@@ -247,7 +252,7 @@
                 </select>
             </div>
 
-            {{-- Tombol Simpan dan Batal (Area tombol abu-abu tua berbentuk oval) --}}
+            {{-- Tombol Simpan dan Batal --}}
             <div class="d-flex justify-content-end pt-3">
                 <a href="{{ route('admin.job_listings.index') }}" class="btn text-white me-3" style="background-color: #343a40; border-radius: 20px; min-width: 100px;">
                     Batal
@@ -261,8 +266,25 @@
 </div>
 {{-- Akhir Area Form Isian --}}
 
-{{-- Script Dropdown Lokasi dengan AJAX (Tidak Berubah, ditempatkan setelah konten) --}}
+{{-- Include CKEditor --}}
+<script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
+
+{{-- Script Dropdown Lokasi dengan AJAX --}}
 <script>
+    // Inisialisasi CKEditor untuk kualifikasi
+    CKEDITOR.replace('qualifications', {
+        toolbar: [
+            { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike', 'RemoveFormat'] },
+            { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Blockquote'] },
+            { name: 'links', items: ['Link', 'Unlink'] },
+            { name: 'tools', items: ['Maximize', 'Source'] }
+        ],
+        height: 200,
+        removeButtons: 'Subscript,Superscript',
+        format_tags: 'p;h1;h2;h3;pre',
+        removeDialogTabs: 'image:advanced;link:advanced'
+    });
+
     const provinsiEl = document.getElementById('provinsi');
     const kabupatenEl = document.getElementById('kabupaten');
     const kecamatanEl = document.getElementById('kecamatan');
@@ -409,30 +431,23 @@
 
     // Initialize form jika ada data old
     document.addEventListener('DOMContentLoaded', function() {
-        // Auto-load data berdasarkan old input
         const loadOldData = async () => {
             const oldProvinceId = "{{ old('province_id') }}";
             const oldRegencyId = "{{ old('regency_id') }}";
             const oldDistrictId = "{{ old('district_id') }}";
             const oldVillageId = "{{ old('village_id') }}";
 
-            // Jika ada oldProvinceId, mulai loading bertingkat
             if (oldProvinceId) {
-                // Gunakan promise/await untuk memastikan urutan loading yang benar
-                
-                // 1. Load Kabupaten/Kota
                 await loadWilayah(`/admin/api/regencies/${oldProvinceId}`, kabupatenEl, 'Kabupaten/Kota');
                 
                 if (oldRegencyId) {
                     kabupatenEl.value = oldRegencyId;
                     
-                    // 2. Load Kecamatan
                     await loadWilayah(`/admin/api/districts/${oldRegencyId}`, kecamatanEl, 'Kecamatan');
                     
                     if (oldDistrictId) {
                         kecamatanEl.value = oldDistrictId;
                         
-                        // 3. Load Desa/Kelurahan
                         await loadWilayah(`/admin/api/villages/${oldDistrictId}`, desaEl, 'Desa/Kelurahan');
                         
                         if (oldVillageId) {
@@ -442,27 +457,30 @@
                 }
             }
 
-            // Panggil display update setelah semua data old dimuat
             updateLocationDisplay();
         };
 
-        // Panggil loadOldData saat DOM siap
         loadOldData();
     });
 </script>
 
 <style>
-    /* Styling kustom untuk form */
     .form-label {
-        font-weight: 600; /* Sedikit lebih tebal */
+        font-weight: 600;
     }
     .form-text {
-        font-size: 0.75rem; /* Teks bantuan lebih kecil */
+        font-size: 0.75rem;
     }
     
     #location-display {
         background-color: #f8f9fa;
         border-left: 4px solid #0d6efd;
+    }
+    
+    /* Styling untuk CKEditor */
+    .cke_chrome {
+        border: 1px solid #ced4da !important;
+        border-radius: 0.375rem !important;
     }
 </style>
 @endsection

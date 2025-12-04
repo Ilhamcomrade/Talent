@@ -8,25 +8,11 @@
   <link rel="icon" type="image/png" href="{{ asset('123.png') }}">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     /* ====================
         GLOBAL STYLES
         ==================== */
-    :root {
-      --sidebar-width: 250px;
-      --sidebar-collapsed: 70px;
-      --transition-speed: 0.3s;
-      --easing: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-
-    * {
-      transition: color var(--transition-speed) var(--easing),
-                 background-color var(--transition-speed) var(--easing),
-                 border-color var(--transition-speed) var(--easing);
-    }
-
     body {
       font-family: 'Poppins', sans-serif;
       background-color: #f4f6f9;
@@ -58,63 +44,82 @@
     body.dark-mode .profile-text {
       color: #ddd !important;
     }
+    body.dark-mode .nav-link:hover,
+    body.dark-mode .nav-link.active {
+      background-color: rgba(255, 255, 255, 0.15);
+    }
 
     /* ====================
         SIDEBAR STYLES - IMPROVED
         ==================== */
     #sidebar-wrapper {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(0deg, 
+        red, orange, yellow, green, blue, indigo, violet
+      );
+      background-size: 100% 400%;
       color: #fff;
       min-height: 100vh;
-      width: var(--sidebar-width);
-      transition: all var(--transition-speed) var(--easing);
-      box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+      width: 250px;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
       position: fixed;
       z-index: 1000;
+      animation: rainbowBG 15s linear infinite;
       left: 0;
-      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    @keyframes rainbowBG {
+      0%   { background-position: 50% 100%; }
+      50%  { background-position: 50% 0%; }
+      100% { background-position: 50% 100%; }
     }
 
     .sidebar-brand {
       padding: 1.5rem 1rem;
       text-align: center;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 120px;
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(10px);
+      flex-shrink: 0;
     }
 
     .sidebar-brand img {
-      width: 70px;
-      height: 70px;
+      width: 100px;
+      height: auto;
       object-fit: contain;
-      margin-bottom: 0.8rem;
-      border-radius: 8px;
-      /* Remove animation */
-      transition: none;
-      filter: brightness(1) contrast(1);
+      margin-bottom: 0;
     }
 
     .sidebar-brand h5 {
-      font-weight: 600;
+      font-weight: 700;
       margin: 0;
-      font-size: 1rem;
-      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-size: 1.1rem;
+      transition: all 0.5s ease;
+    }
+
+    .sidebar-nav-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
     }
 
     .sidebar-nav {
-      height: calc(100vh - 120px);
+      flex: 1;
       overflow-y: auto;
-      overflow-x: hidden;
-      padding: 1rem 0;
+      padding-bottom: 1rem;
+      max-height: calc(100vh - 180px); /* Membatasi tinggi maksimum */
     }
 
     .sidebar-nav::-webkit-scrollbar {
-      width: 4px;
+      width: 6px;
     }
 
     .sidebar-nav::-webkit-scrollbar-track {
@@ -123,7 +128,7 @@
 
     .sidebar-nav::-webkit-scrollbar-thumb {
       background: rgba(255, 255, 255, 0.3);
-      border-radius: 2px;
+      border-radius: 3px;
     }
 
     .sidebar-nav::-webkit-scrollbar-thumb:hover {
@@ -131,207 +136,136 @@
     }
 
     .nav-item {
-      padding: 0 0.8rem;
-      margin-bottom: 0.3rem;
+      padding: 0 1rem;
     }
 
     .nav-link {
       display: flex;
       align-items: center;
-      padding: 0.8rem 1rem;
-      color: rgba(255, 255, 255, 0.9);
+      padding: 0.8rem 1rem; /* Sedikit lebih kecil padding */
+      color: #fff;
       position: relative;
-      transition: all var(--transition-speed) var(--easing);
-      border-radius: 6px;
-      text-decoration: none;
-      font-size: 0.9rem;
-      font-weight: 400;
+      transition: all 0.3s ease;
+      font-size: 0.95rem; /* Sedikit lebih kecil font */
     }
-
-    .nav-link::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      height: 100%;
-      width: 3px;
-      background: #fff;
-      transform: scaleY(0);
-      transition: transform var(--transition-speed) var(--easing);
-      border-radius: 0 2px 2px 0;
-    }
-
+    
     .nav-link.active {
-      background-color: rgba(255, 255, 255, 0.15);
-      color: #fff;
-      font-weight: 500;
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 5px;
     }
-
-    .nav-link.active::before {
-      transform: scaleY(1);
-    }
-
+    
     .nav-link:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-      color: #fff;
-      transform: translateX(3px);
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
+        transform: translateX(5px);
     }
 
     .nav-link i {
       margin-right: 0.8rem;
-      font-size: 1.1rem;
+      font-size: 1.1rem; /* Sedikit lebih kecil */
       width: 20px;
       text-align: center;
-      transition: all var(--transition-speed) var(--easing);
     }
 
     /* Ikon dropdown custom */
     .dropdown-arrow {
       margin-left: auto;
-      color: rgba(255, 255, 255, 0.7);
-      transition: transform var(--transition-speed) var(--easing);
-      font-size: 0.7rem;
+      color: #fff;
+      transition: transform 0.3s ease;
+      font-size: 0.8rem;
     }
-
+    .nav-link[aria-expanded="false"] .dropdown-arrow {
+      transform: rotate(0deg);
+    }
     .nav-link[aria-expanded="true"] .dropdown-arrow {
       transform: rotate(90deg);
+    }
+
+    /* Dropdown menu di sidebar */
+    .sidebar-nav .dropdown-menu {
+      background-color: rgba(59, 96, 196, 0.9);
+      border: none;
+      padding: 0;
+      margin-top: 0;
+      width: 100%;
+      position: static !important;
+      transform: none !important;
+    }
+
+    .sidebar-nav .dropdown-menu .dropdown-item {
       color: #fff;
-    }
-
-    /* PERBAIKAN KHUSUS: Reference Menu Styles - LEBIH RAPIH DAN PRESISI */
-    .reference-menu {
-      background-color: rgba(0, 0, 0, 0.1);
-      border-radius: 6px;
-      margin: 0.5rem 0;
-      overflow: hidden;
-    }
-
-    .reference-submenu {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height var(--transition-speed) var(--easing);
-    }
-
-    .reference-submenu.show {
-      max-height: 300px;
-    }
-
-    .reference-item {
-      padding: 0;
-      opacity: 0;
-      transform: translateY(-5px);
-      transition: all var(--transition-speed) var(--easing);
-    }
-
-    .reference-submenu.show .reference-item {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* Stagger animation untuk reference items */
-    .reference-submenu.show .reference-item:nth-child(1) { transition-delay: 0.03s; }
-    .reference-submenu.show .reference-item:nth-child(2) { transition-delay: 0.06s; }
-    .reference-submenu.show .reference-item:nth-child(3) { transition-delay: 0.09s; }
-    .reference-submenu.show .reference-item:nth-child(4) { transition-delay: 0.12s; }
-
-    .reference-link {
-      color: rgba(255, 255, 255, 0.8);
-      padding: 0.65rem 1rem 0.65rem 3rem;
+      padding: 0.6rem 1rem 0.6rem 3.2rem; /* Sedikit lebih kecil */
+      background-color: transparent;
+      font-size: 0.9rem; /* Sedikit lebih kecil */
       display: flex;
       align-items: center;
-      text-decoration: none;
-      transition: all var(--transition-speed) var(--easing);
-      border-left: 2px solid transparent;
-      font-size: 0.82rem;
-      position: relative;
-      min-height: 40px;
+      transition: all 0.3s ease;
     }
 
-    .reference-link::before {
-      content: '';
-      position: absolute;
-      left: 1.8rem;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 5px;
-      height: 5px;
-      background: rgba(255, 255, 255, 0.5);
-      border-radius: 50%;
-      transition: all var(--transition-speed) var(--easing);
-    }
-
-    /* PERBAIKAN DETAIL: Icon reference submenu yang sangat rapih */
-    .reference-link i {
+    .sidebar-nav .dropdown-menu .dropdown-item i {
       margin-right: 0.75rem;
-      font-size: 0.8rem;
-      width: 16px;
-      text-align: center;
-      transition: all var(--transition-speed) var(--easing);
-      opacity: 0.8;
-      line-height: 1;
-      position: relative;
-      top: 0;
+      width: 20px;
+    }
+    
+    .sidebar-nav .dropdown-menu .dropdown-item:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        transform: translateX(5px);
+    }
+    
+    .sidebar-nav .dropdown-menu .dropdown-item.active {
+        background-color: rgba(255, 255, 255, 0.2); 
+        font-weight: bold;
     }
 
-    .reference-link:hover, 
-    .reference-link.active {
+    /* Logout button di bagian bawah */
+    .sidebar-footer {
+      padding: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      flex-shrink: 0;
+    }
+
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      padding: 0.8rem 1rem;
       color: #fff;
-      background-color: rgba(255, 255, 255, 0.12);
-      border-left-color: #fff;
-      padding-left: 3.1rem;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border-radius: 5px;
     }
 
-    .reference-link:hover::before, 
-    .reference-link.active::before {
-      background: #fff;
-      transform: translateY(-50%) scale(1.3);
-    }
-
-    .reference-link:hover i,
-    .reference-link.active i {
-      opacity: 1;
-      transform: scale(1.08);
+    .logout-btn:hover {
+      background-color: rgba(255, 255, 255, 0.1);
       color: #fff;
     }
 
-    .reference-link.active {
-      font-weight: 500;
-      background-color: rgba(255, 255, 255, 0.15);
-    }
-
-    /* Badge styles */
-    .badge {
-      font-size: 0.7rem;
-      padding: 0.2rem 0.4rem;
-      margin-left: auto;
+    .logout-btn i {
+      margin-right: 0.8rem;
+      font-size: 1.1rem;
     }
 
     /* ====================
-        CONTENT & NAVBAR - IMPROVED
+        CONTENT & NAVBAR
         ==================== */
     #content-wrapper {
       flex-grow: 1;
-      margin-left: var(--sidebar-width);
+      margin-left: 250px;
       background-color: #f4f6f9;
       min-height: 100vh;
-      transition: all var(--transition-speed) var(--easing);
-      width: calc(100% - var(--sidebar-width));
+      transition: all 0.3s ease;
+      width: calc(100% - 250px);
     }
 
     .navbar {
       background-color: #fff;
-      padding: 0.8rem 2rem;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+      padding: 0.75rem 2rem;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       display: flex;
       align-items: center;
       justify-content: space-between;
       position: sticky;
       top: 0;
       z-index: 999;
-      transition: all var(--transition-speed) var(--easing);
     }
 
     .navbar-custom {
@@ -345,253 +279,298 @@
       flex-direction: row;
     }
 
+    .navbar-nav .nav-item .nav-link {
+      color: #555;
+      padding: 0;
+      background: none;
+      display: flex;
+      align-items: center;
+    }
+
+    .dropdown-menu {
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
     .main-content {
       padding: 2rem;
       min-height: calc(100vh - 80px);
     }
 
-    /* PERBAIKAN KHUSUS: Sidebar Toggle Button yang lebih rapih */
     #sidebarToggle {
-      background: rgba(78, 115, 223, 0.1);
+      background: none;
       border: none;
       color: #4e73df;
-      font-size: 1.1rem;
+      font-size: 1.5rem;
       cursor: pointer;
-      transition: all var(--transition-speed) var(--easing);
-      width: 44px;
-      height: 44px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 1rem;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-      position: relative;
-      padding: 0;
+      transition: transform 0.3s ease;
     }
 
     #sidebarToggle:hover {
-      background: rgba(78, 115, 223, 0.2);
-      transform: scale(1.05);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
-    }
-
-    #sidebarToggle i {
-      transition: transform var(--transition-speed) var(--easing);
-      font-size: 1.15rem;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      line-height: 1;
-    }
-
-    .page-title {
-      font-size: 1.3rem;
-      font-weight: 600;
-      color: #2d3748;
-      margin: 0;
-    }
-
-    body.dark-mode .page-title {
-      color: #ddd;
+      transform: scale(1.1);
     }
 
     .profile-text {
-      font-size: 1rem;
+      font-size: 1.1rem;
       font-weight: 500;
     }
 
     .profile-icon {
-      font-size: 2rem !important;
+      font-size: 2.25rem !important;
       cursor: pointer;
-      transition: all var(--transition-speed) var(--easing);
-      color: #4e73df;
+      transition: transform 0.3s ease;
     }
 
     .profile-icon:hover {
-      transform: scale(1.05);
+      transform: scale(1.1);
     }
 
+    /* Dark Mode Toggle Button */
     .dark-toggle {
-        background: rgba(0, 0, 0, 0.05);
+        background: none;
         border: none;
         color: #555;
-        font-size: 1.1rem;
+        font-size: 1.25rem;
         cursor: pointer;
-        transition: all var(--transition-speed) var(--easing);
-        padding: 0;
-        border-radius: 10px;
-        width: 44px;
-        height: 44px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        margin-right: 1rem;
+        transition: all 0.3s ease;
+        padding: 0.5rem;
+        border-radius: 50%;
     }
-
     .dark-toggle:hover {
         color: #4e73df;
         background-color: rgba(78, 115, 223, 0.1);
-        transform: scale(1.05);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
     }
-
     body.dark-mode .dark-toggle {
         color: #ddd;
-        background: rgba(255, 255, 255, 0.1);
     }
-
     body.dark-mode .dark-toggle:hover {
         color: #fff;
-        background-color: rgba(255, 255, 255, 0.2);
+        background-color: rgba(255, 255, 255, 0.1);
     }
 
+    /* Notification Button */
     .notification-btn {
-        background: rgba(0, 0, 0, 0.05);
+        background: none;
         border: none;
         color: #555;
-        font-size: 1.1rem;
+        font-size: 1.25rem;
         cursor: pointer;
-        transition: all var(--transition-speed) var(--easing);
-        padding: 0;
-        border-radius: 10px;
-        width: 44px;
-        height: 44px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        margin-right: 1rem;
+        transition: all 0.3s ease;
+        padding: 0.5rem;
+        border-radius: 50%;
         position: relative;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     }
-
     .notification-btn:hover {
-        color: #ec650a;
-        background-color: rgba(236, 101, 10, 0.1);
-        transform: scale(1.05);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+        color: #ec650aff;
+        background-color: rgba(78, 115, 223, 0.1);
     }
-
     body.dark-mode .notification-btn {
         color: #ddd;
-        background: rgba(255, 255, 255, 0.1);
     }
-
     body.dark-mode .notification-btn:hover {
         color: #fff;
-        background-color: rgba(255, 255, 255, 0.2);
+        background-color: rgba(255, 255, 255, 0.1);
     }
 
     .notification-badge {
         position: absolute;
-        top: -2px;
-        right: -2px;
-        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        top: 0;
+        right: 0;
+        background-color: #e74c3c;
         color: white;
         border-radius: 50%;
         width: 18px;
         height: 18px;
-        font-size: 0.65rem;
+        font-size: 0.7rem;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: bold;
-        box-shadow: 0 2px 6px rgba(231, 76, 60, 0.4);
     }
 
-    /* Dropdown Styles */
-    .dropdown-menu {
-        border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        border: none;
-        margin-top: 0.5rem;
-    }
-
+    /* Notification Dropdown Styles */
     .notification-dropdown {
-        min-width: 320px;
-        max-width: 350px;
+        min-width: 350px;
+        max-width: 400px;
         padding: 0;
     }
 
     .notification-list {
-        max-height: 250px;
+        max-height: 300px;
         overflow-y: auto;
     }
 
+    .notification-item {
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        border-radius: 0;
+        margin: 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .notification-item:last-child {
+        border-bottom: none;
+    }
+
+    .notification-item:hover {
+        background-color: rgba(0, 0, 0, 0.03);
+    }
+
+    .notification-item.unread {
+        background-color: rgba(0, 123, 255, 0.05);
+        border-left: 3px solid #007bff;
+    }
+
+    .notification-item.read {
+        opacity: 0.7;
+        border-left: 3px solid transparent;
+    }
+
+    .notification-item h6 {
+        font-size: 0.9rem;
+        margin-bottom: 0.25rem;
+        color: #333;
+        font-weight: 600;
+    }
+
+    .notification-item p {
+        font-size: 0.8rem;
+        margin-bottom: 0.25rem;
+        color: #666;
+        line-height: 1.3;
+    }
+
+    .notification-item small {
+        font-size: 0.7rem;
+        color: #888;
+    }
+
+    .notification-badge.new {
+        background-color: #e74c3c;
+        color: white;
+        font-size: 0.6rem;
+        padding: 0.1rem 0.3rem;
+    }
+
+    .notification-empty {
+        text-align: center;
+        padding: 2rem 1rem;
+        color: #6c757d;
+    }
+
+    .notification-empty i {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        opacity: 0.5;
+    }
+
+    /* Dark mode styles untuk notifikasi */
+    body.dark-mode .notification-item:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .notification-item.unread {
+        background-color: rgba(78, 115, 223, 0.1);
+    }
+
+    body.dark-mode .notification-item h6 {
+        color: #ddd;
+    }
+
+    body.dark-mode .notification-item p {
+        color: #aaa;
+    }
+
+    body.dark-mode .notification-item {
+        border-bottom-color: #444;
+    }
+
+    /* Scrollbar untuk dropdown notifikasi */
+    .notification-list::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .notification-list::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+    }
+
+    .notification-list::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 3px;
+    }
+
+    .notification-list::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+
+    body.dark-mode .notification-list::-webkit-scrollbar-track {
+        background: #2a2a3c;
+    }
+
+    body.dark-mode .notification-list::-webkit-scrollbar-thumb {
+        background: #555;
+    }
+
+    body.dark-mode .notification-list::-webkit-scrollbar-thumb:hover {
+        background: #777;
+    }
+
+    /* Dropdown header */
+    .dropdown-header {
+        padding: 0.75rem 1rem;
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #e3e6f0;
+    }
+
+    body.dark-mode .dropdown-header {
+        background-color: #2f2f44;
+        border-bottom-color: #444;
+    }
+
     /* ====================
-        TOGGLE STYLES - IMPROVED
+        TOGGLE STYLES
         ==================== */
     #wrapper.toggled #sidebar-wrapper {
-      width: var(--sidebar-collapsed);
+      width: 70px;
     }
-    
     #wrapper.toggled #content-wrapper {
-      margin-left: var(--sidebar-collapsed);
-      width: calc(100% - var(--sidebar-collapsed));
+      margin-left: 70px;
+      width: calc(100% - 70px);
     }
 
     #wrapper.fully-closed #sidebar-wrapper {
       width: 0;
       transform: translateX(-100%);
     }
-    
     #wrapper.fully-closed #content-wrapper {
       margin-left: 0;
       width: 100%;
     }
 
-    /* Improved collapsed state */
     #wrapper.toggled .sidebar-brand h5,
     #wrapper.toggled .sidebar-nav .nav-link span,
-    #wrapper.toggled .dropdown-arrow,
-    #wrapper.toggled .reference-link span,
-    #wrapper.toggled .badge {
-      opacity: 0;
-      visibility: hidden;
-      width: 0;
-      height: 0;
-      margin: 0;
-      padding: 0;
+    #wrapper.toggled .dropdown-arrow {
+      display: none;
     }
-    
-    #wrapper.toggled .reference-submenu {
-      display: none !important;
+    #wrapper.toggled .sidebar-nav .dropdown-menu {
+      display: none !important; 
     }
-    
     #wrapper.toggled .sidebar-brand {
       justify-content: center;
       padding: 1rem 0;
-      height: 80px;
     }
-    
-    #wrapper.toggled .sidebar-brand img {
-      width: 40px;
-      height: 40px;
-      margin-bottom: 0;
-    }
-    
     #wrapper.toggled .nav-link i {
       margin: 0 auto;
-      font-size: 1.2rem;
     }
-    
     #wrapper.toggled .nav-item {
-        padding: 0 0.5rem;
+        padding: 0 5px;
     }
-    
     #wrapper.toggled .nav-link {
         justify-content: center;
-        padding: 0.8rem 0;
-        border-radius: 6px;
-    }
-
-    #wrapper.toggled .reference-link {
-        padding: 0.7rem 0;
-        justify-content: center;
-    }
-
-    #wrapper.toggled .reference-link i {
-        margin: 0;
+        padding: 1rem 0;
     }
 
     #wrapper.fully-closed .sidebar-brand,
@@ -604,13 +583,8 @@
         RESPONSIVE
         ==================== */
     @media (max-width: 768px) {
-      :root {
-        --sidebar-width: 250px;
-        --sidebar-collapsed: 0px;
-      }
-
       #sidebar-wrapper {
-        width: var(--sidebar-width);
+        width: 250px;
         transform: translateX(-100%);
       }
       
@@ -621,7 +595,7 @@
       
       #wrapper.toggled #sidebar-wrapper {
         transform: translateX(0);
-        width: var(--sidebar-width);
+        width: 250px;
       }
       
       #wrapper.toggled #content-wrapper {
@@ -634,7 +608,7 @@
       }
 
       .navbar {
-        padding: 0.8rem 1rem;
+        padding: 0.75rem 1rem;
       }
       
       .navbar-custom {
@@ -645,83 +619,7 @@
       .notification-dropdown {
         min-width: 280px;
         max-width: 300px;
-        position: fixed;
-        right: 1rem;
-        left: auto;
       }
-
-      .main-content {
-        padding: 1.5rem;
-      }
-    }
-
-    /* Animation for page transitions */
-    .main-content > * {
-      animation: fadeInUp 0.5s var(--easing) both;
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(15px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* PERBAIKAN: Text admin tidak hilang - lebih baik */
-    .user-info {
-      display: flex;
-      flex-direction: column;
-      text-align: right;
-      margin-right: 12px;
-    }
-
-    .user-name {
-      font-weight: 600;
-      color: #2d3748;
-      font-size: 0.95rem;
-      line-height: 1.2;
-    }
-
-    .user-role {
-      font-size: 0.75rem;
-      color: #ec650a;
-      font-weight: 500;
-      line-height: 1.2;
-    }
-
-    body.dark-mode .user-name {
-      color: #ddd;
-    }
-
-    /* PERBAIKAN: Icon sejajar dan rapih - alignment sempurna */
-    .icon-group {
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-      margin-right: 1.5rem;
-    }
-
-    /* PERBAIKAN: Sidebar toggle lebih rapih dan sejajar */
-    .sidebar-toggle-container {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    /* PERBAIKAN: Navbar items alignment yang lebih baik */
-    .navbar-right-section {
-      display: flex;
-      align-items: center;
-      gap: 0;
-    }
-
-    /* PERBAIKAN: Menghilangkan margin yang tidak perlu */
-    .nav-item.dropdown.no-arrow {
-      margin: 0;
     }
   </style>
 </head>
@@ -731,186 +629,159 @@
     <div id="sidebar-wrapper">
       <div class="sidebar-brand">
         <a href="#" class="text-white text-decoration-none d-flex flex-column align-items-center">
-          <img src="{{ asset('images/inotal.png') }}" alt="INOTAL Logo">
+          <img src="{{ asset('images/inotal.png') }}" alt="Inotal Logo">
           <div class="brand-text">
-            <h5>PANEL ADMIN</h5>
+            <h5>Panel Admin</h5>
           </div>
         </a>
       </div>
 
-      <ul class="nav flex-column sidebar-nav">
-        <li class="nav-item">
-          <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
-            <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
-          </a>
-        </li>
+      <div class="sidebar-nav-container">
+        <ul class="nav flex-column sidebar-nav mt-3">
+          <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
+              <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+            </a>
+          </li>
 
-        @auth
-        {{-- BLOK KHUSUS UNTUK ROLE WAWANCARA --}}
-        @if(Auth::user()->role === 'wawancara')
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('wawancara.jadwal.index') ? 'active' : '' }}" 
-                   href="{{ route('wawancara.jadwal.index') }}">
-                    <i class="fas fa-calendar-alt"></i> <span>Lihat Jadwal</span>
-                </a>
-            </li>
-        @endif
+          @auth
+          {{-- BLOK KHUSUS UNTUK ROLE WAWANCARA --}}
+          @if(Auth::user()->role === 'wawancara')
+              <li class="nav-item">
+                  <a class="nav-link {{ request()->routeIs('wawancara.jadwal.index') ? 'active' : '' }}" 
+                     href="{{ route('wawancara.jadwal.index') }}">
+                      <i class="fas fa-calendar-alt"></i> <span>Lihat Jadwal</span>
+                  </a>
+              </li>
+          @endif
         
-          {{-- BLOK UNTUK ROLE ADMIN & SUPER ADMIN --}}
-          @if(in_array(Auth::user()->role, ['admin', 'super admin']))
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.job_listings.*') ? 'active' : '' }}" 
-                   href="{{ route('admin.job_listings.index') }}">
-                   <i class="fas fa-briefcase"></i> <span>Lowongan Kerja</span>
+            {{-- BLOK UNTUK ROLE ADMIN & SUPER ADMIN --}}
+            @if(in_array(Auth::user()->role, ['admin', 'super admin']))
+              <li class="nav-item">
+                  <a class="nav-link {{ request()->routeIs('admin.job_listings.*') ? 'active' : '' }}" 
+                     href="{{ route('admin.job_listings.index') }}">
+                     <i class="fas fa-briefcase"></i> <span>Lowongan Kerja</span>
+                  </a>
+              </li>
+
+              <li class="nav-item">
+                  <a class="nav-link {{ request()->routeIs('admin.applicants.*') ? 'active' : '' }}" 
+                     href="{{ route('admin.applicants.index') }}">
+                     <i class="fas fa-user-tie"></i> <span>Pelamar</span>
+                  </a>
+              </li>
+
+              <li class="nav-item">
+                  <a class="nav-link {{ request()->routeIs('admin.calendar.*') ? 'active' : '' }}" 
+                     href="{{ route('admin.calendar.index') }}">
+                     <i class="fas fa-calendar-alt"></i> <span>Manajemen Jadwal</span>
+                  </a>
+              </li>
+
+              <li class="nav-item">
+                  <a class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}" 
+                     href="{{ route('admin.reports.index') }}">
+                     <i class="fas fa-chart-bar"></i> <span>LAPORAN</span>
+                  </a>
+              </li>
+
+              <li class="nav-item">
+                  <a class="nav-link {{ request()->routeIs('admin.notif.*') ? 'active' : '' }}" 
+                     href="{{ route('admin.notif.index') }}">
+                     <i class="fas fa-bell"></i> <span>Notifikasi</span>
+                  </a>
+              </li>
+
+              <li class="nav-item">
+                  <a class="nav-link {{ request()->routeIs('admin.magang.*') ? 'active' : '' }}" 
+                     href="{{ route('admin.magang.index') }}">
+                     <i class="fas fa-briefcase"></i> <span>Lowongan magang</span>
+                  </a>
+              </li>
+
+              {{-- TAMBAHAN: Navigasi untuk Pesan Masuk / Form Kontak yang telah disubmit pengguna --}}
+              <li class="nav-item">
+                  {{-- Menghitung jumlah pesan baru (belum dibaca). 
+                      Jika Anda ingin menghindari query di blade, pindahkan ke view composer. --}}
+                  @php
+                      try {
+                          $countNewMessages = \App\Models\ContactMessage::whereNull('read_at')->count();
+                      } catch (\Throwable $e) {
+                          // Jika model/migration belum ada -> fallback 0 supaya UI tidak error
+                          $countNewMessages = 0;
+                      }
+                  @endphp
+
+                  <a class="nav-link {{ request()->routeIs('admin.contact-messages.*') ? 'active' : '' }}" 
+                     href="{{ route('admin.contact-messages.index') }}">
+                     <i class="fas fa-envelope"></i> <span>kontak</span>
+                     @if($countNewMessages > 0)
+                         <span class="badge bg-danger ms-auto" style="margin-left: 0.5rem;">{{ $countNewMessages }}</span>
+                     @endif
+                  </a>
+              </li>
+            @endif
+
+            {{-- BLOK KHUSUS UNTUK ROLE SUPER ADMIN --}}
+            @if(Auth::user()->role === 'super admin')
+              <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('admin.users.index') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">
+                  <i class="fas fa-users-cog"></i> <span>Manajemen User</span>
                 </a>
-            </li>
+              </li>
 
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.applicants.*') ? 'active' : '' }}" 
-                   href="{{ route('admin.applicants.index') }}">
-                   <i class="fas fa-user-tie"></i> <span>Manajemen Pelamar</span>
+              <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('admin.lokasi.index') ? 'active' : '' }}" href="{{ route('admin.lokasi.index') }}">
+                  <i class="fas fa-map-marker-alt"></i> <span>Manajemen Lokasi</span>
                 </a>
-            </li>
+              </li>
 
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.calendar.*') ? 'active' : '' }}" 
-                   href="{{ route('admin.calendar.index') }}">
-                   <i class="fas fa-calendar-alt"></i> <span>Manajemen Jadwal</span>
+              <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('admin.companies.index') ? 'active' : '' }}" href="{{ route('admin.companies.index') }}">
+                  <i class="fas fa-building"></i> <span>Perusahaan</span>
                 </a>
-            </li>
+              </li>
 
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}" 
-                   href="{{ route('admin.reports.index') }}">
-                   <i class="fas fa-chart-bar"></i> <span>Laporan</span>
+              <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('admin.campus.index') ? 'active' : '' }}" href="{{ route('admin.campus.index') }}">
+                  <i class="fa-solid fa-school"></i> <span>Kampus</span>
                 </a>
-            </li>
+              </li>
+            @endif
+          @endauth
+        </ul>
+      </div>
 
-            <!-- PERBAIKAN DETAIL: Reference Menu yang sangat rapih -->
-            <li class="nav-item">
-                <div class="reference-menu">
-                    <a class="nav-link {{ request()->routeIs('admin.reference.*') ? 'active' : '' }}" 
-                       id="referenceToggle" role="button">
-                       <i class="fas fa-book"></i> <span>Reference</span>
-                       <i class="fas fa-chevron-right dropdown-arrow ms-auto"></i>
-                    </a>
-                    
-                    <ul class="reference-submenu {{ request()->routeIs('admin.reference.*') ? 'show' : '' }}" 
-                        id="referenceSubmenu">
-                        <li class="reference-item">
-                            <a class="reference-link {{ request()->routeIs('admin.reference.provinsi.*') ? 'active' : '' }}" 
-                               href="{{ route('admin.reference.provinsi.index') }}">
-                                <i class="fas fa-map-marker-alt fa-fw"></i> <span>Provinsi</span>
-                            </a>
-                        </li>
-                        <li class="reference-item">
-                            <a class="reference-link {{ request()->routeIs('admin.reference.kabupaten.*') ? 'active' : '' }}" 
-                               href="{{ route('admin.reference.kabupaten.index') }}">
-                                <i class="fas fa-city fa-fw"></i> <span>Kab/Kota</span>
-                            </a>
-                        </li>
-                        <li class="reference-item">
-                            <a class="reference-link {{ request()->routeIs('admin.reference.kecamatan.*') ? 'active' : '' }}" 
-                               href="{{ route('admin.reference.kecamatan.index') }}">
-                                <i class="fas fa-map fa-fw"></i> <span>Kecamatan</span>
-                            </a>
-                        </li>
-                        <li class="reference-item">
-                            <a class="reference-link {{ request()->routeIs('admin.reference.desa.*') ? 'active' : '' }}" 
-                               href="{{ route('admin.reference.desa.index') }}">
-                                <i class="fas fa-home fa-fw"></i> <span>Desa/Kelurahan</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.notif.*') ? 'active' : '' }}" 
-                   href="{{ route('admin.notif.index') }}">
-                   <i class="fas fa-bell"></i> <span>Notifikasi</span>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('admin.magang.*') ? 'active' : '' }}" 
-                   href="{{ route('admin.magang.index') }}">
-                   <i class="fas fa-briefcase"></i> <span>Lowongan magang</span>
-                </a>
-            </li>
-
-            {{-- Navigasi untuk Pesan Masuk --}}
-            <li class="nav-item">
-                @php
-                    try {
-                        $countNewMessages = \App\Models\ContactMessage::whereNull('read_at')->count();
-                    } catch (\Throwable $e) {
-                        $countNewMessages = 0;
-                    }
-                @endphp
-
-                <a class="nav-link {{ request()->routeIs('admin.contact-messages.*') ? 'active' : '' }}" 
-                   href="{{ route('admin.contact-messages.index') }}">
-                   <i class="fas fa-envelope"></i> <span>Kontak</span>
-                   @if($countNewMessages > 0)
-                       <span class="badge bg-danger ms-auto">{{ $countNewMessages }}</span>
-                   @endif
-                </a>
-            </li>
-          @endif
-
-          {{-- BLOK KHUSUS UNTUK ROLE SUPER ADMIN --}}
-          @if(Auth::user()->role === 'super admin')
-            <li class="nav-item">
-              <a class="nav-link {{ request()->routeIs('admin.users.index') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">
-                <i class="fas fa-users-cog"></i> <span>Manajemen User</span>
-              </a>
-            </li>
-
-            <li class="nav-item">
-              <a class="nav-link {{ request()->routeIs('admin.lokasi.index') ? 'active' : '' }}" href="{{ route('admin.lokasi.index') }}">
-                <i class="fas fa-map-marker-alt"></i> <span>Manajemen Lokasi</span>
-              </a>
-            </li>
-
-            <li class="nav-item">
-              <a class="nav-link {{ request()->routeIs('admin.companies.index') ? 'active' : '' }}" href="{{ route('admin.companies.index') }}">
-                <i class="fas fa-building"></i> <span>Perusahaan</span>
-              </a>
-            </li>
-          @endif
-        @endauth
-
-        <li class="nav-item mt-auto">
-          <a class="nav-link" href="{{ route('logout') }}" 
-             onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-            <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
-          </a>
-          <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-            @csrf
-          </form>
-        </li>
-      </ul>
+      <!-- Logout Button di Footer Sidebar -->
+      <div class="sidebar-footer">
+        <a class="logout-btn" href="{{ route('logout') }}" 
+           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+          <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+        </a>
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+          @csrf
+        </form>
+      </div>
     </div>
 
     <!-- Content Wrapper -->
     <div id="content-wrapper">
       <nav class="navbar navbar-expand-lg navbar-light navbar-custom">
-        <div class="sidebar-toggle-container">
-          <button id="sidebarToggle" class="btn btn-link">
+        <div class="d-flex align-items-center">
+          <button id="sidebarToggle" class="btn btn-link rounded-circle me-3">
             <i class="fa fa-bars"></i>
           </button>
-          <h3 class="page-title">@yield('title', 'Dashboard')</h3>
+          <h3 class="page-title mb-0">@yield('title', 'semangat yaa')</h3>
         </div>
 
-        <div class="navbar-right-section">
+        <ul class="navbar-nav ms-auto d-flex flex-row align-items-center">
           @auth
-            <div class="icon-group">
-              <button id="darkModeToggle" class="dark-toggle">
-                <i class="fas fa-moon"></i>
-              </button>
-              
-              <!-- Notification Dropdown -->
+            <button id="darkModeToggle" class="dark-toggle">
+              <i class="fas fa-moon"></i>
+            </button>
+            
+            <!-- Notification Dropdown -->
+            <li class="nav-item dropdown no-arrow me-3">
               <button id="notificationToggle" class="notification-btn" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="fas fa-bell"></i>
                 <span class="notification-badge" style="display: none;">0</span>
@@ -923,7 +794,7 @@
                   <a href="{{ route('admin.notif.my') }}" class="small text-primary">Lihat Semua</a>
                 </div>
                 <div class="dropdown-divider"></div>
-                <div class="notification-list">
+                <div class="notification-list" style="max-height: 300px; overflow-y: auto;">
                   <div class="text-center p-3">
                     <div class="spinner-border spinner-border-sm" role="status">
                       <span class="visually-hidden">Loading...</span>
@@ -936,15 +807,15 @@
                   <i class="fas fa-sync-alt me-1"></i> Refresh
                 </a>
               </div>
-            </div>
+            </li>
 
-            <div class="nav-item dropdown no-arrow">
+            <li class="nav-item dropdown no-arrow">
               <a class="nav-link d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <div class="user-info">
-                  <span class="user-name">{{ Auth::user()->name }}</span>
-                  <span class="user-role">{{ strtoupper(Auth::user()->role) }}</span>
+                <div class="d-none d-lg-flex flex-column text-start me-2">
+                  <span class="fw-bold">{{ Auth::user()->name }}</span>
+                  <span class="small text-warning">{{ strtoupper(Auth::user()->role) }}</span>
                 </div>
-                <i class="fas fa-user-circle profile-icon"></i>
+                <i class="fas fa-user-circle text-primary profile-icon"></i>
               </a>
               <div class="dropdown-menu dropdown-menu-end shadow animated--grow-in" aria-labelledby="userDropdown">
                 <a class="dropdown-item" href="#">
@@ -961,9 +832,9 @@
                   @csrf
                 </form>
               </div>
-            </div>
+            </li>
           @endauth
-        </div>
+        </ul>
       </nav>
 
       <div class="main-content">
@@ -978,61 +849,38 @@
       const sidebarToggle = document.getElementById('sidebarToggle');
       const darkToggle = document.getElementById('darkModeToggle');
       const notificationToggle = document.getElementById('notificationToggle');
-      const referenceToggle = document.getElementById('referenceToggle');
-      const referenceSubmenu = document.getElementById('referenceSubmenu');
       const wrapper = document.getElementById('wrapper');
       const body = document.body;
 
       // State management untuk sidebar
-      let sidebarState = 'open';
+      let sidebarState = 'open'; // 'open', 'collapsed', 'closed'
 
       // Sidebar toggle dengan 3 status
       sidebarToggle.addEventListener('click', function () {
-        const icon = sidebarToggle.querySelector('i');
-        
         if (sidebarState === 'open') {
           // Buka -> Mode ikon
           wrapper.classList.add('toggled');
           wrapper.classList.remove('fully-closed');
           sidebarState = 'collapsed';
-          icon.style.transform = 'translate(-50%, -50%) rotate(90deg)';
         } else if (sidebarState === 'collapsed') {
           // Mode ikon -> Tutup sepenuhnya
           wrapper.classList.remove('toggled');
           wrapper.classList.add('fully-closed');
           sidebarState = 'closed';
-          icon.style.transform = 'translate(-50%, -50%) rotate(0deg)';
         } else {
           // Tutup -> Buka
           wrapper.classList.remove('fully-closed');
           wrapper.classList.remove('toggled');
           sidebarState = 'open';
-          icon.style.transform = 'translate(-50%, -50%) rotate(0deg)';
         }
 
-        // Tutup reference menu saat men-toggle sidebar
-        if (referenceSubmenu.classList.contains('show')) {
-          referenceSubmenu.classList.remove('show');
-          referenceToggle.querySelector('.dropdown-arrow').style.transform = 'rotate(0deg)';
-        }
-      });
-
-      // Reference Menu Toggle
-      referenceToggle.addEventListener('click', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        const isExpanded = referenceSubmenu.classList.contains('show');
-        const arrow = referenceToggle.querySelector('.dropdown-arrow');
-        
-        if (isExpanded) {
-          // Tutup dengan animasi
-          referenceSubmenu.classList.remove('show');
-          arrow.style.transform = 'rotate(0deg)';
-        } else {
-          // Buka dengan animasi
-          referenceSubmenu.classList.add('show');
-          arrow.style.transform = 'rotate(90deg)';
+        // Tutup dropdown yang terbuka saat men-toggle sidebar
+        const openDropdown = document.querySelector('.sidebar-nav .dropdown-menu.show');
+        if (openDropdown) {
+          const collapseElement = bootstrap.Collapse.getInstance(openDropdown.closest('.collapse'));
+          if (collapseElement) {
+            collapseElement.hide();
+          }
         }
       });
 
@@ -1040,7 +888,6 @@
       darkToggle.addEventListener('click', function () {
         body.classList.toggle('dark-mode');
         const icon = darkToggle.querySelector('i');
-        
         if (body.classList.contains('dark-mode')) {
           icon.classList.replace('fa-moon', 'fa-sun');
           localStorage.setItem('theme', 'dark');
@@ -1061,6 +908,7 @@
       // Handle responsive behavior
       function handleResponsive() {
         if (window.innerWidth <= 768) {
+          // Di mobile, defaultnya sidebar tertutup
           if (!wrapper.classList.contains('toggled') && !wrapper.classList.contains('fully-closed')) {
             wrapper.classList.add('fully-closed');
             sidebarState = 'closed';
@@ -1070,14 +918,168 @@
 
       // Initial responsive check
       handleResponsive();
+
+      // Listen for window resize
       window.addEventListener('resize', handleResponsive);
 
+      // ==================== NOTIFICATION FUNCTIONS ====================
+      
+      // Fungsi untuk memuat notifikasi dari server
       async function loadNotifications() {
-        // Load notifications
+        try {
+          const notificationList = document.querySelector('.notification-list');
+          if (notificationList) {
+            notificationList.innerHTML = `
+              <div class="text-center p-3">
+                <div class="spinner-border spinner-border-sm" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2 small text-muted">Memuat notifikasi...</p>
+              </div>
+            `;
+          }
+
+          const response = await fetch('{{ route("admin.notif.api.my") }}');
+          const data = await response.json();
+          
+          if (data.success) {
+            updateNotificationDropdown(data.notifications);
+            updateNotificationBadge(data.unread_count);
+          } else {
+            throw new Error('Failed to load notifications');
+          }
+        } catch (error) {
+          console.error('Error loading notifications:', error);
+          const notificationList = document.querySelector('.notification-list');
+          if (notificationList) {
+            notificationList.innerHTML = `
+              <div class="text-center p-3 text-danger">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p class="mt-2 small">Gagal memuat notifikasi</p>
+                <button class="btn btn-sm btn-primary mt-2" onclick="loadNotifications()">Coba Lagi</button>
+              </div>
+            `;
+          }
+        }
       }
 
+      // Fungsi untuk memperbarui dropdown notifikasi
+      function updateNotificationDropdown(notifications) {
+        const notificationList = document.querySelector('.notification-list');
+        if (!notificationList) return;
+        
+        if (notifications.length === 0) {
+          notificationList.innerHTML = `
+            <div class="notification-empty">
+              <i class="fas fa-bell-slash"></i>
+              <p class="mt-2 small">Tidak ada notifikasi</p>
+            </div>
+          `;
+          return;
+        }
+        
+        let html = '';
+        notifications.forEach(notif => {
+          const isRead = notif.read_at !== null;
+          const timeAgo = getTimeAgo(notif.created_at);
+          const title = notif.data?.title || 'Notifikasi';
+          const message = notif.data?.message || 'Tidak ada pesan';
+          
+          html += `
+            <div class="notification-item ${isRead ? 'read' : 'unread'}" 
+                 data-id="${notif.id}" onclick="markAsRead('${notif.id}')">
+              <div class="d-flex align-items-start">
+                <div class="flex-grow-1">
+                  <h6 class="mb-1">${title}</h6>
+                  <p class="mb-1">${message}</p>
+                  <small class="text-muted">${timeAgo}</small>
+                </div>
+                ${!isRead ? '<span class="badge bg-primary ms-2 new">Baru</span>' : ''}
+              </div>
+            </div>
+          `;
+        });
+        
+        notificationList.innerHTML = html;
+      }
+
+      // Fungsi untuk memperbarui badge notifikasi
+      function updateNotificationBadge(unreadCount) {
+        const badge = document.querySelector('.notification-badge');
+        if (!badge) return;
+        
+        if (unreadCount > 0) {
+          badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+          badge.style.display = 'flex';
+        } else {
+          badge.style.display = 'none';
+        }
+      }
+
+      // Fungsi untuk menandai notifikasi sebagai dibaca
+      window.markAsRead = async function(notificationId) {
+        try {
+          const response = await fetch(`/admin/notif/read/${notificationId}`, {
+            method: 'PUT',
+            headers: {
+              'X-CSRF-TOKEN': '{{ csrf_token() }}',
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            }
+          });
+          
+          if (response.ok) {
+            // Update tampilan notifikasi
+            const notificationItem = document.querySelector(`.notification-item[data-id="${notificationId}"]`);
+            if (notificationItem) {
+              notificationItem.classList.remove('unread');
+              notificationItem.classList.add('read');
+              const newBadge = notificationItem.querySelector('.badge.new');
+              if (newBadge) {
+                newBadge.remove();
+              }
+            }
+            
+            // Update badge count
+            loadNotifications();
+          }
+        } catch (error) {
+          console.error('Error marking notification as read:', error);
+        }
+      }
+
+      // Fungsi utility untuk format waktu
+      function getTimeAgo(timestamp) {
+        const now = new Date();
+        const time = new Date(timestamp);
+        const diffInSeconds = Math.floor((now - time) / 1000);
+        
+        if (diffInSeconds < 60) return 'Baru saja';
+        if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} menit lalu`;
+        if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} jam lalu`;
+        if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)} hari lalu`;
+        
+        return time.toLocaleDateString('id-ID', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric'
+        });
+      }
+
+      // Load notifikasi saat halaman pertama kali dimuat
+      loadNotifications();
+      
+      // Auto-refresh notifikasi setiap 30 detik
+      setInterval(loadNotifications, 30000);
+
+      // Event listener untuk dropdown notifikasi
+      notificationToggle.addEventListener('click', function () {
+        // Load notifikasi ketika dropdown diklik
+        loadNotifications();
+      });
+
+      // Make loadNotifications available globally
       window.loadNotifications = loadNotifications;
-      setTimeout(loadNotifications, 500);
     });
   </script>
 </body>

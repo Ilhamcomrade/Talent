@@ -196,7 +196,7 @@
     }
 
     .btn-company-outline .fas.fa-arrow-right {
-        margin-left: 0.5rem; 
+        margin-left: 0.5rem;
     }
 
     .glints-dropdown {
@@ -394,8 +394,8 @@
         .navbar .nav-link.active {
             border-bottom: none;
         }
-        .nav-underline { 
-            display: none; 
+        .nav-underline {
+            display: none;
         }
         .user-dropdown-name,
         .chevron-icon {
@@ -443,7 +443,7 @@
                 <li class="nav-item">
                     <a class="nav-link {{ request()->is('explore-perusahaan') ? 'active' : '' }}"
                         href="/explore-perusahaan">
-                        Explore Perusahaan
+                        Explore Organisasi
                     </a>
                 </li>
 
@@ -467,7 +467,7 @@
 
                 @auth
                     @if (Auth::user()->role === 'user')
-                        
+
                         <!-- Notifikasi Dropdown -->
                         <div class="dropdown me-2" id="notificationDropdownContainer">
                             <a class="nav-icon notification-icon-container" href="#" role="button"
@@ -498,7 +498,7 @@
                                id="userDropdownToggle" data-bs-toggle="dropdown" aria-expanded="false">
 
                                <div class="user-profile-icon">
-                                
+
                                 @if (Auth::user()->avatar)
                                     <img src="{{ Auth::user()->avatar }}" alt="Profile Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
                                 @else
@@ -514,7 +514,7 @@
                                             $initials = '<i class="fas fa-user"></i>';
                                         }
                                     @endphp
-                                    
+
                                     @if (strpos($initials, 'fas fa-user') !== false)
                                         <i class="fas fa-user"></i>
                                     @else
@@ -532,7 +532,7 @@
 
                             <ul class="dropdown-menu dropdown-menu-end glints-dropdown" aria-labelledby="userDropdownToggle">
                                 <li>
-                                    <a class="dropdown-item" href="{{ url('/profil') }}">
+                                    <a class="dropdown-item" href="{{ url('/profile') }}">
                                         <i class="fas fa-user-circle"></i> PROFIL SAYA
                                     </a>
                                 </li>
@@ -626,14 +626,14 @@ class NotificationManager {
         this.notificationBadge = document.getElementById('notificationBadge');
         this.pollingInterval = null;
         this.isLoading = false;
-        
+
         this.init();
     }
 
     init() {
         this.loadNotifications();
         this.startPolling();
-        
+
         // Event listener untuk menandai notifikasi sebagai dibaca
         this.notificationList.addEventListener('click', (e) => {
             const notificationLink = e.target.closest('.notification-link');
@@ -641,7 +641,7 @@ class NotificationManager {
                 e.preventDefault();
                 const notificationId = notificationLink.dataset.id;
                 this.markAsRead(notificationId);
-                
+
                 // Redirect ke URL notifikasi setelah menandai sebagai dibaca
                 const redirectUrl = notificationLink.href;
                 if (redirectUrl && redirectUrl !== '#') {
@@ -662,13 +662,13 @@ class NotificationManager {
 
     async loadNotifications() {
         if (this.isLoading) return;
-        
+
         this.isLoading = true;
-        
+
         try {
             const response = await fetch('{{ route("notifications.api") }}');
             const data = await response.json();
-            
+
             if (data.success) {
                 this.renderNotifications(data.notifications);
                 this.updateBadge(data.unread_count);
@@ -692,9 +692,9 @@ class NotificationManager {
         }
 
         const notificationsHtml = notifications.map(notification => `
-            <li class="notification-item ${notification.read_at ? '' : 'unread'}" 
+            <li class="notification-item ${notification.read_at ? '' : 'unread'}"
                 data-id="${notification.id}">
-                <a class="notification-link" 
+                <a class="notification-link"
                    href="${this.getNotificationUrl(notification)}"
                    data-id="${notification.id}">
                     <div class="notification-title">${this.escapeHtml(notification.data.title)}</div>
@@ -712,7 +712,7 @@ class NotificationManager {
         if (notification.data.url) {
             return notification.data.url;
         }
-        
+
         // Default URLs berdasarkan jenis notifikasi
         switch (notification.data.type) {
             case 'job_application':
@@ -744,7 +744,7 @@ class NotificationManager {
                 if (notificationItem) {
                     notificationItem.classList.remove('unread');
                 }
-                
+
                 // Update badge count
                 this.updateBadgeCount(-1);
             }
@@ -756,7 +756,7 @@ class NotificationManager {
     updateBadgeCount(change) {
         const currentCount = parseInt(this.notificationBadge.textContent) || 0;
         const newCount = Math.max(0, currentCount + change);
-        
+
         if (newCount > 0) {
             this.notificationBadge.textContent = newCount > 99 ? '99+' : newCount;
             this.notificationBadge.classList.remove('d-none');
@@ -791,7 +791,7 @@ class NotificationManager {
         const date = new Date(isoString);
         const now = new Date();
         const diffInMinutes = Math.floor((now - date) / (1000 * 60));
-        
+
         if (diffInMinutes < 1) return 'Baru saja';
         if (diffInMinutes < 60) return `${diffInMinutes} menit lalu`;
         if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)} jam lalu`;
@@ -807,14 +807,13 @@ class NotificationManager {
             .replace(/'/g, "&#039;");
     }
 }
-</script>
 
+// Inisialisasi notifikasi manager ketika user sudah login
 @auth
     @if (Auth::user()->role === 'user')
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        new NotificationManager();
-    });
-</script>
+        document.addEventListener('DOMContentLoaded', function() {
+            new NotificationManager();
+        });
     @endif
 @endauth
+</script>

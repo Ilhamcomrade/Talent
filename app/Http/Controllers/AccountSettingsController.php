@@ -32,7 +32,7 @@ class AccountSettingsController extends Controller
         if (!Auth::check()) {
             return redirect()->route('login');
         }
-        
+
         // Data pengguna akan diakses langsung di view melalui Auth::user()
         return view('contact_detail');
     }
@@ -43,9 +43,10 @@ class AccountSettingsController extends Controller
      */
     public function updateContactDetails(Request $request)
     {
+
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        
+
         // 1. Validasi input
         $request->validate([
             'name' => 'required|string|max:255',
@@ -59,7 +60,7 @@ class AccountSettingsController extends Controller
         $user->name = $request->name;
         // Hanya update bio jika kolom 'bio' ada pada model User
         if (property_exists($user, 'bio')) {
-             $user->bio = $request->bio ?? null; 
+             $user->bio = $request->bio ?? null;
         }
         $user->save();
 
@@ -74,7 +75,7 @@ class AccountSettingsController extends Controller
         if (!Auth::check()) {
             return redirect()->route('login');
         }
-        
+
         // Cek apakah ada session yang menandakan akun sudah diputuskan (hanya simulasi)
         $isDisconnected = $request->session()->pull('disconnected_status', false);
 
@@ -90,10 +91,10 @@ class AccountSettingsController extends Controller
         if (!Auth::check()) {
             return redirect()->route('login');
         }
-        
+
         return view('notification_preferences'); // Ganti 'notification_preferences' dengan nama file view Anda
     }
-    
+
     /**
      * Menangani proses pembaruan preferensi notifikasi.
      * (Asumsi fungsi ini ada dari versi sebelumnya, jika tidak ada, ini adalah tambahan yang logis)
@@ -112,7 +113,7 @@ class AccountSettingsController extends Controller
         // 2. Update preferensi
         $user->notify_email = $request->has('notify_email');
         $user->notify_whatsapp = $request->has('notify_whatsapp');
-        
+
         $user->save();
 
         return back()->with('success_notification', 'Preferensi notifikasi berhasil diperbarui.');
@@ -130,7 +131,7 @@ class AccountSettingsController extends Controller
         }
 
         // Anda dapat menambahkan data dinamis di sini jika diperlukan (misalnya FAQ)
-        return view('help_support'); 
+        return view('help_support');
     }
 
     /**
@@ -151,7 +152,7 @@ class AccountSettingsController extends Controller
 
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        
+
         // Cek apakah akun adalah akun Google (tidak punya password)
         if (is_null($user->password)) {
             $user->password = Hash::make($request->new_password);
@@ -201,7 +202,7 @@ class AccountSettingsController extends Controller
             'whatsapp' => [
                 'required',
                 'max:15',
-                'regex:/^(\+628|08|8)[0-9]{8,13}$/', 
+                'regex:/^(\+628|08|8)[0-9]{8,13}$/',
             ],
         ], [
             'whatsapp.required' => 'Nomor WhatsApp wajib diisi.',
@@ -218,7 +219,7 @@ class AccountSettingsController extends Controller
 
         if (substr($whatsapp_input, 0, 2) === '08') {
             $cleaned_whatsapp = substr($whatsapp_input, 1);
-        } 
+        }
         elseif (substr($whatsapp_input, 0, 4) === '+628') {
             $cleaned_whatsapp = substr($whatsapp_input, 3);
         }
@@ -255,7 +256,7 @@ class AccountSettingsController extends Controller
             'confirmation_word' => 'required|in:DELETE',
             'delete_reason' => 'required|string', // Alasan utama dari Langkah 2
             // DIUBAH: Penjelasan detail dari Langkah 3 diubah dari min:10 menjadi min:1
-            'reason_explanation' => 'required|string|min:1', 
+            'reason_explanation' => 'required|string|min:1',
         ], [
             'confirmation_word.required' => 'Kata konfirmasi wajib diisi.',
             'confirmation_word.in' => 'Kata konfirmasi harus "DELETE".',
@@ -264,7 +265,6 @@ class AccountSettingsController extends Controller
             'reason_explanation.min' => 'Penjelasan alasan minimal 1 karakter.', // DIUBAH: Pesan error disesuaikan
         ]);
 
-        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         // 2. LOGIKA KRUSIAL: Pencatatan Alasan
@@ -280,7 +280,7 @@ class AccountSettingsController extends Controller
 
         // 3. LOGIKA KRUSIAL: Menghapus Akun Permanen
         $userId = $user->id;
-        
+
         // Logout pengguna sebelum menghapus
         Auth::logout();
 

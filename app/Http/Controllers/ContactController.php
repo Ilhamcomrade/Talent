@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Profile; // Pastikan Model Profile sudah di-import
 use App\Models\ContactMessage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\log;
 use Illuminate\Support\Facades\Mail; // Wajib di-import untuk mengirim email
-use Illuminate\Support\Facades\Log;
 use App\Mail\ContactUsMail; // Wajib di-import (asumsi Anda telah membuat file ini)
 
 class ContactController extends Controller
@@ -24,7 +24,7 @@ class ContactController extends Controller
         return view('contact', compact('profile', 'success_message'));
     }
 
-    
+
     public function store(Request $request)
     {
         // 1. Validasi Data
@@ -43,8 +43,8 @@ class ContactController extends Controller
         // 3. Kirim Email ke Alamat Tujuan
         try {
             // PERBAIKAN KRUSIAL: Mengubah 'gmaul.com' menjadi 'gmail.com'
-            $recipientEmail = 'septiangeorgio@gmail.com'; 
-            
+            $recipientEmail = 'septiangeorgio@gmail.com';
+
             // Kirim email menggunakan Mailable Class ContactUsMail
             Mail::to($recipientEmail)->send(new ContactUsMail($validatedData));
 
@@ -55,7 +55,7 @@ class ContactController extends Controller
             // Log error untuk debugging (sangat penting jika email gagal)
             // Pesan error ini akan muncul di file storage/logs/laravel.log
             Log::error('Gagal mengirim email dari Contact Form: ' . $e->getMessage());
-            
+
             // Walaupun gagal kirim email, kita tetap memberikan pesan sukses karena data sudah tersimpan di DB
             return redirect()->route('contact')->with('success_message', true);
         }

@@ -8,6 +8,7 @@ use App\Models\Province;
 use App\Models\Regency;
 use App\Models\District;
 use App\Models\Village;
+use App\Models\Company; // Tambahkan ini
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -67,7 +68,8 @@ class JobListingController extends Controller
     public function create()
     {
         $provinces = Province::orderBy('name')->get();
-        return view('admin.job_listings.create', compact('provinces'));
+        $companies = Company::select('id', 'nama_lengkap')->orderBy('nama_lengkap')->get(); // Tambahkan ini
+        return view('admin.job_listings.create', compact('provinces', 'companies')); // Tambahkan companies
     }
 
     public function store(Request $request)
@@ -75,6 +77,7 @@ class JobListingController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'company' => 'required|string|max:255',
+            'company_id' => 'required|exists:companies,id', // Tambahkan validasi company_id
             'company_logo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'provinsi_id' => 'required|string|size:2',
             'kabupaten_id' => 'required|string|size:4',
@@ -99,6 +102,9 @@ class JobListingController extends Controller
             $validated['company_logo'] = $request->file('company_logo')->store('company_logos', 'public');
         }
 
+        // Tambahkan field company_id ke data yang akan disimpan
+        $validated['company_id'] = $request->company_id;
+
         JobListing::create($validated);
 
         return redirect()->route('admin.job_listings.index')->with('success', 'Lowongan berhasil ditambahkan.');
@@ -106,13 +112,14 @@ class JobListingController extends Controller
 
     public function show(JobListing $jobListing)
     {
-        $jobListing->load(['province', 'regency', 'district', 'village']);
+        $jobListing->load(['province', 'regency', 'district', 'village', 'company']); // Tambahkan company
         return view('admin.job_listings.show', compact('jobListing'));
     }
 
     public function edit(JobListing $jobListing)
     {
         $provinces = Province::orderBy('name')->get();
+        $companies = Company::select('id', 'nama_lengkap')->orderBy('nama_lengkap')->get(); // Tambahkan ini
         
         // Load data wilayah yang sudah dipilih untuk auto-select
         $regencies = collect();
@@ -143,6 +150,7 @@ class JobListingController extends Controller
         return view('admin.job_listings.edit', compact(
             'jobListing', 
             'provinces',
+            'companies', // Tambahkan companies
             'regencies',
             'districts',
             'villages'
@@ -154,6 +162,7 @@ class JobListingController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'company' => 'required|string|max:255',
+            'company_id' => 'required|exists:companies,id', // Tambahkan validasi company_id
             'company_logo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'provinsi_id' => 'required|string|size:2',
             'kabupaten_id' => 'required|string|size:4',
@@ -180,6 +189,9 @@ class JobListingController extends Controller
             }
             $validated['company_logo'] = $request->file('company_logo')->store('company_logos', 'public');
         }
+
+        // Tambahkan field company_id ke data yang akan diupdate
+        $validated['company_id'] = $request->company_id;
 
         $jobListing->update($validated);
 

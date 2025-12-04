@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Notifications\AdminBroadcastNotification;
 
@@ -46,8 +45,7 @@ class NotifController extends Controller
      */
     public function myNotifications()
     {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
+        $user = request()->user();
         $notifications = $user->notifications()->latest()->get();
 
         return view('admin.notif.my', compact('notifications'));
@@ -59,8 +57,7 @@ class NotifController extends Controller
     public function getMyNotificationsApi()
     {
         try {
-            /** @var \App\Models\User $user */
-            $user = Auth::user();
+            $user = request()->user();
             $notifications = $user->notifications()
                 ->latest()
                 ->take(10)
@@ -94,9 +91,7 @@ class NotifController extends Controller
      */
     public function markAsRead($id)
     {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-        $notification = $user->notifications()->findOrFail($id);
+        $notification = request()->user()->notifications()->findOrFail($id);
         $notification->update(['read_at' => now()]);
 
         return redirect()->back()->with('success', 'Notifikasi ditandai sebagai dibaca.');
@@ -108,9 +103,7 @@ class NotifController extends Controller
     public function markAsReadApi($id)
     {
         try {
-            /** @var \App\Models\User $user */
-            $user = Auth::user();
-            $notification = $user->notifications()->findOrFail($id);
+            $notification = request()->user()->notifications()->findOrFail($id);
             $notification->markAsRead();
 
             return response()->json([

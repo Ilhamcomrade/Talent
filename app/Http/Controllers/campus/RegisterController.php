@@ -23,7 +23,7 @@ class RegisterController extends Controller
     {
         // Debug: Log request data
         Log::info('Campus Registration Step 1 - Request Data:', $request->all());
-        
+
         $validator = Validator::make($request->all(), [
             'nama_lengkap' => 'required|string|max:255',
             'no_hp' => 'required|string|max:15',
@@ -51,7 +51,7 @@ class RegisterController extends Controller
 
         // Simpan data step 1 ke session
         $request->session()->put('campus_register.step1', $request->all());
-        
+
         Log::info('Campus Registration Step 1 - Success, redirecting to step 2');
 
         return redirect()->route('campus.register.process')
@@ -73,7 +73,7 @@ class RegisterController extends Controller
     public function processStep2(Request $request)
     {
         Log::info('Campus Registration Step 2 - Request Data:', $request->all());
-        
+
         $validator = Validator::make($request->all(), [
             'nama_kampus' => 'required|string|max:255',
             'jumlah_pegawai' => 'required|string',
@@ -110,9 +110,9 @@ class RegisterController extends Controller
             'jumlah_pegawai' => $request->jumlah_pegawai,
             'jenis_institusi' => $request->jenis_institusi,
         ];
-        
+
         $request->session()->put('campus_register.step2', $step2Data);
-        
+
         Log::info('Campus Registration Step 2 - Success, redirecting to step 3');
         Log::info('Campus Registration Step 2 - Session data saved:', $step2Data);
 
@@ -141,7 +141,7 @@ class RegisterController extends Controller
     public function processStep3(Request $request)
     {
         Log::info('Campus Registration Step 3 - Request Data:', $request->all());
-        
+
         $validator = Validator::make($request->all(), [
             'provinsi' => 'required|string|max:255',
             'kota' => 'required|string|max:255',
@@ -254,7 +254,7 @@ class RegisterController extends Controller
         try {
             $registrationDate = now()->translatedFormat('d F Y');
             $loginUrl = route('campus.login');
-            
+
             Log::info('Sending campus registration email directly to: ' . $campus->email);
 
             // Kirim email langsung menggunakan Mail facade (lebih reliable)

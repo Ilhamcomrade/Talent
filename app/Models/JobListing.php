@@ -12,6 +12,7 @@ class JobListing extends Model
     protected $fillable = [
         'title',
         'company',
+        'company_id', // TAMBAHKAN INI
         'company_logo',
         'provinsi_id',
         'kabupaten_id',
@@ -60,12 +61,6 @@ class JobListing extends Model
         return $this->belongsTo(Village::class, 'desa_id', 'id');
     }
 
-    // TAMBAHKAN RELATIONSHIP INI - RELASI KE APPLICATIONS
-    public function applications()
-    {
-        return $this->hasMany(Application::class, 'job_listing_id');
-    }
-
     // Accessor untuk mendapatkan lokasi lengkap
     public function getFullLocationAttribute()
     {
@@ -109,9 +104,15 @@ class JobListing extends Model
         }
     }
 
-    // TAMBAHKAN ACCESSOR UNTUK COUNT APPLICATIONS
-    public function getApplicationsCountAttribute()
+    // Relasi ke tabel companies
+    public function company()
     {
-        return $this->applications()->count();
+        return $this->belongsTo(\App\Models\Company::class, 'company_id', 'id');
+    }
+
+    // Accessor untuk mendapatkan nama pengelola
+    public function getPengelolaAttribute()
+    {
+        return $this->company ? $this->company->nama_lengkap : '-';
     }
 }
