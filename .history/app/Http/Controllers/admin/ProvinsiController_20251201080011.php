@@ -50,11 +50,13 @@ class ProvinsiController extends Controller
         $request->validate([
             'id' => 'required|string|max:10|unique:provinces,id',
             'name' => 'required|string|max:100',
+            'status' => 'required|in:0,1',
         ]);
 
         Province::create([
             'id' => $request->id,
             'name' => $request->name,
+            'status' => (bool) $request->status,
         ]);
 
         return redirect()->route('admin.reference.provinsi.index')
