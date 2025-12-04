@@ -79,13 +79,11 @@
 
 <script>
     const initialValues = {
-        name: '{{ old("name", $province->name ?? "") }}',
-        status: '{{ old("status", $province->status) }}'
+        name: '{{ old("name", $province->name ?? "") }}'
     };
 
     function resetForm() {
         document.getElementById('name').value = initialValues.name;
-        document.getElementById('status').value = initialValues.status;
     }
 </script>
 
