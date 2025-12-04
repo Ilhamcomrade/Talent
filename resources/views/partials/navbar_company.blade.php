@@ -117,7 +117,7 @@
 
                 <!-- LOWONGAN KERJA + SUBMENU -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle 
+                    <a class="nav-link dropdown-toggle
                         {{ request()->is('company/jobs*') ? 'active' : '' }}"
                        href="#" data-bs-toggle="dropdown">
                        Lowongan Kerja
@@ -140,7 +140,7 @@
 
                 <!-- INTERSHIP + SUBMENU -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle 
+                    <a class="nav-link dropdown-toggle
                         {{ request()->is('company/magang*') ? 'active' : '' }}"
                        href="#" data-bs-toggle="dropdown">
                        Intership
@@ -160,6 +160,15 @@
                         </li>
                     </ul>
                 </li>
+
+                 <!-- BENEFIT -->
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('company/benefits*') ? 'active' : '' }}"
+                    href="{{ route('company.benefits.index') }}">
+                    Benefit
+                    </a>
+                </li>
+
 
                 <span class="nav-underline" id="companyUnderline"></span>
             </ul>
@@ -216,7 +225,7 @@
                                     <i class="fas fa-power-off"></i>&nbsp;Keluar
                                 </button>
                             </form>
-                        </li> 
+                        </li>
                     </ul>
                 </div>
             @else

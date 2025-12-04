@@ -316,7 +316,6 @@
             <a href="{{ route('company.culture', ['company' => $company->slug]) }}" class="detail-nav-item">Kehidupan dan Budaya</a>
             <a href="{{ route('company.job', ['company' => $company->slug]) }}" class="detail-nav-item">Pekerjaan</a>
             <a href="{{ route('company.salary', ['company' => $company->slug]) }}" class="detail-nav-item">Gaji</a>
-            {{-- <button class="detail-nav-item">Ulasan</button> --}}
         </div>
     </div>
 
@@ -332,34 +331,42 @@
 
             <div class="detail-info-row">
                 <div class="detail-info-label">Nama Perusahaan</div>
-                <div class="detail-info-value">{{ $company->nama_perusahaan ?? 'Gojek' }}</div>
+                <div class="detail-info-value">{{ $company->nama_perusahaan ?? 'Tidak tersedia' }}</div>
             </div>
 
             <div class="detail-info-row">
                 <div class="detail-info-label">Jenis Industri</div>
-                <div class="detail-info-value">{{ $company->industri ?? 'Real Estate & Property' }}</div>
+                <div class="detail-info-value">{{ $company->industri ?? 'Tidak tersedia' }}</div>
             </div>
 
             <div class="detail-info-row">
                 <div class="detail-info-label">Jumlah Karyawan</div>
-                <div class="detail-info-value">{{ $company->jumlah_karyawan ?? 'More than 10,000' }}</div>
+                <div class="detail-info-value">{{ $company->jumlah_karyawan ?? 'Tidak tersedia' }}</div>
             </div>
 
             <div class="detail-info-row">
                 <div class="detail-info-label">Bergabung Sejak</div>
                 <div class="detail-info-value">
-                    {{ $company->created_at->format('d F Y') }}
+                    @if($company->created_at)
+                        {{ $company->created_at->format('d F Y') }}
+                    @else
+                        Tidak tersedia
+                    @endif
                 </div>
             </div>
 
             <div class="detail-info-row">
                 <div class="detail-info-label">Lokasi utama</div>
                 <div class="detail-info-value">
-                    @if($company->provinsi)
-                        {{ $company->provinsi }}, {{ $company->kota }}, {{ $company->kecamatan }},
-                        {{ $company->desa_kelurahan }}, {{ $company->alamat_lengkap }}
+                    @if($company->provinsi || $company->alamat_lengkap)
+                        @if($company->provinsi)
+                            {{ $company->provinsi }}, {{ $company->kota }}, {{ $company->kecamatan }},
+                            {{ $company->desa_kelurahan }}, {{ $company->alamat_lengkap }}
+                        @else
+                            {{ $company->alamat_lengkap }}
+                        @endif
                     @else
-                        Sinar Mas Land Plaza BSD, Jl. Grand Boulevard, BSD Green Office Park, BSD City - Tangerang
+                        Tidak tersedia
                     @endif
                 </div>
             </div>
@@ -373,7 +380,7 @@
                 @if($company->deskripsi_perusahaan)
                     {{ $company->deskripsi_perusahaan }}
                 @else
-                    Sinar Mas Land Limited (sebelumnya dikenal sebagai AFP Properties Limited), terdaftar di Bursa Efek Singapura dan berkantor pusat di Singapura, bergerak di bisnis properti melalui operasinya di Indonesia, Tiongkok, Malaysia, dan Singapura. Sinar Mas Land memiliki investasi jangka panjang di gedung-gedung komersial besar, hotel, dan resor, serta terlibat dalam pengembangan dan penyewaan properti di Indonesia, Tiongkok, Malaysia, dan Singapura.
+                    Data deskripsi perusahaan belum tersedia.
                 @endif
             </p>
         </div>
@@ -385,7 +392,7 @@
                 @if($company->visi)
                     {{ $company->visi }}
                 @else
-                    Menjadi sumber pembiayaan produk-produk Indomobil Group, yang terbaik dalam hal kepuasan pelanggan, terbesar dalam jumlah pembiayaan dan perolehan tingkat keuntungan bagi para pemegang saham
+                    Data visi perusahaan belum tersedia.
                 @endif
             </p>
         </div>
@@ -397,10 +404,7 @@
                 @if($company->misi)
                     {{ $company->misi }}
                 @else
-1. Mengembangkan produk teknologi inovatif yang relevan dengan kebutuhan pasar.
-2. Meningkatkan kualitas layanan dengan standar internasional.
-3. Menciptakan lingkungan kerja kolaboratif yang mendukung kreativitas dan pertumbuhan karyawan.
-4. Berperan aktif dalam pembangunan berkelanjutan melalui solusi digital ramah lingkungan.
+                    Data misi perusahaan belum tersedia.
                 @endif
             </p>
         </div>

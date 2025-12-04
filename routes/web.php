@@ -141,6 +141,16 @@ Route::middleware(['auth.company'])->group(function () {
     Route::put('magang/{id}', [CMagangController::class, 'update'])->name('company.magang.update');
     Route::delete('magang/{id}', [CMagangController::class, 'destroy'])->name('company.magang.destroy');
 
+
+    // CRUD Benefit
+    Route::get('benefits', [\App\Http\Controllers\Company\BenefitController::class, 'index'])->name('company.benefits.index');
+    Route::get('benefits/create', [\App\Http\Controllers\Company\BenefitController::class, 'create'])->name('company.benefits.create');
+    Route::post('benefits', [\App\Http\Controllers\Company\BenefitController::class, 'store'])->name('company.benefits.store');
+    Route::get('benefits/{benefit}/edit', [\App\Http\Controllers\Company\BenefitController::class, 'edit'])->name('company.benefits.edit');
+    Route::put('benefits/{benefit}', [\App\Http\Controllers\Company\BenefitController::class, 'update'])->name('company.benefits.update');
+    Route::delete('benefits/{benefit}', [\App\Http\Controllers\Company\BenefitController::class, 'destroy'])->name('company.benefits.destroy');
+    Route::patch('benefits/{benefit}/toggle-status', [\App\Http\Controllers\Company\BenefitController::class, 'toggleStatus'])->name('company.benefits.toggle-status');
+
     // Route jobs dengan nama berbeda (perhatikan duplikasi)
     Route::get('jobs', [cJobController::class, 'index'])->name('companiesjobs.index');
     Route::get('jobs/create', [cJobController::class, 'create'])->name('companiesjobs.create');

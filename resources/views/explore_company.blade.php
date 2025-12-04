@@ -1060,6 +1060,12 @@
                     <!-- PERBAIKAN: Gunakan grid layout untuk lebar card yang konsisten -->
                     <div class="search-results-grid">
                         @foreach($companyResults as $company)
+                            @php
+                                // Hitung jumlah lowongan aktif untuk perusahaan ini
+                                $jobCount = App\Models\CompaniesJob::where('company_id', $company->id)
+                                    ->where('is_public', true)
+                                    ->count();
+                            @endphp
                             <a href="{{  route('company.detail', $company->slug) }}" style="text-decoration: none; color: inherit;">
                                 <div class="companies-card">
                                     <div class="logo-container">
@@ -1092,7 +1098,7 @@
                                         4.{{ rand(0,5) }} • {{ rand(50, 300) }} Ulasan
                                     </p>
                                     <button class="btn btn-jobs">
-                                        {{ rand(10, 100) }} Pekerjaan
+                                        {{ $jobCount }} Lowongan
                                     </button>
                                 </div>
                             </a>
@@ -1200,6 +1206,12 @@
                             <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
                                 <div class="row g-3 fixed-columns-row">
                                     @foreach($chunk as $company)
+                                        @php
+                                            // Hitung jumlah lowongan aktif untuk perusahaan ini
+                                            $jobCount = App\Models\CompaniesJob::where('company_id', $company->id)
+                                                ->where('is_public', true)
+                                                ->count();
+                                        @endphp
                                         <div class="col-6 col-md fixed-column">
                                             <a href="{{  route('company.detail', $company->slug) }}" style="text-decoration: none; color: inherit;">
                                                 <div class="companies-card">
@@ -1221,7 +1233,7 @@
                                                         4.{{ rand(0,5) }} • {{ rand(50, 300) }} Ulasan
                                                     </p>
                                                     <button class="btn btn-jobs">
-                                                        {{ rand(10, 100) }} Pekerjaan
+                                                        {{ $jobCount }} Lowongan
                                                     </button>
                                                 </div>
                                             </a>

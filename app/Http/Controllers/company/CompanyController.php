@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Company;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
+use App\Models\Benefit;
 use Illuminate\Http\Request;
 
 class CompanyController extends Controller
@@ -37,14 +38,20 @@ class CompanyController extends Controller
                 abort(404, 'Perusahaan tidak ditemukan');
             }
 
-            return view('detail_company.life_company', compact('company'));
+            // Ambil benefit aktif dari perusahaan ini
+            $benefits = Benefit::where('company_id', $company->id)
+                ->where('status', 'aktif') // Hanya yang status aktif
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            return view('detail_company.life_company', compact('company', 'benefits'));
 
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             abort(404, 'Perusahaan tidak ditemukan');
         }
     }
 
-        public function job(Company $company)
+    public function job(Company $company)
     {
         try {
             // Pastikan perusahaan aktif
@@ -59,7 +66,7 @@ class CompanyController extends Controller
         }
     }
 
-         public function salary (Company $company)
+    public function salary(Company $company)
     {
         try {
             // Pastikan perusahaan aktif
@@ -73,7 +80,6 @@ class CompanyController extends Controller
             abort(404, 'Perusahaan tidak ditemukan');
         }
     }
-
 
     /**
      * Menampilkan daftar semua perusahaan (untuk explore)

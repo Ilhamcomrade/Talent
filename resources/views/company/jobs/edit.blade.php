@@ -68,7 +68,7 @@
         {{-- Skills --}}
         <div class="mb-3">
             <label class="form-label">Skills (pisahkan dengan koma)</label>
-            <input type="text" name="skills" class="form-control" 
+            <input type="text" name="skills" class="form-control"
                    value="{{ old('skills', is_array($job->skills) ? implode(',', $job->skills) : $job->skills) }}">
         </div>
 

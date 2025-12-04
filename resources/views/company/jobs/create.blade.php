@@ -172,7 +172,125 @@
 
 {{-- Script Lokasi Bertingkat --}}
 <script>
-    // (script tetap sama)
+    
+      const provinsiEl = document.getElementById('provinsi');
+    const kabupatenEl = document.getElementById('kabupaten');
+    const kecamatanEl = document.getElementById('kecamatan');
+    const desaEl = document.getElementById('desa');
+
+    const provinceIdInput = document.getElementById('province_id');
+    const regencyIdInput = document.getElementById('regency_id');
+    const districtIdInput = document.getElementById('district_id');
+    const villageIdInput = document.getElementById('village_id');
+    const locationInput = document.getElementById('location');
+
+    const locationDisplay = document.getElementById('location-display');
+    const locationText = document.getElementById('location-text');
+
+    function resetDropdowns(level) {
+        if (level === 'provinsi') {
+            kabupatenEl.innerHTML = '<option value="">-- Pilih Kabupaten --</option>'; kabupatenEl.disabled = true;
+            kecamatanEl.innerHTML = '<option value="">-- Pilih Kecamatan --</option>'; kecamatanEl.disabled = true;
+            desaEl.innerHTML = '<option value="">-- Pilih Desa --</option>'; desaEl.disabled = true;
+
+            regencyIdInput.value = ''; districtIdInput.value = ''; villageIdInput.value = '';
+        }
+        if (level === 'kabupaten') {
+            kecamatanEl.innerHTML = '<option value="">-- Pilih Kecamatan --</option>'; kecamatanEl.disabled = true;
+            desaEl.innerHTML = '<option value="">-- Pilih Desa --</option>'; desaEl.disabled = true;
+
+            districtIdInput.value = ''; villageIdInput.value = '';
+        }
+        if (level === 'kecamatan') {
+            desaEl.innerHTML = '<option value="">-- Pilih Desa --</option>'; desaEl.disabled = true;
+            villageIdInput.value = '';
+        }
+    }
+
+    function updateLocationDisplay() {
+        const provName = provinsiEl.options[provinsiEl.selectedIndex]?.text || '';
+        const kabName = kabupatenEl.options[kabupatenEl.selectedIndex]?.text || '';
+        const kecName = kecamatanEl.options[kecamatanEl.selectedIndex]?.text || '';
+        const desaName = desaEl.options[desaEl.selectedIndex]?.text || '';
+
+        const parts = [];
+        if (desaName && desaName !== '-- Pilih Desa --') parts.unshift(desaName);
+        if (kecName && kecName !== '-- Pilih Kecamatan --') parts.unshift(kecName);
+        if (kabName && kabName !== '-- Pilih Kabupaten --') parts.unshift(kabName);
+        if (provName && provName !== '-- Pilih Provinsi --') parts.unshift(provName);
+
+        if (parts.length > 0) {
+            locationText.textContent = parts.join(', ');
+            locationInput.value = parts.join(', ');
+            locationDisplay.style.display = 'block';
+        } else {
+            locationDisplay.style.display = 'none';
+            locationInput.value = '';
+        }
+    }
+
+    async function fetchAndFill(url, selectEl, selectedValue = '') {
+        try {
+            const res = await fetch(url);
+            const data = await res.json();
+            selectEl.innerHTML = '<option value="">-- Pilih --</option>';
+            data.forEach(item => {
+                const selected = item.id == selectedValue ? 'selected' : '';
+                selectEl.innerHTML += `<option value="${item.id}" ${selected}>${item.name}</option>`;
+            });
+            selectEl.disabled = false;
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    provinsiEl.addEventListener('change', () => {
+        const provId = provinsiEl.value;
+        provinceIdInput.value = provId;
+        resetDropdowns('provinsi');
+        if (provId) fetchAndFill(`/company/api/regencies/${provId}`, kabupatenEl);
+        updateLocationDisplay();
+    });
+
+    kabupatenEl.addEventListener('change', () => {
+        const regId = kabupatenEl.value;
+        regencyIdInput.value = regId;
+        resetDropdowns('kabupaten');
+        if (regId) fetchAndFill(`/company/api/districts/${regId}`, kecamatanEl);
+        updateLocationDisplay();
+    });
+
+    kecamatanEl.addEventListener('change', () => {
+        const distId = kecamatanEl.value;
+        districtIdInput.value = distId;
+        resetDropdowns('kecamatan');
+        if (distId) fetchAndFill(`/company/api/villages/${distId}`, desaEl);
+        updateLocationDisplay();
+    });
+
+    desaEl.addEventListener('change', () => {
+        villageIdInput.value = desaEl.value;
+        updateLocationDisplay();
+    });
+
+    window.addEventListener('DOMContentLoaded', async () => {
+        const oldProv = provinceIdInput.value;
+        const oldReg = regencyIdInput.value;
+        const oldDist = districtIdInput.value;
+        const oldVill = villageIdInput.value;
+
+        if (oldProv) {
+            await fetchAndFill(`/company/api/regencies/${oldProv}`, kabupatenEl, oldReg);
+        }
+        if (oldReg) {
+            await fetchAndFill(`/company/api/districts/${oldReg}`, kecamatanEl, oldDist);
+        }
+        if (oldDist) {
+            await fetchAndFill(`/company/api/villages/${oldDist}`, desaEl, oldVill);
+        }
+        updateLocationDisplay();
+    });
+
 </script>
 
 </body>
