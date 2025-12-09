@@ -220,7 +220,7 @@
                     <p>Total Campus</p>
                 </div>
                 <div class="card-footer">
-                    <a href="{{ route('admin.dashboard') }}">Lihat Detail</a>
+                    <a href="{{ route('admin.campus.index') }}">Lihat Detail</a>
                 </div>
             </div>
         </div>
@@ -286,10 +286,10 @@
         new Chart(userRoleCtx, {
             type: 'pie',
             data: {
-                labels: appChartData.userRoleLabels, 
+                labels: appChartData.userRoleLabels,
                 datasets: [{
                     label: 'Jumlah User',
-                    data: appChartData.userRoleData, 
+                    data: appChartData.userRoleData,
                     backgroundColor: [
                         'rgb(0,123,255)',
                         'rgb(40,167,69)',
@@ -312,10 +312,10 @@
         new Chart(lokasiCtx, {
             type: 'bar',
             data: {
-                labels: appChartData.lokasiLabels, 
+                labels: appChartData.lokasiLabels,
                 datasets: [{
                     label: 'Jumlah Lowongan',
-                    data: appChartData.lokasiData, 
+                    data: appChartData.lokasiData,
                     backgroundColor: 'rgba(23,162,184,0.8)',
                     borderColor: 'rgb(23,162,184)',
                     borderWidth: 1,
@@ -352,11 +352,11 @@
                 }]
             },
             options: {
-                plugins: { 
-                    legend: { 
-                        position: 'bottom', 
-                        labels: { boxWidth: 14 } 
-                    } 
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { boxWidth: 14 }
+                    }
                 }
             }
         });
@@ -393,15 +393,15 @@
             options: {
                 plugins: { legend: { display: false } },
                 scales: {
-                    y: { 
-                        beginAtZero: true, 
+                    y: {
+                        beginAtZero: true,
                         ticks: { stepSize: 5 },
                         title: {
                             display: true,
                             text: 'Jumlah Campus'
                         }
                     },
-                    x: { 
+                    x: {
                         grid: { display: false },
                         title: {
                             display: true,

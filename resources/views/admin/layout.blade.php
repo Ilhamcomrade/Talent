@@ -53,7 +53,7 @@
         SIDEBAR STYLES - IMPROVED
         ==================== */
     #sidebar-wrapper {
-      background: linear-gradient(0deg, 
+      background: linear-gradient(0deg,
         red, orange, yellow, green, blue, indigo, violet
       );
       background-size: 100% 400%;
@@ -148,12 +148,12 @@
       transition: all 0.3s ease;
       font-size: 0.95rem; /* Sedikit lebih kecil font */
     }
-    
+
     .nav-link.active {
         background-color: rgba(255, 255, 255, 0.2);
         border-radius: 5px;
     }
-    
+
     .nav-link:hover {
         background-color: rgba(255, 255, 255, 0.1);
         border-radius: 5px;
@@ -206,14 +206,14 @@
       margin-right: 0.75rem;
       width: 20px;
     }
-    
+
     .sidebar-nav .dropdown-menu .dropdown-item:hover {
         background-color: rgba(255, 255, 255, 0.1);
         transform: translateX(5px);
     }
-    
+
     .sidebar-nav .dropdown-menu .dropdown-item.active {
-        background-color: rgba(255, 255, 255, 0.2); 
+        background-color: rgba(255, 255, 255, 0.2);
         font-weight: bold;
     }
 
@@ -556,7 +556,7 @@
       display: none;
     }
     #wrapper.toggled .sidebar-nav .dropdown-menu {
-      display: none !important; 
+      display: none !important;
     }
     #wrapper.toggled .sidebar-brand {
       justify-content: center;
@@ -587,22 +587,22 @@
         width: 250px;
         transform: translateX(-100%);
       }
-      
+
       #content-wrapper {
         margin-left: 0;
         width: 100%;
       }
-      
+
       #wrapper.toggled #sidebar-wrapper {
         transform: translateX(0);
         width: 250px;
       }
-      
+
       #wrapper.toggled #content-wrapper {
         margin-left: 0;
         width: 100%;
       }
-      
+
       #wrapper.fully-closed #sidebar-wrapper {
         transform: translateX(-100%);
       }
@@ -610,7 +610,7 @@
       .navbar {
         padding: 0.75rem 1rem;
       }
-      
+
       .navbar-custom {
         padding-left: 0.5rem;
         padding-right: 1rem;
@@ -648,52 +648,52 @@
           {{-- BLOK KHUSUS UNTUK ROLE WAWANCARA --}}
           @if(Auth::user()->role === 'wawancara')
               <li class="nav-item">
-                  <a class="nav-link {{ request()->routeIs('wawancara.jadwal.index') ? 'active' : '' }}" 
+                  <a class="nav-link {{ request()->routeIs('wawancara.jadwal.index') ? 'active' : '' }}"
                      href="{{ route('wawancara.jadwal.index') }}">
                       <i class="fas fa-calendar-alt"></i> <span>Lihat Jadwal</span>
                   </a>
               </li>
           @endif
-        
+
             {{-- BLOK UNTUK ROLE ADMIN & SUPER ADMIN --}}
             @if(in_array(Auth::user()->role, ['admin', 'super admin']))
               <li class="nav-item">
-                  <a class="nav-link {{ request()->routeIs('admin.job_listings.*') ? 'active' : '' }}" 
+                  <a class="nav-link {{ request()->routeIs('admin.job_listings.*') ? 'active' : '' }}"
                      href="{{ route('admin.job_listings.index') }}">
                      <i class="fas fa-briefcase"></i> <span>Lowongan Kerja</span>
                   </a>
               </li>
 
               <li class="nav-item">
-                  <a class="nav-link {{ request()->routeIs('admin.applicants.*') ? 'active' : '' }}" 
+                  <a class="nav-link {{ request()->routeIs('admin.applicants.*') ? 'active' : '' }}"
                      href="{{ route('admin.applicants.index') }}">
                      <i class="fas fa-user-tie"></i> <span>Pelamar</span>
                   </a>
               </li>
 
               <li class="nav-item">
-                  <a class="nav-link {{ request()->routeIs('admin.calendar.*') ? 'active' : '' }}" 
+                  <a class="nav-link {{ request()->routeIs('admin.calendar.*') ? 'active' : '' }}"
                      href="{{ route('admin.calendar.index') }}">
                      <i class="fas fa-calendar-alt"></i> <span>Manajemen Jadwal</span>
                   </a>
               </li>
 
               <li class="nav-item">
-                  <a class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}" 
+                  <a class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}"
                      href="{{ route('admin.reports.index') }}">
                      <i class="fas fa-chart-bar"></i> <span>LAPORAN</span>
                   </a>
               </li>
 
               <li class="nav-item">
-                  <a class="nav-link {{ request()->routeIs('admin.notif.*') ? 'active' : '' }}" 
+                  <a class="nav-link {{ request()->routeIs('admin.notif.*') ? 'active' : '' }}"
                      href="{{ route('admin.notif.index') }}">
                      <i class="fas fa-bell"></i> <span>Notifikasi</span>
                   </a>
               </li>
 
               <li class="nav-item">
-                  <a class="nav-link {{ request()->routeIs('admin.magang.*') ? 'active' : '' }}" 
+                  <a class="nav-link {{ request()->routeIs('admin.magang.*') ? 'active' : '' }}"
                      href="{{ route('admin.magang.index') }}">
                      <i class="fas fa-briefcase"></i> <span>Lowongan magang</span>
                   </a>
@@ -701,7 +701,7 @@
 
               {{-- TAMBAHAN: Navigasi untuk Pesan Masuk / Form Kontak yang telah disubmit pengguna --}}
               <li class="nav-item">
-                  {{-- Menghitung jumlah pesan baru (belum dibaca). 
+                  {{-- Menghitung jumlah pesan baru (belum dibaca).
                       Jika Anda ingin menghindari query di blade, pindahkan ke view composer. --}}
                   @php
                       try {
@@ -712,7 +712,7 @@
                       }
                   @endphp
 
-                  <a class="nav-link {{ request()->routeIs('admin.contact-messages.*') ? 'active' : '' }}" 
+                  <a class="nav-link {{ request()->routeIs('admin.contact-messages.*') ? 'active' : '' }}"
                      href="{{ route('admin.contact-messages.index') }}">
                      <i class="fas fa-envelope"></i> <span>kontak</span>
                      @if($countNewMessages > 0)
@@ -754,7 +754,7 @@
 
       <!-- Logout Button di Footer Sidebar -->
       <div class="sidebar-footer">
-        <a class="logout-btn" href="{{ route('logout') }}" 
+        <a class="logout-btn" href="{{ route('logout') }}"
            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
           <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
         </a>
@@ -779,15 +779,15 @@
             <button id="darkModeToggle" class="dark-toggle">
               <i class="fas fa-moon"></i>
             </button>
-            
+
             <!-- Notification Dropdown -->
             <li class="nav-item dropdown no-arrow me-3">
               <button id="notificationToggle" class="notification-btn" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="fas fa-bell"></i>
                 <span class="notification-badge" style="display: none;">0</span>
               </button>
-              
-              <div class="dropdown-menu dropdown-menu-end shadow animated--grow-in notification-dropdown" 
+
+              <div class="dropdown-menu dropdown-menu-end shadow animated--grow-in notification-dropdown"
                    id="notificationDropdown" aria-labelledby="notificationToggle">
                 <div class="dropdown-header d-flex justify-content-between align-items-center">
                   <strong>Notifikasi</strong>
@@ -923,7 +923,7 @@
       window.addEventListener('resize', handleResponsive);
 
       // ==================== NOTIFICATION FUNCTIONS ====================
-      
+
       // Fungsi untuk memuat notifikasi dari server
       async function loadNotifications() {
         try {
@@ -941,7 +941,7 @@
 
           const response = await fetch('{{ route("admin.notif.api.my") }}');
           const data = await response.json();
-          
+
           if (data.success) {
             updateNotificationDropdown(data.notifications);
             updateNotificationBadge(data.unread_count);
@@ -967,7 +967,7 @@
       function updateNotificationDropdown(notifications) {
         const notificationList = document.querySelector('.notification-list');
         if (!notificationList) return;
-        
+
         if (notifications.length === 0) {
           notificationList.innerHTML = `
             <div class="notification-empty">
@@ -977,16 +977,16 @@
           `;
           return;
         }
-        
+
         let html = '';
         notifications.forEach(notif => {
           const isRead = notif.read_at !== null;
           const timeAgo = getTimeAgo(notif.created_at);
           const title = notif.data?.title || 'Notifikasi';
           const message = notif.data?.message || 'Tidak ada pesan';
-          
+
           html += `
-            <div class="notification-item ${isRead ? 'read' : 'unread'}" 
+            <div class="notification-item ${isRead ? 'read' : 'unread'}"
                  data-id="${notif.id}" onclick="markAsRead('${notif.id}')">
               <div class="d-flex align-items-start">
                 <div class="flex-grow-1">
@@ -999,7 +999,7 @@
             </div>
           `;
         });
-        
+
         notificationList.innerHTML = html;
       }
 
@@ -1007,7 +1007,7 @@
       function updateNotificationBadge(unreadCount) {
         const badge = document.querySelector('.notification-badge');
         if (!badge) return;
-        
+
         if (unreadCount > 0) {
           badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
           badge.style.display = 'flex';
@@ -1027,7 +1027,7 @@
               'Accept': 'application/json'
             }
           });
-          
+
           if (response.ok) {
             // Update tampilan notifikasi
             const notificationItem = document.querySelector(`.notification-item[data-id="${notificationId}"]`);
@@ -1039,7 +1039,7 @@
                 newBadge.remove();
               }
             }
-            
+
             // Update badge count
             loadNotifications();
           }
@@ -1053,12 +1053,12 @@
         const now = new Date();
         const time = new Date(timestamp);
         const diffInSeconds = Math.floor((now - time) / 1000);
-        
+
         if (diffInSeconds < 60) return 'Baru saja';
         if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} menit lalu`;
         if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} jam lalu`;
         if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)} hari lalu`;
-        
+
         return time.toLocaleDateString('id-ID', {
           day: 'numeric',
           month: 'short',
@@ -1068,7 +1068,7 @@
 
       // Load notifikasi saat halaman pertama kali dimuat
       loadNotifications();
-      
+
       // Auto-refresh notifikasi setiap 30 detik
       setInterval(loadNotifications, 30000);
 

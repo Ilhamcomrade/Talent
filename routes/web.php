@@ -18,6 +18,11 @@ use App\Http\Controllers\Admin\CandidateController;
 use App\Http\Controllers\Admin\ContactController as AdminContactController;
 use App\Http\Controllers\Admin\NotifController;
 use App\Http\Controllers\Admin\MagangController;
+use App\Http\Controllers\Admin\ReferenceController;
+use App\Http\Controllers\Admin\ProvinsiController;
+use App\Http\Controllers\Admin\KabupatenController;
+use App\Http\Controllers\Admin\KecamatanController;
+use App\Http\Controllers\Admin\DesaController;
 use App\Http\Controllers\intersipController;
 
 
@@ -40,6 +45,9 @@ use App\Http\Controllers\Campus\RegisterController as CampusRegisterController;
 use App\Http\Controllers\Campus\LoginController as CampusLoginController;
 use App\Http\Controllers\Campus\CampusController as PublicCampusController;
 use App\Http\Controllers\Campus\PasswordResetController as CampusPasswordResetController;
+
+// API Controllers
+use App\Http\Controllers\Api\LocationApiController;
 
 // Public Controllers
 use App\Http\Controllers\JobController;
@@ -432,6 +440,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('campus', [CampusController::class, 'index'])->name('campus.index');
     Route::get('campus/{campus:slug}', [CampusController::class, 'show'])->name('campus.show'); // Gunakan slug
     Route::delete('campus/{campus:slug}', [CampusController::class, 'destroy'])->name('campus.destroy'); // Gunakan slug
+    
 
     // TAMBAHAN: Routes untuk Pemagang (Interns)
     Route::prefix('interns')->name('interns.')->group(function () {});
@@ -448,6 +457,65 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // 5. Laporan & Analitik
     Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
 
+        // 6. Reference
+    Route::prefix('reference')->name('reference.')->group(function () {
+
+    Route::get('/', [ReferenceController::class, 'index'])->name('index');
+
+    // Submenu Provinsi
+       Route::prefix('provinsi')->name('provinsi.')->group(function () {
+        Route::get('/', [ProvinsiController::class, 'index'])->name('index');
+        Route::get('/create', [ProvinsiController::class, 'create'])->name('create');
+        Route::post('/', [ProvinsiController::class, 'store'])->name('store');
+        Route::get('/{id}', [ProvinsiController::class, 'show'])->name('show');
+        Route::get('/{id}/edit', [ProvinsiController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [ProvinsiController::class, 'update'])->name('update');
+        Route::delete('/{id}', [ProvinsiController::class, 'destroy'])->name('destroy');
+
+        // API Routes untuk Provinsi
+        Route::get('/api/list', [ProvinsiController::class, 'getProvinsi'])->name('api.list');
+    });
+
+    // Submenu Kabupaten
+    Route::prefix('kabupaten')->name('kabupaten.')->group(function () {
+        Route::get('/', [KabupatenController::class, 'index'])->name('index');
+        Route::get('/create', [KabupatenController::class, 'create'])->name('create');
+        Route::post('/', [KabupatenController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [KabupatenController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [KabupatenController::class, 'update'])->name('update');
+        Route::delete('/{id}', [KabupatenController::class, 'destroy'])->name('destroy');
+
+        Route::get('/api/list', [KabupatenController::class, 'getKabupaten'])->name('api.list');
+        Route::get('/api/provinsi/{provinsiId}', [KabupatenController::class, 'getByProvinsi'])->name('api.by-provinsi');
+    });
+
+    // Submenu Kecamatan
+    Route::prefix('kecamatan')->name('kecamatan.')->group(function () {
+        Route::get('/', [KecamatanController::class, 'index'])->name('index');
+        Route::get('/create', [KecamatanController::class, 'create'])->name('create');
+        Route::post('/', [KecamatanController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [KecamatanController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [KecamatanController::class, 'update'])->name('update');
+        Route::delete('/{id}', [KecamatanController::class, 'destroy'])->name('destroy');
+
+        Route::get('/api/list', [KecamatanController::class, 'getKecamatan'])->name('api.list');
+        Route::get('/api/kabupaten/{kabupatenId}', [KecamatanController::class, 'getByKabupaten'])->name('api.by-kabupaten');
+    });
+
+    // Submenu Desa
+    Route::prefix('desa')->name('desa.')->group(function () {
+        Route::get('/', [DesaController::class, 'index'])->name('index');
+        Route::get('/create', [DesaController::class, 'create'])->name('create');
+        Route::post('/', [DesaController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [DesaController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [DesaController::class, 'update'])->name('update');
+        Route::delete('/{id}', [DesaController::class, 'destroy'])->name('destroy');
+
+        Route::get('/api/list', [DesaController::class, 'getDesa'])->name('api.list');
+        Route::get('/api/kecamatan/{kecamatanId}', [DesaController::class, 'getByKecamatan'])->name('api.by-kecamatan');
+    });
+
+});
 
     // Contact messages admin management
     Route::resource('contact-messages', AdminContactController::class)->only(['index', 'show', 'destroy']);
@@ -468,6 +536,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::resource('lokasi', LokasiController::class);
     });
 });
+
+Route::prefix('api/reference')->name('api.reference.')->group(function () {
+    Route::get('/provinsi/list', [LocationApiController::class, 'getProvinsiList'])->name('provinsi.list');
+    Route::get('/kabupaten/by-province', [LocationApiController::class, 'getKabupatenByProvince'])->name('kabupaten.by-province');
+    Route::get('/kabupaten/by-provinsi', [LocationApiController::class, 'getKabupatenByProvinsi'])->name('kabupaten.by-provinsi');
+    Route::get('/kecamatan/by-kabupaten', [LocationApiController::class, 'getKecamatanByKabupaten'])->name('kecamatan.by-kabupaten');
+    Route::get('/kecamatan/by-kabupaten-old', [LocationApiController::class, 'getKecamatanByKabupatenOld'])->name('kecamatan.by-kabupaten-old');
+    Route::get('/desa/by-kecamatan', [LocationApiController::class, 'getDesaByKecamatan'])->name('desa.by-kecamatan');
+});
+
 
 /*
 |--------------------------------------------------------------------------
