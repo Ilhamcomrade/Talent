@@ -45,12 +45,12 @@
 <div class="col-md-4 mb-4 mb-md-0">
                 <h5 class="fw-bold mb-3 text-red-custom">Navigasi</h5>
                 <ul class="list-unstyled">
-                    <li><a href="/jobs" class="footer-link">Lowongan Kerja</a></li> 
-                    <li><a href="/sumber-daya-karir" class="footer-link">Sumber Daya Karir</a></li> 
-                    <li><a href="/explore-perusahaan" class="footer-link">Explore Perusahaan</a></li> 
-                    <li><a href="/magang" class="footer-link">Open Intership</a></li> 
-                    <li><a href="/tentang-perusahaan" class="footer-link">Tentang Perusahaan</a></li> 
-                    
+                    <li><a href="/jobs" class="footer-link">Lowongan Kerja</a></li>
+                    <li><a href="/sumber-daya-karir" class="footer-link">Sumber Daya Karir</a></li>
+                    <li><a href="/explore-organisasi" class="footer-link">Explore Organisasi</a></li>
+                    <li><a href="/magang" class="footer-link">Open Intership</a></li>
+                    <li><a href="/tentang-kami" class="footer-link">Tentang kami</a></li>
+
                     <li><a href="/kontak" class="footer-link">Kontak</a></li>
 
                 </ul>

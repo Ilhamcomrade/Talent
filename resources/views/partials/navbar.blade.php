@@ -441,8 +441,8 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->is('explore-perusahaan') ? 'active' : '' }}"
-                        href="/explore-perusahaan">
+                    <a class="nav-link {{ request()->is('explore-organisasi') ? 'active' : '' }}"
+                        href="/explore-organisasi">
                         Explore Organisasi
                     </a>
                 </li>

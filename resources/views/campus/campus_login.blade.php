@@ -125,6 +125,10 @@
             height: auto;
             border: 1px solid #999; /* Diubah ketebalan border menjadi 1px solid #999 */
         }
+        .form-control.is-invalid {
+            border-color: #dc3545 !important;
+            background-image: none;
+        }
         .password-container {
             position: relative;
             width: 100%;
@@ -285,6 +289,22 @@
             font-weight: 500;
             margin: 0;
         }
+
+        /* PERUBAHAN: Error message khusus untuk email salah */
+        .error-message {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 5px;
+            text-align: left;
+            width: 100%;
+            display: block;
+        }
+
+        /* PERUBAHAN: Style untuk form errors */
+        .form-group {
+            margin-bottom: 1rem;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
@@ -315,17 +335,7 @@
         </div>
 
         <div class="register-right">
-              <h3>Pasang Iklan Intership<br>Sekarang!</h3>
-
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul class="mb-0">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+            <h3>Pasang Iklan Intership<br>Sekarang!</h3>
 
             @if (session('success'))
                 <div class="alert alert-success">
@@ -335,26 +345,42 @@
 
             <form action="{{ route('campus.login.submit') }}" method="POST" style="width: 100%;">
                 @csrf
-                <div class="mb-3 text-start">
-                    <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" placeholder="Masukkan email Anda" value="{{ old('email') }}" required>
+
+                <!-- PERUBAHAN: Form group untuk email dengan error di bawahnya -->
+                <div class="form-group mb-3 text-start">
+                    <input type="email"
+                           class="form-control @error('email') is-invalid @enderror"
+                           id="email"
+                           name="email"
+                           placeholder="Masukkan email Anda"
+                           value="{{ old('email') }}"
+                           required>
+
+                    <!-- PERUBAHAN: Tampilkan error email spesifik di bawah input -->
                     @error('email')
-                        <div class="invalid-feedback">
-                            {{ $message }}
-                        </div>
+                        <div class="error-message">{{ $message }}</div>
                     @enderror
                 </div>
-                <div class="mb-3 text-start">
+
+                <!-- PERUBAHAN: Form group untuk password dengan error di bawahnya -->
+                <div class="form-group mb-3 text-start">
                     <div class="password-container">
-                        <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Masukkan password anda" required>
+                        <input type="password"
+                               class="form-control @error('password') is-invalid @enderror"
+                               id="password"
+                               name="password"
+                               placeholder="Masukkan password anda"
+                               required>
                         <i class="fa-regular fa-eye password-toggle"></i>
                     </div>
+
+                    <!-- PERUBAHAN: Tampilkan error password spesifik di bawah input -->
                     @error('password')
-                        <div class="invalid-feedback">
-                            {{ $message }}
-                        </div>
+                        <div class="error-message">{{ $message }}</div>
                     @enderror
                 </div>
-                <a href="#" class="forgot-password">Lupa password?</a>
+
+                <a href="/lupa-password-kampus" class="forgot-password">Lupa password?</a>
                 <button type="submit" class="btn btn-submit">Masuk</button>
             </form>
 
@@ -393,6 +419,16 @@
             this.classList.toggle('fa-eye');
             this.classList.toggle('fa-eye-slash');
         });
+
+        // PERUBAHAN: Focus pada input email jika ada error
+        @if($errors->has('email'))
+            document.getElementById('email').focus();
+        @endif
+
+        // PERUBAHAN: Focus pada input password jika ada error password saja
+        @if($errors->has('password') && !$errors->has('email'))
+            document.getElementById('password').focus();
+        @endif
     </script>
 </body>
 </html>

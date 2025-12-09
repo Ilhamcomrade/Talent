@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PasswordResetController;
+
 // Admin Controllers
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -31,12 +33,13 @@ use App\Http\Controllers\Company\cMagangController;
 // use App\Http\Controllers\Company\cDashboardController;
 use App\Http\Controllers\Company\CompanyController as PublicCompanyController;
 use App\Http\Controllers\Company\CompanyJobController;
-
+use App\Http\Controllers\Company\CompanyPasswordResetController;
 
 // Campus Controllers
 use App\Http\Controllers\Campus\RegisterController as CampusRegisterController;
 use App\Http\Controllers\Campus\LoginController as CampusLoginController;
 use App\Http\Controllers\Campus\CampusController as PublicCampusController;
+use App\Http\Controllers\Campus\PasswordResetController as CampusPasswordResetController;
 
 // Public Controllers
 use App\Http\Controllers\JobController;
@@ -53,6 +56,7 @@ use App\Http\Controllers\ProfileController;
 | Halaman Publik
 |--------------------------------------------------------------------------
 */
+
 Route::get('/', fn() => view('home'))->name('home');
 Route::get('/daftar', fn() => view('daftar'))->name('register');
 Route::get('/masuk', fn() => view('login'))->name('login');
@@ -71,11 +75,11 @@ Route::get('/kontak', [ContactController::class, 'index'])->name('contact');
 Route::post('/kontak', [ContactController::class, 'store'])->name('contact.store');
 // END: PERUBAHAN DI BAGIAN KONTAK
 
-Route::get('/tentang-perusahaan', fn() => view('about_company'))->name('about');
-Route::get('/explore-perusahaan', fn() => view('explore_company'));
+Route::get('/tentang-kami', fn() => view('about_us'))->name('about');
+Route::get('/explore-organisasi', fn() => view('explore_organization'));
 // Pencarian explore
 Route::get('/explore/search', function () {
-    return view('explore_company');
+    return view('explore_organization');
 })->name('explore.search');
 
 
@@ -89,6 +93,22 @@ Route::prefix('company')->group(function () {
     Route::post('/login', [App\Http\Controllers\Company\LoginController::class, 'login'])->name('company.login.submit');
     Route::post('/logout', [App\Http\Controllers\Company\LoginController::class, 'logout'])->name('company.logout');
 
+
+    // ✅ ROUTE ALIAS UNTUK COMPATIBILITY DENGAN CONTROLLER
+    Route::get('/lupa-password', [CompanyPasswordResetController::class, 'showForgotPasswordForm'])
+        ->name('company.forgot.password');
+
+    Route::post('/lupa-password', [CompanyPasswordResetController::class, 'sendResetLinkEmail'])
+        ->name('company.password.email');
+
+    // ✅ ROUTE RESET PASSWORD PERUSAHAAN
+    Route::get('/reset-password/{token}', [CompanyPasswordResetController::class, 'showResetPasswordForm'])
+        ->name('company.password.reset');
+
+    Route::post('/reset-password', [CompanyPasswordResetController::class, 'resetPassword'])
+        ->name('company.password.update');
+
+
     // Registration routes
     Route::get('/daftar', [App\Http\Controllers\Company\RegisterController::class, 'showStep1'])->name('company.register');
     Route::post('/daftar/step1', [App\Http\Controllers\Company\RegisterController::class, 'processStep1'])->name('company.register.step1');
@@ -99,74 +119,72 @@ Route::prefix('company')->group(function () {
     Route::get('/daftar/batal', [App\Http\Controllers\Company\RegisterController::class, 'cancelRegistration'])->name('company.register.cancel');
 
     // Semua route dalam group ini akan dilindungi middleware 'auth.company'
-Route::middleware(['auth.company'])->group(function () {
+    Route::middleware(['auth.company'])->group(function () {
 
-    // Dashboard
-    Route::get('/dashboard', fn() => view('company.company_dashboard'))->name('company.dashboard');
+        // Dashboard
+        Route::get('/dashboard', fn() => view('company.company_dashboard'))->name('company.dashboard');
 
-    // // Lowongan
-    // Route::get('/jobs', [cJobController::class, 'index'])->name('company.jobs.index');
-    // Route::get('/jobs/create', [cJobController::class, 'create'])->name('company.jobs.create');
-    // Route::post('/jobs', [cJobController::class, 'store'])->name('jobs.store');
-    // Route::get('/jobs/{id}/edit', [cJobController::class, 'edit'])->name('jobs.edit');
-    // Route::put('/jobs/{id}', [cJobController::class, 'update'])->name('jobs.update');
-    // Route::delete('/jobs/{id}', [cJobController::class, 'destroy'])->name('jobs.destroy');
+        // // Lowongan
+        // Route::get('/jobs', [cJobController::class, 'index'])->name('company.jobs.index');
+        // Route::get('/jobs/create', [cJobController::class, 'create'])->name('company.jobs.create');
+        // Route::post('/jobs', [cJobController::class, 'store'])->name('jobs.store');
+        // Route::get('/jobs/{id}/edit', [cJobController::class, 'edit'])->name('jobs.edit');
+        // Route::put('/jobs/{id}', [cJobController::class, 'update'])->name('jobs.update');
+        // Route::delete('/jobs/{id}', [cJobController::class, 'destroy'])->name('jobs.destroy');
 
-    // API untuk wilayah (jika perlu akses terproteksi)
-    Route::get('/api/regencies/{id}', [cJobController::class, 'getRegencies']);
-    Route::get('/api/districts/{id}', [cJobController::class, 'getDistricts']);
-    Route::get('/api/villages/{id}', [cJobController::class, 'getVillages']);
+        // API untuk wilayah (jika perlu akses terproteksi)
+        Route::get('/api/regencies/{id}', [cJobController::class, 'getRegencies']);
+        Route::get('/api/districts/{id}', [cJobController::class, 'getDistricts']);
+        Route::get('/api/villages/{id}', [cJobController::class, 'getVillages']);
 
-    // Profil
-    Route::get('/profile', [cProfileController::class, 'index'])->name('profile');
-    Route::post('/profile', [cProfileController::class, 'index'])->name('profile');
-    Route::get('/company/profile', [\App\Http\Controllers\Company\cProfileController::class, 'index'])
-        ->name('company.profile');
+        // Profil
+        Route::get('/profile', [cProfileController::class, 'index'])->name('profile');
+        Route::post('/profile', [cProfileController::class, 'index'])->name('profile');
+        Route::get('/company/profile', [\App\Http\Controllers\Company\cProfileController::class, 'index'])
+            ->name('company.profile');
 
-    Route::post('/company/profile/update', [\App\Http\Controllers\Company\cProfileController::class, 'update'])
-        ->name('company.profile.update');
+        Route::post('/company/profile/update', [\App\Http\Controllers\Company\cProfileController::class, 'update'])
+            ->name('company.profile.update');
         Route::put('/company/profile/update', [cProfileController::class, 'update'])
-    ->name('company.profile.update');
+            ->name('company.profile.update');
 
         // Profile Delete
-    Route::delete('/company/profile/destroy', [\App\Http\Controllers\Company\cProfileController::class, 'destroy'])
-        ->name('company.profile.destroy');
+        Route::delete('/company/profile/destroy', [\App\Http\Controllers\Company\cProfileController::class, 'destroy'])
+            ->name('company.profile.destroy');
 
-    // CRUD Magang
-    Route::get('magang', [CMagangController::class, 'index'])->name('company.magang.index');
-    Route::get('magang/create', [CMagangController::class, 'create'])->name('company.magang.create');
-    Route::post('magang', [CMagangController::class, 'store'])->name('company.magang.store');
-    Route::get('magang/{id}', [CMagangController::class, 'show'])->name('company.magang.show');
-    Route::get('magang/{id}/edit', [CMagangController::class, 'edit'])->name('company.magang.edit');
-    Route::put('magang/{id}', [CMagangController::class, 'update'])->name('company.magang.update');
-    Route::delete('magang/{id}', [CMagangController::class, 'destroy'])->name('company.magang.destroy');
-
-
-    // CRUD Benefit
-    Route::get('benefits', [\App\Http\Controllers\Company\BenefitController::class, 'index'])->name('company.benefits.index');
-    Route::get('benefits/create', [\App\Http\Controllers\Company\BenefitController::class, 'create'])->name('company.benefits.create');
-    Route::post('benefits', [\App\Http\Controllers\Company\BenefitController::class, 'store'])->name('company.benefits.store');
-    Route::get('benefits/{benefit}/edit', [\App\Http\Controllers\Company\BenefitController::class, 'edit'])->name('company.benefits.edit');
-    Route::put('benefits/{benefit}', [\App\Http\Controllers\Company\BenefitController::class, 'update'])->name('company.benefits.update');
-    Route::delete('benefits/{benefit}', [\App\Http\Controllers\Company\BenefitController::class, 'destroy'])->name('company.benefits.destroy');
-    Route::patch('benefits/{benefit}/toggle-status', [\App\Http\Controllers\Company\BenefitController::class, 'toggleStatus'])->name('company.benefits.toggle-status');
-
-    // Route jobs dengan nama berbeda (perhatikan duplikasi)
-    Route::get('jobs', [cJobController::class, 'index'])->name('companiesjobs.index');
-    Route::get('jobs/create', [cJobController::class, 'create'])->name('companiesjobs.create');
-    Route::post('jobs', [cJobController::class, 'store'])->name('companiesjobs.store');
-    Route::get('jobs/{id}/edit', [cJobController::class, 'edit'])->name('companiesjobs.edit');
-    Route::put('jobs/{id}', [cJobController::class, 'update'])->name('companiesjobs.update');
-    Route::delete('jobs/{id}', [cJobController::class, 'destroy'])->name('companiesjobs.destroy');
-    // Halaman daftar pelamar
-Route::get('jobs/pelamar', function () {
-    return view('company.jobs.pelamar');
-})->name('companiesjobs.pelamar');
-
-    Route::get('jobs/{id}', [cJobController::class, 'show'])->name('companiesjobs.show');
-});
+        // CRUD Magang
+        Route::get('magang', [CMagangController::class, 'index'])->name('company.magang.index');
+        Route::get('magang/create', [CMagangController::class, 'create'])->name('company.magang.create');
+        Route::post('magang', [CMagangController::class, 'store'])->name('company.magang.store');
+        Route::get('magang/{id}', [CMagangController::class, 'show'])->name('company.magang.show');
+        Route::get('magang/{id}/edit', [CMagangController::class, 'edit'])->name('company.magang.edit');
+        Route::put('magang/{id}', [CMagangController::class, 'update'])->name('company.magang.update');
+        Route::delete('magang/{id}', [CMagangController::class, 'destroy'])->name('company.magang.destroy');
 
 
+        // CRUD Benefit
+        Route::get('benefits', [\App\Http\Controllers\Company\BenefitController::class, 'index'])->name('company.benefits.index');
+        Route::get('benefits/create', [\App\Http\Controllers\Company\BenefitController::class, 'create'])->name('company.benefits.create');
+        Route::post('benefits', [\App\Http\Controllers\Company\BenefitController::class, 'store'])->name('company.benefits.store');
+        Route::get('benefits/{benefit}/edit', [\App\Http\Controllers\Company\BenefitController::class, 'edit'])->name('company.benefits.edit');
+        Route::put('benefits/{benefit}', [\App\Http\Controllers\Company\BenefitController::class, 'update'])->name('company.benefits.update');
+        Route::delete('benefits/{benefit}', [\App\Http\Controllers\Company\BenefitController::class, 'destroy'])->name('company.benefits.destroy');
+        Route::patch('benefits/{benefit}/toggle-status', [\App\Http\Controllers\Company\BenefitController::class, 'toggleStatus'])->name('company.benefits.toggle-status');
+
+        // Route jobs dengan nama berbeda (perhatikan duplikasi)
+        Route::get('jobs', [cJobController::class, 'index'])->name('companiesjobs.index');
+        Route::get('jobs/create', [cJobController::class, 'create'])->name('companiesjobs.create');
+        Route::post('jobs', [cJobController::class, 'store'])->name('companiesjobs.store');
+        Route::get('jobs/{id}/edit', [cJobController::class, 'edit'])->name('companiesjobs.edit');
+        Route::put('jobs/{id}', [cJobController::class, 'update'])->name('companiesjobs.update');
+        Route::delete('jobs/{id}', [cJobController::class, 'destroy'])->name('companiesjobs.destroy');
+        // Halaman daftar pelamar
+        Route::get('jobs/pelamar', function () {
+            return view('company.jobs.pelamar');
+        })->name('companiesjobs.pelamar');
+
+        Route::get('jobs/{id}', [cJobController::class, 'show'])->name('companiesjobs.show');
+    });
 });
 
 // ===========================================================================
@@ -248,15 +266,15 @@ Route::middleware(['auth'])->group(function () {
 // 🌟 API NOTIFIKASI VERSI USER
 Route::middleware(['auth'])->group(function () {
     // Halaman notifikasi user
-     Route::get('/notifications/my', [UserNotifController::class, 'myNotifications'])->name('notifications.my');
+    Route::get('/notifications/my', [UserNotifController::class, 'myNotifications'])->name('notifications.my');
     Route::get('/notifications/api', [UserNotifController::class, 'getMyNotificationsApi'])->name('notifications.api');
     Route::put('/notifications/api/read/{id}', [UserNotifController::class, 'markAsReadApi'])->name('notifications.api.read');
-     // 🌟 Tambahkan ini
+    // 🌟 Tambahkan ini
     Route::post('/notifications/mark-all-read', [UserNotifController::class, 'markAllRead'])
         ->name('notifications.markAllRead');
-        // Tandai notifikasi sebagai sudah dibaca (untuk satu notifikasi)
-Route::post('/notifications/read/{id}', [UserNotifController::class, 'markAsRead'])
-    ->name('notifications.markRead');
+    // Tandai notifikasi sebagai sudah dibaca (untuk satu notifikasi)
+    Route::post('/notifications/read/{id}', [UserNotifController::class, 'markAsRead'])
+        ->name('notifications.markRead');
     // ❌ RUTE DELETE SATU NOTIFIKASI (DELETE /notifications/{id})
     Route::delete('/notifications/delete/{id}', [UserNotifController::class, 'delete'])->name('notifications.delete');
 
@@ -265,8 +283,6 @@ Route::post('/notifications/read/{id}', [UserNotifController::class, 'markAsRead
     Route::get('/notifications/{id}', [UserNotifController::class, 'show'])->name('notifications.show');
     Route::get('/notifications', [UserNotifController::class, 'myNotifications'])->name('notifications.index');
     Route::patch('/notifications/{id}/mark-unread', [UserNotifController::class, 'markUnread'])->name('notifications.mark-unread');
-
-
 });
 
 // Halaman tipe pekerjaan
@@ -291,6 +307,14 @@ Route::name('campus.')->group(function () {
     Route::get('/lokasi-daftar-kampus', [App\Http\Controllers\Campus\RegisterController::class, 'showStep3'])->name('register.location');
     Route::post('/lokasi-daftar-kampus/step3', [App\Http\Controllers\Campus\RegisterController::class, 'processStep3'])->name('register.step3');
     Route::get('/cancel-registration-kampus', [App\Http\Controllers\Campus\RegisterController::class, 'cancelRegistration'])->name('register.cancel');
+
+
+
+    // Password Reset Routes
+    Route::get('/lupa-password-kampus', [CampusPasswordResetController::class, 'showForgotPasswordForm'])->name('forgot.password');
+    Route::post('/lupa-password-kampus', [CampusPasswordResetController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::get('/reset-password-kampus/{token}', [CampusPasswordResetController::class, 'showResetPasswordForm'])->name('password.reset');
+    Route::post('/reset-password-kampus', [CampusPasswordResetController::class, 'resetPassword'])->name('password.update');
 
     Route::get('/mou-kampus', fn() => view('campus.mou'));
     Route::get('/pengajuan-proposal-kampus', fn() => view('campus.proposal'));
@@ -318,6 +342,14 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.process');
 Route::post('/register', [AuthController::class, 'registerProcess'])->name('register.process');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+Route::middleware(['logout.for.password'])->group(function () {
+    Route::get('/lupa-password', [PasswordResetController::class, 'showForgotPasswordForm'])->name('password.request');
+    Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetPasswordForm'])->name('password.reset');
+});
+
+Route::post('/lupa-password', [PasswordResetController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::post('/reset-password', [PasswordResetController::class, 'resetPassword'])->name('password.update');
+
 // ✅ TAMBAHAN RUTE GOOGLE LOGIN
 Route::get('auth/google/redirect', [AuthController::class, 'redirectToGoogle'])->name('google.login');
 Route::get('auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
@@ -332,7 +364,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
     // 1. Dashboard, Lowongan, Pelamar, Perusahaan, Kandidat
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-     // 🔔 Route Notifikasi
+    // 🔔 Route Notifikasi
     // Form kirim notifikasi (admin -> user)
     Route::get('/notif', [NotifController::class, 'index'])->name('notif.index');
     Route::post('/notif/send', [NotifController::class, 'send'])->name('notif.send');
@@ -356,11 +388,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/api/magang/districts/{regencyId}', [MagangController::class, 'getDistricts'])->name('magang.api.districts');
     Route::get('/api/magang/villages/{districtId}', [MagangController::class, 'getVillages'])->name('magang.api.villages');
 
-        // Lowongan Magang
+    // Lowongan Magang
     Route::resource('magang', MagangController::class);
     Route::get('/api/magang/regencies/{provinceId}', [MagangController::class, 'getRegencies'])->name('magang.api.regencies');
-Route::get('/api/magang/districts/{regencyId}', [MagangController::class, 'getDistricts'])->name('magang.api.districts');
-Route::get('/api/magang/villages/{districtId}', [MagangController::class, 'getVillages'])->name('magang.api.villages');
+    Route::get('/api/magang/districts/{regencyId}', [MagangController::class, 'getDistricts'])->name('magang.api.districts');
+    Route::get('/api/magang/villages/{districtId}', [MagangController::class, 'getVillages'])->name('magang.api.villages');
 
 
 
@@ -402,8 +434,7 @@ Route::get('/api/magang/villages/{districtId}', [MagangController::class, 'getVi
     Route::delete('campus/{campus:slug}', [CampusController::class, 'destroy'])->name('campus.destroy'); // Gunakan slug
 
     // TAMBAHAN: Routes untuk Pemagang (Interns)
-    Route::prefix('interns')->name('interns.')->group(function () {
-    });
+    Route::prefix('interns')->name('interns.')->group(function () {});
 
     // 4. Manajemen Jadwal/Kalender
     Route::prefix('calendar')->name('calendar.')->group(function () {
@@ -419,7 +450,7 @@ Route::get('/api/magang/villages/{districtId}', [MagangController::class, 'getVi
 
 
     // Contact messages admin management
-    Route::resource('contact-messages', AdminContactController::class)->only(['index','show','destroy']);
+    Route::resource('contact-messages', AdminContactController::class)->only(['index', 'show', 'destroy']);
     Route::post('contact-messages/{id}/restore', [AdminContactController::class, 'restore'])->name('contact-messages.restore');
 
 
@@ -447,6 +478,5 @@ Route::prefix('wawancara')->name('wawancara.')->middleware(['auth', 'wawancara']
     Route::prefix('jadwal')->name('jadwal.')->group(function () {
         Route::get('/', fn() => view('admin.calendar.index'))->name('index');
         Route::get('/events', [CalendarController::class, 'fetchEvents'])->name('index.events');
-
     });
 });

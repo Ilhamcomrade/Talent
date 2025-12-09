@@ -264,7 +264,7 @@
 
                             {{-- Link lihat lainnya hanya muncul bila perusahaan ada --}}
                             <div class="text-start mt-3">
-                                <a href="explore-perusahaan" class="text-decoration-none see-more-offset">Lihat Lainnya.....</a>
+                                <a href="explore-organisasi" class="text-decoration-none see-more-offset">Lihat Lainnya.....</a>
                             </div>
                         @endif
                     </div>

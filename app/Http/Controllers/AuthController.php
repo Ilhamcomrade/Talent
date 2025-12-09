@@ -48,12 +48,28 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        // Validasi input
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
         $credentials = $request->only('email', 'password');
 
         $user = User::where('email', $credentials['email'])->first();
 
-        // Cek apakah user ada dan password benar
-        if ($user && (!is_null($user->password) && Hash::check($credentials['password'], $user->password))) {
+        // Cek apakah user ada
+        if (!$user) {
+            // Email tidak ditemukan - HANYA error untuk email
+            return back()
+                ->withInput($request->only('email'))
+                ->withErrors([
+                    'email' => 'Email tidak ditemukan!'
+                ]);
+        }
+
+        // Cek apakah password benar
+        if (!is_null($user->password) && Hash::check($credentials['password'], $user->password)) {
             // Simpan session login
             Auth::login($user);
 
@@ -79,11 +95,21 @@ class AuthController extends Controller
         }
 
         // TAMBAHAN: Jika user ada tetapi tidak punya password (Google User) dan mencoba login manual
-        if ($user && is_null($user->password)) {
-            return back()->with('error', 'Akun ini terdaftar melalui Google. Silakan gunakan tombol "Masuk dengan Google".');
+        if (is_null($user->password)) {
+            // Akun Google - HANYA error untuk email
+            return back()
+                ->withInput($request->only('email'))
+                ->withErrors([
+                    'email' => 'Akun ini terdaftar melalui Google. Silakan gunakan tombol "Masuk dengan Google".'
+                ]);
         }
 
-        return back()->with('error', 'Email atau password salah!');
+        // Jika password salah - HANYA error untuk password
+        return back()
+            ->withInput($request->only('email'))
+            ->withErrors([
+                'password' => 'Password salah!'
+            ]);
     }
 
     public function logout()
@@ -113,15 +139,11 @@ class AuthController extends Controller
             /** @var \Laravel\Socialite\Contracts\User $googleUser */
             $googleUser = Socialite::driver('google')->user();
 
-            // Log user data yang diterima dari Google
-            Log::info('Google User Data Received: ' . $googleUser->getEmail());
-
             $user = User::where('google_id', $googleUser->getId())->first();
 
             if ($user) {
                 // 1. User ditemukan, langsung login
                 Auth::login($user);
-                Log::info('User existing Google ID logged in: ' . $user->email);
             } else {
                 $existingUser = User::where('email', $googleUser->getEmail())->first();
 
@@ -131,7 +153,6 @@ class AuthController extends Controller
                     $existingUser->avatar = $googleUser->getAvatar();
                     $existingUser->save();
                     Auth::login($existingUser);
-                    Log::info('Existing user linked to Google ID: ' . $existingUser->email);
                 } else {
                     // 3. User BARU: Buat akun baru
                     $newUser = User::create([
@@ -147,16 +168,16 @@ class AuthController extends Controller
                     ]);
 
                     Auth::login($newUser);
-                    Log::info('New Google user created and logged in: ' . $newUser->email);
                 }
             }
 
             // 4. Redirect ke halaman utama ('/') sesuai permintaan
             return redirect('/')->with('success', 'Selamat datang, Anda berhasil masuk dengan Google!');
         } catch (\Exception $e) {
-            // Log Error detail untuk debugging
-            Log::error('Google Login GAGAL: ' . $e->getMessage() . ' pada line ' . $e->getLine() . ' di file ' . $e->getFile());
-            return redirect('/masuk')->with('error', 'Gagal login dengan Google. Silakan coba lagi. Cek log server untuk detail.');
+            // Redirect dengan error spesifik untuk email
+            return redirect('/masuk')->withErrors([
+                'email' => 'Gagal login dengan Google. Silakan coba lagi.'
+            ]);
         }
     }
 }

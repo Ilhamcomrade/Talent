@@ -58,7 +58,7 @@
             text-align: center;
             color: #8c8f95;
             font-size: 16px;
-            margin: 8px 0; /* Dikurangi margin atas dan bawah agar lebih dekat */
+            margin: 8px 0;
         }
 
         .divider::before,
@@ -95,7 +95,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 12px; /* Dikurangi dari 20px menjadi 12px untuk naik lebih tinggi */
+            margin-top: 12px;
             font-size: 16px;
             color: #6c757d;
         }
@@ -116,7 +116,7 @@
             font-size: 16px;
             color: #6c757d;
             text-align: center;
-            margin-top: 4px; /* Dikurangi dari 8px menjadi 4px untuk naik lebih tinggi */
+            margin-top: 4px;
         }
 
         .company-link a {
@@ -132,6 +132,11 @@
             border: 1px solid #999;
             border-radius: 2px;
             box-shadow: none;
+        }
+
+        .form-control.is-invalid {
+            border-color: #dc3545;
+            background-image: none;
         }
 
         .form-control:focus {
@@ -160,8 +165,8 @@
             height: 45px;
             border: none;
             font-size: 15px;
-            width: 180px; /* Sama dengan lebar tombol Daftar */
-            margin: 10px auto 8px; /* Dikurangi margin atas dan bawah agar lebih dekat */
+            width: 180px;
+            margin: 10px auto 8px;
             display: block;
         }
 
@@ -182,6 +187,15 @@
             font-size: 15px;
         }
 
+        .error-feedback {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+            text-align: left;
+            display: block;
+        }
+
+        /* Styling untuk toast (tetap dipertahankan) */
         .glints-toast {
             border: none;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -213,6 +227,10 @@
             line-height: 1.5;
         }
 
+        .error-icon {
+            color: #dc3545;
+        }
+
         .glints-toast-content {
             flex-grow: 1;
             margin-right: 10px;
@@ -233,6 +251,10 @@
             display: block;
         }
 
+        .error-toast-text {
+            color: #dc3545;
+        }
+
         .glints-toast .btn-close {
             padding: 0;
             margin-left: auto;
@@ -248,28 +270,61 @@
     @include('partials.navbar')
 
     <div class="d-flex flex-column align-items-center pt-3">
-        <!-- <h2 class="title-glints">Selamat Datang Kembali!</h2> -->
         <p class="sub-title">Masuk ke akun Talenthub kamu</p>
         <div class="login-container bg-white rounded shadow-sm">
-            <form action="{{ route('login.process') }}" method="POST">
+            <!-- HAPUS ALERT ERROR UMUM -->
+            <!--
+            @if($errors->any() || session('error'))
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                        @if(session('error'))
+                            <li>{{ session('error') }}</li>
+                        @endif
+                    </ul>
+                </div>
+            @endif
+            -->
+
+            <form action="{{ route('login.process') }}" method="POST" id="loginForm">
                 @csrf
                 <div class="mb-3">
-                     <!-- <label for="email" class="form-label">Email</label> -->
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Alamat Email" required>
+                    <input type="email"
+                           class="form-control @error('email') is-invalid @enderror"
+                           id="email"
+                           name="email"
+                           placeholder="Alamat Email"
+                           value="{{ old('email') }}"
+                           required>
+                    @error('email')
+                        <div class="error-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
                 <div class="mb-3">
-                    <!-- <label for="password" class="form-label">Password</label> -->
                     <div class="password-container">
-                        <input type="password" class="form-control" id="passwordInput" name="password" placeholder="Kata Sandi" required>
+                        <input type="password"
+                               class="form-control @error('password') is-invalid @enderror"
+                               id="passwordInput"
+                               name="password"
+                               placeholder="Kata Sandi"
+                               required>
                         <i class="fa-regular fa-eye password-toggle"></i>
                     </div>
+                    @error('password')
+                        <div class="error-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
                 <!-- Tambahkan link Lupa Password di sini -->
                 <div class="forgot-password">
-                    <a href="{{ url('/lupa-kata-sandi') }}">Lupa Kata Sandi?</a>
+                    <a href="{{ url('/lupa-password') }}">Lupa Kata Sandi?</a>
                 </div>
-                <div class="d-grid gap-2 mb-2"> <!-- Dikurangi margin bottom dari mb-3 ke mb-2 -->
-                    <button type="submit" class="btn btn-masuk">Masuk</button>
+                <div class="d-grid gap-2 mb-2">
+                    <button type="submit" class="btn btn-masuk" id="submitBtn">
+                        <span id="submitText">Masuk</span>
+                        <span id="loadingSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+                    </button>
                 </div>
             </form>
 
@@ -279,15 +334,9 @@
                <a href="{{ route('google.login') }}" title="Masuk dengan Google">
                     <img src="{{ asset('images/logo google.png') }}" alt="Google">
                 </a>
-                 <!-- <a href="#">
-                    <img src="{{ asset('images/logo facebook.png') }}" alt="Facebook" class="facebook-logo">
-                </a>
-                 <a href="#">
-                    <img src="{{ asset('images/logo linkedin.png') }}" alt="linkedin" class="linkedin-logo">
-                </a>  -->
             </div>
 
-            <hr class="my-3"> <!-- Dikurangi margin dari my-4 ke my-3 -->
+            <hr class="my-3">
 
             <div class="footer-line">
                 <span>Belum punya akun?</span>
@@ -304,6 +353,13 @@
         <input type="hidden" id="showDeletedAccountToastFlag" value="1">
     @endif
 
+    <!-- Toast untuk error login - HAPUS -->
+    <!--
+    @if(session('error'))
+        <input type="hidden" id="showErrorToastFlag" value="1" data-message="{{ session('error') }}">
+    @endif
+    -->
+
     <div class="toast-container position-fixed top-0 end-0 p-3">
         <div id="deletedAccountToast" class="toast glints-toast" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
@@ -315,6 +371,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Tutup"></button>
             </div>
         </div>
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -332,9 +389,89 @@
             });
         }
 
+        // Form validation and submission
         document.addEventListener('DOMContentLoaded', function() {
-            const showFlag = document.getElementById('showDeletedAccountToastFlag');
+            const form = document.getElementById('loginForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const submitText = document.getElementById('submitText');
+            const loadingSpinner = document.getElementById('loadingSpinner');
 
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    // Reset previous errors
+                    const errorMessages = document.querySelectorAll('.error-feedback');
+                    errorMessages.forEach(error => error.style.display = 'none');
+
+                    const inputs = document.querySelectorAll('.form-control');
+                    inputs.forEach(input => input.classList.remove('is-invalid'));
+
+                    // Get form values
+                    const email = document.getElementById('email').value.trim();
+                    const password = document.getElementById('passwordInput').value.trim();
+                    let hasError = false;
+
+                    // Validate email
+                    if (!email) {
+                        showError('email', 'Email harus diisi.');
+                        hasError = true;
+                    } else if (!isValidEmail(email)) {
+                        showError('email', 'Format email tidak valid.');
+                        hasError = true;
+                    }
+
+                    // Validate password
+                    if (!password) {
+                        showError('passwordInput', 'Password harus diisi.');
+                        hasError = true;
+                    } else if (password.length < 8) {
+                        showError('passwordInput', 'Password minimal 8 karakter.');
+                        hasError = true;
+                    }
+
+                    if (hasError) {
+                        e.preventDefault();
+                        return false;
+                    }
+
+                    // Show loading state
+                    submitBtn.disabled = true;
+                    submitText.style.display = 'none';
+                    loadingSpinner.style.display = 'inline-block';
+
+                    return true;
+                });
+            }
+
+            function showError(fieldId, message) {
+                const input = document.getElementById(fieldId);
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-feedback';
+                errorDiv.textContent = message;
+
+                input.classList.add('is-invalid');
+
+                // Remove existing error message
+                const existingError = input.parentElement.querySelector('.error-feedback');
+                if (existingError) {
+                    existingError.remove();
+                }
+
+                // Insert error message after input (or after password container)
+                if (fieldId === 'passwordInput') {
+                    const passwordContainer = input.closest('.password-container');
+                    passwordContainer.parentElement.appendChild(errorDiv);
+                } else {
+                    input.parentElement.appendChild(errorDiv);
+                }
+            }
+
+            function isValidEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            }
+
+            // Toast untuk akun dihapus
+            const showFlag = document.getElementById('showDeletedAccountToastFlag');
             if (showFlag) {
                 const toastEl = document.getElementById('deletedAccountToast');
                 if (toastEl) {
@@ -345,6 +482,11 @@
                     deletedToast.show();
                 }
             }
+
+            // Focus on email field if there's an error from server
+            @if($errors->has('email') || $errors->has('password'))
+                document.getElementById('email').focus();
+            @endif
         });
     </script>
 </body>

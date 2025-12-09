@@ -182,7 +182,7 @@
                         <img src="{{ asset('images/city.png') }}" alt="Tentang Perusahaan" class="hero-img" id="heroImg">
                     </div>
                     <div class="col-md-6">
-                        <div class="hero-subtitle">Tentang Perusahaan</div>
+                        <div class="hero-subtitle">Tentang kami</div>
                         <h2 class="hero-title">Selayang Pandang</h2>
                         <p class="hero-text">
                             Dimulai 25 Agustus 2022, sebagai konsultan IT untuk kebutuhan pemerintah dan swasta. Pada 2023, PT INOTAL SISTEMA Internasional berkesempatan membangun sistem perbankan dan pada 2024 mengembangkan sistem rumah sakit. Dengannya kami senantiasa lebih profesional, terpercaya, dan berdedikasi memberikan solusi inovatif.

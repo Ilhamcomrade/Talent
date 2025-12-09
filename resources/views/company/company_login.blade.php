@@ -120,6 +120,13 @@
             height: auto;
             border: 1px solid #999; /* Diubah ketebalan border menjadi 1px solid #999 */
         }
+
+        /* Error styling untuk form input */
+        .form-control.is-invalid {
+            border-color: #dc3545 !important;
+            background-image: none;
+        }
+
         .password-container {
             position: relative;
             width: 100%;
@@ -154,7 +161,16 @@
             margin-top: 20px;
         }
         .btn-submit:hover {
-            background-color: #0d47a1;
+            background-color: #0a3d8a;
+        }
+
+        /* Error message styling - HANYA DI BAWAH INPUT */
+        .error-message {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 5px;
+            text-align: left;
+            display: block;
         }
 
         /* Social login - DISESUAIKAN SAMA */
@@ -249,6 +265,42 @@
             font-weight: 500;
             margin: 0;
         }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .register-container {
+                flex-direction: column;
+                max-width: 90%;
+                margin: 20px auto;
+            }
+
+            .register-left {
+                max-width: 100%;
+                flex-direction: row;
+                justify-content: space-around;
+                padding: 15px;
+                gap: 10px;
+            }
+
+            .register-left .feature {
+                align-items: center;
+                text-align: center;
+            }
+
+            .register-left .feature img {
+                width: 35px;
+                height: 35px;
+            }
+
+            .register-left .feature img.people-img {
+                width: 45px;
+                height: 45px;
+            }
+
+            .qr-code-float {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -281,22 +333,52 @@
         <div class="register-right">
             <h3>Pasang Iklan Lowongan<br>Kerja Gratis!</h3>
 
-            <form action="{{ route('company.login.submit') }}" method="POST" style="width: 100%;">
+            <!-- HANYA MENAMPILKAN PESAN SUKSES, TANPA PESAN ERROR UMUM -->
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 4px; margin-bottom: 20px; padding: 12px 15px; font-size: 0.9rem;">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
+            <form action="{{ route('company.login.submit') }}" method="POST" style="width: 100%;" id="loginForm">
                 @csrf
 
                 <div class="mb-3 text-start">
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Masukkan email Anda" value="{{ old('email') }}" required>
+                    <input type="email"
+                           class="form-control @error('email') is-invalid @enderror"
+                           id="email"
+                           name="email"
+                           placeholder="Masukkan email Anda"
+                           value="{{ old('email') }}"
+                           required>
+                    <!-- HANYA TAMPILKAN ERROR EMAIL DI SINI -->
+                    @error('email')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="mb-3 text-start">
                     <div class="password-container">
-                        <input type="password" class="form-control" id="password" name="password" placeholder="Masukkan password anda" required>
+                        <input type="password"
+                               class="form-control @error('password') is-invalid @enderror"
+                               id="password"
+                               name="password"
+                               placeholder="Masukkan password anda"
+                               required>
                         <i class="fa-regular fa-eye password-toggle"></i>
                     </div>
+                    <!-- HANYA TAMPILKAN ERROR PASSWORD DI SINI -->
+                    @error('password')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
                 </div>
 
-                <a href="#" class="forgot-password">Lupa password?</a>
-                <button type="submit" class="btn btn-submit">Masuk</button>
+                <a href="{{ route('company.forgot.password') }}" class="forgot-password">Lupa password?</a>
+                <button type="submit" class="btn btn-submit" id="submitBtn">
+                    <span id="submitText">Masuk</span>
+                    <span id="loadingSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+                </button>
             </form>
 
             <div class="social-login">
@@ -324,26 +406,110 @@
 
     @include('partials.footer')
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Password toggle functionality
         const passwordToggle = document.querySelector('.password-toggle');
         const passwordInput = document.querySelector('#password');
 
-        passwordToggle.addEventListener('click', function () {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            this.classList.toggle('fa-eye');
-            this.classList.toggle('fa-eye-slash');
-        });
+        if (passwordToggle && passwordInput) {
+            passwordToggle.addEventListener('click', function () {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                this.classList.toggle('fa-eye');
+                this.classList.toggle('fa-eye-slash');
+            });
+        }
 
-        // Auto-hide alerts after 5 seconds
+        // Form validation and submission
         document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(function() {
-                const alerts = document.querySelectorAll('.alert');
-                alerts.forEach(function(alert) {
-                    const bsAlert = new bootstrap.Alert(alert);
-                    bsAlert.close();
+            const form = document.getElementById('loginForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const submitText = document.getElementById('submitText');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    // Reset previous errors
+                    const errorMessages = document.querySelectorAll('.error-message');
+                    errorMessages.forEach(error => error.style.display = 'none');
+
+                    const inputs = document.querySelectorAll('.form-control');
+                    inputs.forEach(input => input.classList.remove('is-invalid'));
+
+                    // Get form values
+                    const email = document.getElementById('email').value.trim();
+                    const password = document.getElementById('password').value.trim();
+                    let hasError = false;
+
+                    // Validate email
+                    if (!email) {
+                        showError('email', 'Email harus diisi.');
+                        hasError = true;
+                    } else if (!isValidEmail(email)) {
+                        showError('email', 'Format email tidak valid.');
+                        hasError = true;
+                    }
+
+                    // Validate password
+                    if (!password) {
+                        showError('password', 'Password harus diisi.');
+                        hasError = true;
+                    } else if (password.length < 6) {
+                        showError('password', 'Password minimal 6 karakter.');
+                        hasError = true;
+                    }
+
+                    if (hasError) {
+                        e.preventDefault();
+                        return false;
+                    }
+
+                    // Show loading state
+                    submitBtn.disabled = true;
+                    submitText.style.display = 'none';
+                    loadingSpinner.style.display = 'inline-block';
+
+                    return true;
                 });
+            }
+
+            function showError(field, message) {
+                const input = document.getElementById(field);
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message';
+                errorDiv.textContent = message;
+
+                input.classList.add('is-invalid');
+
+                // Remove existing error message
+                const existingError = input.parentElement.querySelector('.error-message');
+                if (existingError) {
+                    existingError.remove();
+                }
+
+                // Insert error message after input
+                input.parentElement.appendChild(errorDiv);
+            }
+
+            function isValidEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            }
+
+            // Auto-hide success alert after 5 seconds
+            setTimeout(function() {
+                const successAlert = document.querySelector('.alert-success');
+                if (successAlert) {
+                    const bsAlert = new bootstrap.Alert(successAlert);
+                    bsAlert.close();
+                }
             }, 5000);
+
+            // Focus on email field if there's an error
+            @if($errors->has('email') || $errors->has('password'))
+                document.getElementById('email').focus();
+            @endif
         });
     </script>
 </body>

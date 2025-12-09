@@ -1012,7 +1012,7 @@
     <div class="search-results-section">
         <div class="container">
             <!-- TOMBOL KEMBALI DI ATAS JUDUL - TETAP BESAR -->
-            <a href="http://127.0.0.1:8000/explore-perusahaan" class="back-to-explore">
+            <a href="http://127.0.0.1:8000/explore-organisasi" class="back-to-explore">
                 <i class="bi bi-arrow-left"></i>
                 Kembali ke Halaman Explore
             </a>

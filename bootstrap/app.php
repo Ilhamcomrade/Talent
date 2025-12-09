@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         'wawancara' => \App\Http\Middleware\WawancaraMiddleware::class,
         'auth.company' => \App\Http\Middleware\RedirectIfNotCompany::class,
         'auth.campus' => \App\Http\Middleware\RedirectIfNotCampus::class,
+        'logout.for.password' => \App\Http\Middleware\LogoutForPassword::class,
 
     ]);
 })

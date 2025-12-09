@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Campus;
+use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
@@ -14,6 +15,7 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
+        // PERUBAHAN: Tidak perlu hapus session errors, biarkan tampil
         return view('campus.campus_login');
     }
 
@@ -22,37 +24,60 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
-        // Validasi input
+        // Validasi input dasar
         $request->validate([
             'email' => 'required|email',
             'password' => 'required|min:6',
         ]);
 
-        // Coba melakukan login
-        $credentials = $request->only('email', 'password');
-        
-        if (Auth::guard('campus')->attempt($credentials)) {
-            // Cek status aktif kampus
-            $campus = Auth::guard('campus')->user();
-            
-            if (!$campus->is_active) {
-                Auth::guard('campus')->logout();
-                return back()->withErrors([
-                    'email' => 'Akun kampus Anda tidak aktif. Silakan hubungi administrator.',
-                ])->withInput();
-            }
+        // PERUBAHAN: Cek apakah email ada di database
+        $campus = Campus::where('email', $request->email)->first();
 
+        if (!$campus) {
+            // PERUBAHAN: Email tidak ditemukan, return dengan errors
+            return back()
+                ->withInput($request->only('email'))
+                ->withErrors([
+                    'email' => 'Email yang Anda masukkan salah.'
+                ]);
+        }
+
+        // PERUBAHAN: Cek password
+        if (!Hash::check($request->password, $campus->password)) {
+            // PERUBAHAN: Password salah, return dengan errors
+            return back()
+                ->withInput($request->only('email'))
+                ->withErrors([
+                    'password' => 'Password yang Anda masukkan salah.'
+                ]);
+        }
+
+        // Cek status aktif kampus
+        if (!$campus->is_active) {
+            return back()
+                ->withInput($request->only('email'))
+                ->withErrors([
+                    'email' => 'Akun kampus Anda tidak aktif. Silakan hubungi administrator.'
+                ]);
+        }
+
+        // Coba melakukan login dengan credentials
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::guard('campus')->attempt($credentials)) {
             // Regenerate session untuk keamanan
             $request->session()->regenerate();
-            
+
             // Redirect ke dashboard kampus
             return redirect()->intended(route('campus.dashboard'));
         }
 
-        // Jika login gagal
-        return back()->withErrors([
-            'email' => 'Email atau password yang Anda masukkan salah.',
-        ])->withInput();
+        // Jika login gagal karena alasan lain
+        return back()
+            ->withInput($request->only('email'))
+            ->withErrors([
+                'email' => 'Terjadi kesalahan saat login. Silakan coba lagi.'
+            ]);
     }
 
     /**
@@ -61,10 +86,10 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         Auth::guard('campus')->logout();
-        
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        
+
         // DIUBAH: Redirect ke halaman login kampus, bukan ke halaman utama
         return redirect()->route('campus.login')->with('info', 'Anda telah berhasil keluar dari akun kampus.');
     }
