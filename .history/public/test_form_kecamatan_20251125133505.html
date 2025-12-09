@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Provinsi Kecamatan Form</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-container { background: #f0f0f0; padding: 20px; border-radius: 5px; margin: 20px 0; }
+        label { display: block; margin: 10px 0 5px 0; font-weight: bold; }
+        select { padding: 8px; width: 100%; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        pre { background: #fff; padding: 10px; border: 1px solid #ddd; overflow-x: auto; max-height: 300px; }
+    </style>
+</head>
+<body>
+    <h1>Test Form Kecamatan - Provinsi & Kabupaten</h1>
+    
+    <div class="test-container">
+        <h2>Test Dropdown</h2>
+        <label>Pilih Provinsi:</label>
+        <select id="testProvince" onchange="testDropdown()">
+            <option value="">-- Loading Provinsi --</option>
+        </select>
+        
+        <label style="margin-top: 15px;">Kabupaten (akan muncul setelah pilih Provinsi):</label>
+        <select id="testKabupaten">
+            <option value="">-- Pilih Kabupaten --</option>
+        </select>
+        
+        <div style="margin-top: 15px;">
+            <button onclick="testAPI()">Test API Kabupaten by Provinsi 1</button>
+            <button onclick="loadProvinsi()">Reload Provinsi List</button>
+        </div>
+    </div>
+    
+    <div class="test-container">
+        <h2>API Response Log:</h2>
+        <pre id="log"></pre>
+    </div>
+    
+    <script>
+        function log(msg) {
+            const el = document.getElementById('log');
+            el.textContent += msg + '\n';
+            el.scrollTop = el.scrollHeight;
+        }
+        
+        async function loadProvinsi() {
+            log('Fetching: /api/reference/provinsi/list');
+            try {
+                const response = await fetch('/api/reference/provinsi/list');
+                const data = await response.json();
+                log(`Got ${data.length} provinces`);
+                
+                // Populate select
+                const select = document.getElementById('testProvince');
+                select.innerHTML = '<option value="">-- Pilih Provinsi --</option>';
+                data.forEach(prov => {
+                    const option = document.createElement('option');
+                    option.value = prov.id;
+                    option.textContent = prov.name || prov.nama_provinsi || prov.id;
+                    select.appendChild(option);
+                });
+                
+                if (data.length > 0) {
+                    log(`First province: id=${data[0].id}, fields=${Object.keys(data[0]).join(', ')}`);
+                }
+            } catch (e) {
+                log(`ERROR: ${e.message}`);
+            }
+        }
+        
+        async function testDropdown() {
+            const provinceId = document.getElementById('testProvince').value;
+            if (!provinceId) return;
+            
+            log(`\nSelected province: ${provinceId}`);
+            await testAPI(provinceId);
+        }
+        
+        async function testAPI(provinceId = '1') {
+            log(`\nTesting API: /api/reference/kabupaten/by-provinsi?parent_id=${provinceId}`);
+            try {
+                const response = await fetch(`/api/reference/kabupaten/by-provinsi?parent_id=${provinceId}`);
+                const data = await response.json();
+                log(`Got ${data.length} kabupaten`);
+                
+                // Populate select
+                const select = document.getElementById('testKabupaten');
+                select.innerHTML = '<option value="">-- Pilih Kabupaten --</option>';
+                data.forEach(kab => {
+                    const option = document.createElement('option');
+                    option.value = kab.id;
+                    option.textContent = kab.name || kab.nama_kabupaten || kab.id;
+                    select.appendChild(option);
+                });
+                
+                if (data.length > 0) {
+                    log(`First kabupaten: id=${data[0].id}, name=${data[0].name}`);
+                }
+                log('Response sample:');
+                log(JSON.stringify(data.slice(0, 2), null, 2));
+            } catch (e) {
+                log(`ERROR: ${e.message}`);
+            }
+        }
+        
+        // Load on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadProvinsi();
+        });
+    </script>
+</body>
+</html>

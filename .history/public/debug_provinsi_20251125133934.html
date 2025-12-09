@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Provinsi Values</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        div { margin: 20px 0; }
+        pre { background: #f0f0f0; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Debug Form Kecamatan</h1>
+    
+    <div>
+        <h2>Test 1: Check Provinsi API Response</h2>
+        <button onclick="testProvinsi()">Test API</button>
+        <pre id="provinsi-result"></pre>
+    </div>
+    
+    <div>
+        <h2>Test 2: Form Value Check</h2>
+        <button onclick="checkFormValue()">Check Form</button>
+        <pre id="form-result"></pre>
+    </div>
+    
+    <script>
+        async function testProvinsi() {
+            const res = document.getElementById('provinsi-result');
+            res.textContent = 'Loading...';
+            try {
+                const response = await fetch('/api/reference/provinsi/list');
+                const data = await response.json();
+                res.textContent = JSON.stringify(data.slice(0, 3), null, 2) + `\n\nTotal: ${data.length} provinces`;
+            } catch (e) {
+                res.textContent = `ERROR: ${e.message}`;
+            }
+        }
+        
+        function checkFormValue() {
+            const res = document.getElementById('form-result');
+            res.textContent = 'Fetching form...';
+            
+            fetch('/admin/reference/kecamatan/create')
+                .then(r => r.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const provinsiSelect = doc.getElementById('provinsi');
+                    if (!provinsiSelect) {
+                        res.textContent = 'ERROR: Cannot find provinsi select';
+                        return;
+                    }
+                    
+                    let output = 'Provinsi Options:\n\n';
+                    const options = provinsiSelect.querySelectorAll('option');
+                    for (let i = 0; i < Math.min(5, options.length); i++) {
+                        const opt = options[i];
+                        output += `[${i}] value="${opt.value}" text="${opt.textContent}"\n`;
+                    }
+                    output += `\nTotal options: ${options.length}`;
+                    res.textContent = output;
+                })
+                .catch(e => {
+                    res.textContent = `ERROR: ${e.message}`;
+                });
+        }
+        
+        // Auto-test on load
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(testProvinsi, 500);
+        });
+    </script>
+</body>
+</html>

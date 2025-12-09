@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Kabupaten API</title>
+    <style>
+        body { font-family: monospace; padding: 20px; }
+        button { padding: 10px; margin: 5px; }
+        pre { background: #f5f5f5; padding: 10px; border-radius: 3px; overflow-x: auto; max-height: 500px; }
+    </style>
+</head>
+<body>
+    <h1>Test Kabupaten API (Old System)</h1>
+    
+    <div>
+        <label>Province ID:</label>
+        <input type="text" id="provinceId" value="1" style="padding: 5px;">
+        <button onclick="testKabupaten()">Test Get Kabupaten</button>
+        <button onclick="clearLog()">Clear</button>
+    </div>
+    
+    <h2>Response:</h2>
+    <pre id="log"></pre>
+    
+    <script>
+        function log(msg) {
+            const el = document.getElementById('log');
+            el.textContent += msg + '\n';
+            el.scrollTop = el.scrollHeight;
+        }
+        
+        function clearLog() {
+            document.getElementById('log').textContent = '';
+        }
+        
+        async function testKabupaten() {
+            clearLog();
+            const provinceId = document.getElementById('provinceId').value;
+            log(`Testing: GET /api/reference/kabupaten/by-provinsi?parent_id=${provinceId}`);
+            log('---');
+            
+            try {
+                const url = `/api/reference/kabupaten/by-provinsi?parent_id=${provinceId}`;
+                log(`URL: ${url}`);
+                const response = await fetch(url);
+                log(`HTTP Status: ${response.status}`);
+                
+                const data = await response.json();
+                log(`Total items: ${data.length}`);
+                log('');
+                
+                if (data.length > 0) {
+                    log('First 5 items:');
+                    for (let i = 0; i < Math.min(5, data.length); i++) {
+                        log(`  [${i}] id=${data[i].id}, name=${data[i].name}`);
+                    }
+                    log('');
+                    log('Full response:');
+                    log(JSON.stringify(data, null, 2));
+                } else {
+                    log('NO DATA RETURNED!');
+                }
+            } catch (e) {
+                log(`ERROR: ${e.message}`);
+                log(e.stack);
+            }
+        }
+        
+        // Auto-test on load with province_id=1
+        window.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => testKabupaten(), 500);
+        });
+    </script>
+</body>
+</html>

@@ -363,108 +363,132 @@
     {{-- IMPORT FOOTER --}}
     @include('partials.footer')
 
+    <div id="pageData" data-initial-provinsi="{{ $provinsi ?? '' }}"></div>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Elements
-            const provinsiSelect = document.getElementById('provinsiSelect');
-            const kabupatenSelect = document.getElementById('kabupatenSelect');
-            const jobCards = document.querySelectorAll('.job-card');
-            const filterType = document.querySelectorAll('.filter-type');
-            const filterDuration = document.querySelectorAll('.filter-duration');
-            const applyFiltersBtn = document.getElementById('applyFilters');
-
-            // Load kabupaten based on selected provinsi
-            function loadKabupaten(provinsiId) {
-                if (!provinsiId) {
-                    kabupatenSelect.innerHTML = '<option value="">Semua Kabupaten</option>';
-                    return;
-                }
-
-                fetch(`/api/regencies/${provinsiId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        kabupatenSelect.innerHTML = '<option value="">Semua Kabupaten</option>';
-                        data.forEach(kabupaten => {
-                            kabupatenSelect.innerHTML += `<option value="${kabupaten.id}">${kabupaten.name}</option>`;
-                        });
-                        
-                        // Set selected kabupaten if exists in URL
-                        const urlParams = new URLSearchParams(window.location.search);
-                        const selectedKabupaten = urlParams.get('kabupaten');
-                        if (selectedKabupaten) {
-                            kabupatenSelect.value = selectedKabupaten;
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error loading kabupaten:', error);
-                    });
+        // Load kabupaten based on selected provinsi
+        function loadKabupaten(provinsiId) {
+            var kabupatenSelect = document.getElementById('kabupatenSelect');
+            
+            if (!provinsiId) {
+                kabupatenSelect.innerHTML = '<option value="">Semua Kabupaten</option>';
+                return;
             }
 
+            fetch('/api/regencies/' + provinsiId)
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(data) {
+                    kabupatenSelect.innerHTML = '<option value="">Semua Kabupaten</option>';
+                    
+                    for (var i = 0; i < data.length; i++) {
+                        var kabupaten = data[i];
+                        var option = document.createElement('option');
+                        option.value = kabupaten.id;
+                        option.textContent = kabupaten.name;
+                        kabupatenSelect.appendChild(option);
+                    }
+                    
+                    // Set selected kabupaten if exists in URL
+                    var urlParams = new URLSearchParams(window.location.search);
+                    var selectedKabupaten = urlParams.get('kabupaten');
+                    if (selectedKabupaten) {
+                        kabupatenSelect.value = selectedKabupaten;
+                    }
+                })
+                .catch(function(error) {
+                    console.error('Error loading kabupaten:', error);
+                });
+        }
+
+        // Filter functionality
+        function filterJobs() {
+            var filterType = document.querySelectorAll('.filter-type');
+            var filterDuration = document.querySelectorAll('.filter-duration');
+            var jobCards = document.querySelectorAll('.job-card');
+            
+            var selectedTypes = [];
+            var selectedDurations = [];
+
+            // Get selected types
+            for (var i = 0; i < filterType.length; i++) {
+                if (filterType[i].checked) {
+                    selectedTypes.push(filterType[i].value);
+                }
+            }
+
+            // Get selected durations
+            for (var i = 0; i < filterDuration.length; i++) {
+                if (filterDuration[i].checked) {
+                    selectedDurations.push(filterDuration[i].value);
+                }
+            }
+
+            var visibleCount = 0;
+
+            // Filter job cards
+            for (var i = 0; i < jobCards.length; i++) {
+                var card = jobCards[i];
+                var jobType = card.getAttribute('data-job-type');
+                var duration = card.getAttribute('data-duration');
+                
+                var matchesType = selectedTypes.length === 0 || selectedTypes.indexOf(jobType) !== -1;
+                var matchesDuration = selectedDurations.length === 0 || selectedDurations.indexOf(duration) !== -1;
+                
+                if (matchesType && matchesDuration) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            }
+
+            // Update job count
+            var jobCountElement = document.getElementById('jobCount');
+            if (jobCountElement) {
+                jobCountElement.innerHTML = 'Menampilkan <strong>' + visibleCount + '</strong> lowongan';
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get initial provinsi from data attribute
+            var pageDataElement = document.getElementById('pageData');
+            var initialProvinsi = pageDataElement ? pageDataElement.getAttribute('data-initial-provinsi') : '';
+            
             // Event listener for provinsi change
-            provinsiSelect.addEventListener('change', function() {
-                loadKabupaten(this.value);
-            });
+            var provinsiSelect = document.getElementById('provinsiSelect');
+            if (provinsiSelect) {
+                provinsiSelect.addEventListener('change', function() {
+                    loadKabupaten(this.value);
+                });
+            }
 
             // Load kabupaten on page load if provinsi is selected
-            @if($provinsi)
-                loadKabupaten({{ $provinsi }});
-            @endif
-
-            // Filter functionality
-            function filterJobs() {
-                const selectedTypes = Array.from(filterType)
-                    .filter(cb => cb.checked)
-                    .map(cb => cb.value);
-                
-                const selectedDurations = Array.from(filterDuration)
-                    .filter(cb => cb.checked)
-                    .map(cb => cb.value);
-
-                let visibleCount = 0;
-
-                jobCards.forEach(card => {
-                    const jobType = card.getAttribute('data-job-type');
-                    const duration = card.getAttribute('data-duration');
-                    
-                    const matchesType = selectedTypes.length === 0 || selectedTypes.includes(jobType);
-                    const matchesDuration = selectedDurations.length === 0 || selectedDurations.includes(duration);
-                    
-                    if (matchesType && matchesDuration) {
-                        card.style.display = 'block';
-                        visibleCount++;
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-
-                // Update job count
-                document.getElementById('jobCount').innerHTML = `Menampilkan <strong>${visibleCount}</strong> lowongan`;
+            if (initialProvinsi) {
+                loadKabupaten(initialProvinsi);
             }
 
             // Apply filters button
-            applyFiltersBtn.addEventListener('click', filterJobs);
-
-            // Event listeners for filters
-            filterType.forEach(filter => {
-                filter.addEventListener('change', filterJobs);
-            });
-
-            filterDuration.forEach(filter => {
-                filter.addEventListener('change', filterJobs);
-            });
-
-            // Initialize filters based on URL parameters
-            function initializeFilters() {
-                const urlParams = new URLSearchParams(window.location.search);
-                
-                // You can add logic here to check URL parameters and set filter states
-                // For example, if you want to add tipe and durasi to URL parameters
+            var applyFiltersBtn = document.getElementById('applyFilters');
+            if (applyFiltersBtn) {
+                applyFiltersBtn.addEventListener('click', filterJobs);
             }
 
-            // Initialize on page load
-            initializeFilters();
+            // Event listeners for filter changes
+            var filterType = document.querySelectorAll('.filter-type');
+            for (var i = 0; i < filterType.length; i++) {
+                filterType[i].addEventListener('change', filterJobs);
+            }
+
+            var filterDuration = document.querySelectorAll('.filter-duration');
+            for (var i = 0; i < filterDuration.length; i++) {
+                filterDuration[i].addEventListener('change', filterJobs);
+            }
         });
+    </script>
     </script>
 </body>
 </html>

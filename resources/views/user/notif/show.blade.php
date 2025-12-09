@@ -132,7 +132,9 @@
                                 $iconColor = $data['icon_color'] ?? 'primary';
                                 $iconBg = $data['icon_bg'] ?? '#e3f2fd';
                             @endphp
-                            <div class="notification-icon" style="background-color: {{ $iconBg }}; color: {{ $iconColor }};">
+                            <div class="notification-icon" 
+                                 data-icon-bg="{{ $iconBg }}" 
+                                 data-icon-color="{{ $iconColor }}">
                                 <i class="{{ $icon }}"></i>
                             </div>
                             <div class="flex-grow-1">
@@ -338,6 +340,19 @@
                     .catch(() => {
                         Swal.fire('Error', 'Koneksi ke server gagal.', 'error');
                     });
+                }
+            });
+
+            // Apply styles from data attributes to notification icons
+            var notificationIcons = document.querySelectorAll('.notification-icon[data-icon-bg]');
+            notificationIcons.forEach(function(icon) {
+                var bgColor = icon.getAttribute('data-icon-bg');
+                var textColor = icon.getAttribute('data-icon-color');
+                if (bgColor) {
+                    icon.style.backgroundColor = bgColor;
+                }
+                if (textColor) {
+                    icon.style.color = textColor;
                 }
             });
         });

@@ -111,7 +111,7 @@
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                                     <form action="{{ route('admin.applicants.destroy', $application->id) }}" method="POST">
                                         @csrf
-                                        @method('DELETE')
+                                        <input type="hidden" name="_method" value="DELETE">
                                         <button type="submit" class="btn btn-danger">Ya, Hapus Permanen</button>
                                     </form>
                                 </div>
@@ -154,3 +154,4 @@
     /* Pastikan Anda menambahkan helper class di model Application atau di tempat lain jika perlu */
 </style>
 @endsection
+

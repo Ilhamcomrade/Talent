@@ -381,7 +381,12 @@
         </div>
     </div>
 
-    <div class="modal fade" id="deleteAccountModalStep3" tabindex="-1" aria-labelledby="deleteAccountModalStep3Label" aria-hidden="true">
+    <div class="modal fade" id="deleteAccountModalStep3" tabindex="-1" aria-labelledby="deleteAccountModalStep3Label" aria-hidden="true"
+        data-has-errors="{{ $errors->any() ? 'true' : 'false' }}"
+        data-current-route="{{ Route::currentRouteName() }}"
+        data-delete-route="{{ 'account.delete.process' }}"
+        data-old-reason="{{ old('delete_reason') }}"
+        data-old-explanation="{{ old('reason_explanation') }}">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <form id="deleteAccountForm" action="{{ route('account.delete.process') }}" method="POST">
@@ -511,21 +516,27 @@
 
             reasonExplanationInput.addEventListener('input', checkExplanationInput);
             
-            @if ($errors->any() && Route::currentRouteName() === 'account.delete.process')
+            // Baca data attribute untuk cek apakah ada error dan route match
+            const deleteAccountModalStep3El = document.getElementById('deleteAccountModalStep3');
+            const hasErrors = deleteAccountModalStep3El.getAttribute('data-has-errors') === 'true';
+            const currentRoute = deleteAccountModalStep3El.getAttribute('data-current-route');
+            const deleteRoute = deleteAccountModalStep3El.getAttribute('data-delete-route');
+            const oldReason = deleteAccountModalStep3El.getAttribute('data-old-reason');
+            const oldExplanation = deleteAccountModalStep3El.getAttribute('data-old-explanation');
+            
+            if (hasErrors && currentRoute === deleteRoute) {
                 var modal = new bootstrap.Modal(document.getElementById('deleteAccountModalStep3'));
                 modal.show();
                 
-                const oldReasonExplanation = "{{ old('reason_explanation') }}";
-                if (oldReasonExplanation) {
-                    reasonExplanationInput.value = oldReasonExplanation;
+                if (oldExplanation) {
+                    reasonExplanationInput.value = oldExplanation;
                 }
-                const oldDeleteReason = "{{ old('delete_reason') }}";
-                if (oldDeleteReason) {
-                    hiddenDeleteReason.value = oldDeleteReason;
+                if (oldReason) {
+                    hiddenDeleteReason.value = oldReason;
                 }
                 
                 checkExplanationInput();
-            @endif
+            }
         });
     </script>
 

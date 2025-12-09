@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Form Kecamatan - Debug</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        select:disabled {
+            background-color: #f0f0f0;
+            cursor: not-allowed;
+        }
+        .debug-box {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 10px;
+            margin-top: 20px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .debug-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 3px;
+        }
+        .status.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Test Form Kecamatan - Data Provinsi, Kabupaten & Kecamatan</h1>
+        
+        <div id="status"></div>
+        
+        <h2>Form Lokasi Kampus</h2>
+        <form id="locationForm">
+            <div class="form-group">
+                <label for="provinsi">Provinsi:</label>
+                <select id="provinsi" name="provinsi" required>
+                    <option value="" selected disabled>Memuat data...</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="kota">Kabupaten/Kota:</label>
+                <select id="kota" name="kota" required disabled>
+                    <option value="" selected disabled>Pilih Provinsi terlebih dahulu</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="kecamatan">Kecamatan:</label>
+                <select id="kecamatan" name="kecamatan" required disabled>
+                    <option value="" selected disabled>Pilih Kabupaten terlebih dahulu</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="desa_kelurahan">Desa/Kelurahan:</label>
+                <select id="desa_kelurahan" name="desa_kelurahan" required disabled>
+                    <option value="" selected disabled>Pilih Kecamatan terlebih dahulu</option>
+                </select>
+            </div>
+        </form>
+        
+        <h2>Debug Information</h2>
+        <div class="debug-box">
+            <div class="debug-title">API Response Log:</div>
+            <div id="log"></div>
+        </div>
+    </div>
+
+    <script>
+        const cache = { kabupaten: {}, kecamatan: {}, desa: {} };
+        const provinsiSelect = document.getElementById('provinsi');
+        const kotaSelect = document.getElementById('kota');
+        const kecamatanSelect = document.getElementById('kecamatan');
+        const desaKelurahanSelect = document.getElementById('desa_kelurahan');
+        const logEl = document.getElementById('log');
+        const statusEl = document.getElementById('status');
+        
+        function log(msg) {
+            const timestamp = new Date().toLocaleTimeString();
+            logEl.innerHTML += `[${timestamp}] ${msg}<br>`;
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+        
+        function showStatus(msg, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.textContent = msg;
+            statusEl.innerHTML = '';
+            statusEl.appendChild(div);
+        }
+        
+        async function loadProvinsi() {
+            log('Loading provinsi...');
+            try {
+                const response = await fetch('/api/reference/provinsi/list');
+                log(`Provinsi API Status: ${response.status}`);
+                const data = await response.json();
+                log(`✓ Loaded ${data.length} provinces`);
+                
+                provinsiSelect.innerHTML = '<option value="" selected disabled>Pilih Provinsi</option>';
+                data.forEach(p => {
+                    const option = document.createElement('option');
+                    option.value = p.id;
+                    option.textContent = p.name;
+                    provinsiSelect.appendChild(option);
+                });
+                
+                showStatus(`✓ Data Provinsi berhasil dimuat: ${data.length} provinsi`, 'success');
+            } catch (error) {
+                log(`✗ Error loading provinsi: ${error.message}`);
+                showStatus(`Error loading provinsi: ${error.message}`, 'error');
+            }
+        }
+        
+        async function isiKabupaten(provinsiId) {
+            kotaSelect.innerHTML = '<option value="" selected disabled>Memuat...</option>';
+            kotaSelect.disabled = true;
+            kecamatanSelect.innerHTML = '<option value="" selected disabled>Pilih Kabupaten terlebih dahulu</option>';
+            kecamatanSelect.disabled = true;
+            desaKelurahanSelect.innerHTML = '<option value="" selected disabled>Pilih Kecamatan terlebih dahulu</option>';
+            desaKelurahanSelect.disabled = true;
+            
+            if (!provinsiId) return;
+            
+            log(`Loading kabupaten for province ${provinsiId}...`);
+            try {
+                if (cache.kabupaten[provinsiId]) {
+                    log(`✓ Using cached data for province ${provinsiId}`);
+                    populateKabupaten(cache.kabupaten[provinsiId], provinsiId);
+                    return;
+                }
+                
+                const url = `/api/reference/kabupaten/by-province?parent_id=${provinsiId}`;
+                log(`Fetching: ${url}`);
+                const response = await fetch(url);
+                log(`Kabupaten API Status: ${response.status}`);
+                
+                const data = await response.json();
+                log(`✓ Received ${data.length} kabupaten for province ${provinsiId}`);
+                
+                if (data.length === 0) {
+                    log(`⚠ WARNING: No kabupaten found for province ${provinsiId}`);
+                    kotaSelect.innerHTML = '<option value="" selected disabled>Tidak ada data Kabupaten</option>';
+                    kotaSelect.disabled = true;
+                    showStatus(`Tidak ada data Kabupaten untuk Provinsi ini`, 'error');
+                    return;
+                }
+                
+                cache.kabupaten[provinsiId] = data;
+                populateKabupaten(data, provinsiId);
+                showStatus(`✓ Kabupaten berhasil dimuat: ${data.length} kabupaten`, 'success');
+            } catch (error) {
+                log(`✗ Error loading kabupaten: ${error.message}`);
+                showStatus(`Error loading kabupaten: ${error.message}`, 'error');
+                kotaSelect.innerHTML = '<option value="" selected disabled>Error loading data</option>';
+            }
+        }
+        
+        function populateKabupaten(data, provinsiId) {
+            kotaSelect.innerHTML = '<option value="" selected disabled>Pilih Kabupaten/Kota</option>';
+            data.forEach(kab => {
+                const option = document.createElement('option');
+                option.value = kab.id;
+                option.textContent = kab.name;
+                kotaSelect.appendChild(option);
+            });
+            kotaSelect.disabled = false;
+            log(`✓ Populated ${data.length} kabupaten options`);
+        }
+        
+        async function isiKecamatan(kabupatenId) {
+            kecamatanSelect.innerHTML = '<option value="" selected disabled>Memuat...</option>';
+            kecamatanSelect.disabled = true;
+            desaKelurahanSelect.innerHTML = '<option value="" selected disabled>Pilih Kecamatan terlebih dahulu</option>';
+            desaKelurahanSelect.disabled = true;
+            
+            if (!kabupatenId) return;
+            
+            log(`Loading kecamatan for regency ${kabupatenId}...`);
+            try {
+                if (cache.kecamatan[kabupatenId]) {
+                    log(`✓ Using cached data for regency ${kabupatenId}`);
+                    populateKecamatan(cache.kecamatan[kabupatenId]);
+                    return;
+                }
+                
+                const url = `/api/reference/kecamatan/by-kabupaten?parent_id=${kabupatenId}`;
+                log(`Fetching: ${url}`);
+                const response = await fetch(url);
+                log(`Kecamatan API Status: ${response.status}`);
+                
+                const data = await response.json();
+                log(`✓ Received ${data.length} kecamatan for regency ${kabupatenId}`);
+                
+                if (data.length === 0) {
+                    log(`⚠ WARNING: No kecamatan found for regency ${kabupatenId}`);
+                    kecamatanSelect.innerHTML = '<option value="" selected disabled>Tidak ada data Kecamatan</option>';
+                    kecamatanSelect.disabled = true;
+                    showStatus(`Tidak ada data Kecamatan untuk Kabupaten ini`, 'error');
+                    return;
+                }
+                
+                cache.kecamatan[kabupatenId] = data;
+                populateKecamatan(data);
+                showStatus(`✓ Kecamatan berhasil dimuat: ${data.length} kecamatan`, 'success');
+            } catch (error) {
+                log(`✗ Error loading kecamatan: ${error.message}`);
+                showStatus(`Error loading kecamatan: ${error.message}`, 'error');
+                kecamatanSelect.innerHTML = '<option value="" selected disabled>Error loading data</option>';
+            }
+        }
+        
+        function populateKecamatan(data) {
+            kecamatanSelect.innerHTML = '<option value="" selected disabled>Pilih Kecamatan</option>';
+            data.forEach(kec => {
+                const option = document.createElement('option');
+                option.value = kec.id;
+                option.textContent = kec.name;
+                kecamatanSelect.appendChild(option);
+            });
+            kecamatanSelect.disabled = false;
+            log(`✓ Populated ${data.length} kecamatan options`);
+        }
+        
+        async function isiDesaKelurahan(kecamatanId) {
+            desaKelurahanSelect.innerHTML = '<option value="" selected disabled>Memuat...</option>';
+            desaKelurahanSelect.disabled = true;
+            
+            if (!kecamatanId) return;
+            
+            log(`Loading desa for kecamatan ${kecamatanId}...`);
+            try {
+                if (cache.desa[kecamatanId]) {
+                    log(`✓ Using cached data for kecamatan ${kecamatanId}`);
+                    populateDesa(cache.desa[kecamatanId]);
+                    return;
+                }
+                
+                const url = `/api/reference/desa/by-kecamatan?parent_id=${kecamatanId}`;
+                log(`Fetching: ${url}`);
+                const response = await fetch(url);
+                log(`Desa API Status: ${response.status}`);
+                
+                const data = await response.json();
+                log(`✓ Received ${data.length} desa for kecamatan ${kecamatanId}`);
+                
+                if (data.length === 0) {
+                    log(`⚠ WARNING: No desa found for kecamatan ${kecamatanId}`);
+                    desaKelurahanSelect.innerHTML = '<option value="" selected disabled>Tidak ada data Desa/Kelurahan</option>';
+                    desaKelurahanSelect.disabled = true;
+                    showStatus(`Tidak ada data Desa/Kelurahan untuk Kecamatan ini`, 'error');
+                    return;
+                }
+                
+                cache.desa[kecamatanId] = data;
+                populateDesa(data);
+                showStatus(`✓ Desa/Kelurahan berhasil dimuat: ${data.length} desa`, 'success');
+            } catch (error) {
+                log(`✗ Error loading desa: ${error.message}`);
+                showStatus(`Error loading desa: ${error.message}`, 'error');
+                desaKelurahanSelect.innerHTML = '<option value="" selected disabled>Error loading data</option>';
+            }
+        }
+        
+        function populateDesa(data) {
+            desaKelurahanSelect.innerHTML = '<option value="" selected disabled>Pilih Desa/Kelurahan</option>';
+            data.forEach(desa => {
+                const option = document.createElement('option');
+                option.value = desa.id;
+                option.textContent = desa.name;
+                desaKelurahanSelect.appendChild(option);
+            });
+            desaKelurahanSelect.disabled = false;
+            log(`✓ Populated ${data.length} desa options`);
+        }
+        
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            log('Page loaded, initializing...');
+            loadProvinsi();
+            
+            provinsiSelect.addEventListener('change', function() {
+                log(`Provinsi changed: ${this.value}`);
+                isiKabupaten(this.value);
+            });
+            
+            kotaSelect.addEventListener('change', function() {
+                log(`Kabupaten changed: ${this.value}`);
+                isiKecamatan(this.value);
+            });
+            
+            kecamatanSelect.addEventListener('change', function() {
+                log(`Kecamatan changed: ${this.value}`);
+                isiDesaKelurahan(this.value);
+            });
+            
+            log('Event listeners registered');
+        });
+    </script>
+</body>
+</html>

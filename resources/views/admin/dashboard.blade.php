@@ -216,11 +216,11 @@
         <div class="col-md-2 mb-3">
             <div class="card kpi-card kpi-card-campus">
                 <div class="card-body">
-                    <h3>{{ $totalCampusesCount }}</h3> {{-- UBAH DARI 42 MENJADI VARIABLE --}}
+                    <h3>{{ $totalCampusesCount }}</h3>
                     <p>Total Campus</p>
                 </div>
                 <div class="card-footer">
-                    <a href="{{ route('admin.campus.index') }}">Lihat Detail</a> {{-- PERBAIKI ROUTE --}}
+                    <a href="{{ route('admin.dashboard') }}">Lihat Detail</a>
                 </div>
             </div>
         </div>

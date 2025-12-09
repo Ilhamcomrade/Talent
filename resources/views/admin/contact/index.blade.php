@@ -45,6 +45,11 @@
         background-color: #f0f0f0 !important;
     }
 
+    /* Warna putih untuk pesan sudah dibaca */
+    .read-row td {
+        background-color: #ffffff !important;
+    }
+
     /* Penyesuaian agar elemen form dan filter muat di satu baris */
     .data-filter-controls {
         display: flex;
@@ -220,7 +225,7 @@
                 </thead>
                 <tbody>
                     @foreach($messages as $msg)
-                    <tr class="{{ $msg->status == 0 ? 'unread-row' : '' }}" style="{{ $msg->status == 0 ? 'background-color: #f0f0f0 !important;' : 'background-color: #ffffff !important;' }}">
+                    <tr class="{{ $msg->status == 0 ? 'unread-row' : 'read-row' }}" data-status="{{ $msg->status }}">
                         <td>{{ ($messages->currentPage() - 1) * $messages->perPage() + $loop->iteration }}</td>
 
                         <td>{{ $msg->name ?? '-' }}</td>
