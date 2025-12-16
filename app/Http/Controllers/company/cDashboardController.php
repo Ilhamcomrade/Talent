@@ -1,76 +1,90 @@
 <?php
 
-// namespace App\Http\Controllers\Company;
+namespace App\Http\Controllers\Company;
 
-// use App\Http\Controllers\Controller;
-// use Illuminate\Support\Facades\Auth;
-// use App\Models\CompaniesJob;
-// use App\Models\CompaniesApplication;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use App\Models\CompaniesApplication;
+use App\Models\CompaniesJob;
+use App\Models\CompaniesMagang;
 
-// class cDashboardController extends Controller
-// {
-//     public function index()
-//     {
-//         $companyId = Auth::guard('company')->id();
+class cDashboardController extends Controller
+{
+    public function index()
+    {
+        $company = Auth::guard('company')->user();
 
-//         return view('company.company_dashboard', [
-//             'totalLowongan' => CompaniesJob::where('company_id', $companyId)->count(),
+        // ==========================
+        // TOTAL STATISTIK
+        // ==========================
 
-//             'totalPelamar' => CompaniesApplication::whereIn(
-//                 'companies_job_id',
-//                 CompaniesJob::where('company_id', $companyId)->pluck('id')
-//             )->count(),
+        // Total lowongan kerja
+        $totalJobs = CompaniesJob::where('company_id', $company->id)->count();
 
-//             'lowonganAktif' => CompaniesJob::where('company_id', $companyId)
-//                 ->where('status', 'aktif')
-//                 ->count(),
+        // Total lowongan magang (PAKE TABEL companies_magang)
+        $totalMagangJobs = CompaniesMagang::where('company_id', $company->id)->count();
 
-//             'lowonganExpired' => CompaniesJob::where('company_id', $companyId)
-//                 ->where('status', 'expired')
-//                 ->count(),
-//         ]);
-//     }
+        // Total aplikasi lamaran dari tabel companies_applications
+        $totalApplicants = CompaniesApplication::whereHas('job', function ($q) use ($company) {
+            $q->where('company_id', $company->id);
+        })->count();
 
-//     public function detailLowongan()
-//     {
-//         $companyId = Auth::guard('company')->id();
+        // Total pelamar unik (berdasarkan email)
+        $totalUniqueApplicants = CompaniesApplication::whereHas('job', function ($q) use ($company) {
+                $q->where('company_id', $company->id);
+            })
+            ->distinct('email')
+            ->count('email');
 
-//         $lowongan = CompaniesJob::where('company_id', $companyId)->get();
+        // Total pelamar magang (BERDASARKAN JOB kerja bertipe 'Magang')
+        // NOTE: ini cuma kepake kalau di companies_jobs ada employment_type = 'Magang'
+        $totalMagangApplicants = CompaniesApplication::whereHas('job', function ($q) use ($company) {
+            $q->where('company_id', $company->id)
+              ->where('employment_type', 'Magang');
+        })->count();
 
-//         return view('company.dashboard.detail', compact('lowongan'));
-//     }
+        // ==========================
+        // GRAFIK: LOWONGAN KERJA PER BULAN
+        // ==========================
 
-//     public function detailPelamar()
-//     {
-//         $companyId = Auth::guard('company')->id();
+        $monthlyJobs = CompaniesJob::where('company_id', $company->id)
+            ->selectRaw('EXTRACT(MONTH FROM created_at) as month, COUNT(*) as total')
+            ->groupBy('month')
+            ->orderBy('month')
+            ->pluck('total', 'month')
+            ->toArray();
 
-//         $pelamar = CompaniesApplication::whereIn(
-//             'companies_job_id',
-//             CompaniesJob::where('company_id', $companyId)->pluck('id')
-//         )->get();
+        // ==========================
+        // GRAFIK: LOWONGAN MAGANG PER BULAN (tabel companies_magang)
+        // ==========================
 
-//         return view('company.dashboard.detailpelamar', compact('pelamar'));
-//     }
+        $monthlyMagangJobs = CompaniesMagang::where('company_id', $company->id)
+            ->selectRaw('EXTRACT(MONTH FROM created_at) as month, COUNT(*) as total')
+            ->groupBy('month')
+            ->orderBy('month')
+            ->pluck('total', 'month')
+            ->toArray();
 
-//     public function detailLowonganAktif()
-//     {
-//         $companyId = Auth::guard('company')->id();
+        // ==========================
+        // SIAPKAN ARRAY 12 BULAN (1–12)
+        // ==========================
 
-//         $lowongan = CompaniesJob::where('company_id', $companyId)
-//             ->where('status', 'aktif')
-//             ->get();
+        $chartJobs = [];
+        $chartMagang = [];
 
-//         return view('company.dashboard.detail_lowongan_aktif', compact('lowongan'));
-//     }
+        for ($i = 1; $i <= 12; $i++) {
+            $chartJobs[]   = $monthlyJobs[$i] ?? 0;
+            $chartMagang[] = $monthlyMagangJobs[$i] ?? 0;
+        }
 
-//     public function detailLowonganExpired()
-//     {
-//         $companyId = Auth::guard('company')->id();
-
-//         $lowongan = CompaniesJob::where('company_id', $companyId)
-//             ->where('status', 'expired')
-//             ->get();
-
-//         return view('company.dashboard.detail_lowongan_expired', compact('lowongan'));
-//     }
-// }
+        return view('company.company_dashboard', compact(
+            'totalJobs',
+            'totalMagangJobs',
+            'totalApplicants',
+            'totalUniqueApplicants',
+            'totalMagangApplicants',
+            'chartJobs',
+            'chartMagang'
+        ));
+    }
+}

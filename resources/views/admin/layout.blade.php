@@ -731,6 +731,15 @@
               </li>
 
               <li class="nav-item">
+    <a class="nav-link {{ request()->routeIs('admin.job-categories.*') ? 'active' : '' }}" 
+       href="{{ route('admin.job-categories.index') }}">
+        <i class="fas fa-users-cog"></i> 
+        <span>Kategori Pekerjaan</span>
+    </a>
+</li>
+
+
+              <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('admin.lokasi.index') ? 'active' : '' }}" href="{{ route('admin.lokasi.index') }}">
                   <i class="fas fa-map-marker-alt"></i> <span>Manajemen Lokasi</span>
                 </a>

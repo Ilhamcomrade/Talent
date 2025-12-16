@@ -283,8 +283,8 @@
                             "Talenthub jadi platform cari kerja yang paling mudah & cepat buatku. Aku berhasil career switch ke bidang yang jadi passion-ku dan dapat kerja cuma dalam 4 hari."
                         </blockquote>
                         <div class="mt-3">
-                            <div class="testimonial-author">ilham sadewo, 24 tahun</div>
-                            <div class="testimonial-role">pemula</div>
+                            <div class="testimonial-author">ilham sadewo, 20 tahun</div>
+                            <div class="testimonial-role">full stack developer</div>
                         </div>
                     </div>
                 </div>
@@ -295,7 +295,7 @@
                             "Lewat Talenthub, aku bisa dapat pekerjaan yang bikin aku puas dan orang tua bangga. Prosesnya cepat, cuma 4 hari aku langsung dihubungi rekruter."
                         </blockquote>
                         <div class="mt-3">
-                            <div class="testimonial-author">rimba sadewo, 26 tahun</div>
+                            <div class="testimonial-author">rimba sadewo, 20 tahun</div>
                             <div class="testimonial-role">full stack developer</div>
                         </div>
                     </div>

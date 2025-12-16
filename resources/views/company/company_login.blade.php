@@ -153,6 +153,30 @@
             width: 180px;
             margin-top: 20px;
         }
+        .btn-submit {
+    background-color: #0d47a1;
+    color: #fff;
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-weight: normal;
+    font-size: 1rem;
+    border: none;
+    width: 180px;
+    margin-top: 20px;
+
+    /* tambahan */
+    transition: all 0.3s ease;
+}
+
+.btn-submit:hover,
+.btn-submit:focus,
+.btn-submit:active {
+    background-color: #0d47a1;
+    color: #fff !important; /* paksa teks tetap putih */
+    outline: none; /* hilangkan outline default */
+    box-shadow: none;
+}
+
         .btn-submit:hover {
             background-color: #0d47a1;
         }

@@ -16,7 +16,9 @@ use App\Http\Controllers\Admin\CandidateController;
 use App\Http\Controllers\Admin\ContactController as AdminContactController;
 use App\Http\Controllers\Admin\NotifController;
 use App\Http\Controllers\Admin\MagangController;
+use App\Http\Controllers\Admin\JobCategoryController;
 use App\Http\Controllers\intersipController;
+use App\Http\Controllers\User\UserApplicationsController;
 
 
 
@@ -28,8 +30,9 @@ use App\Http\Controllers\Company\cJobController;
 use App\Http\Controllers\Company\cProfileController;
 use App\Http\Controllers\Company\cNotificationController;
 use App\Http\Controllers\Company\cMagangController;
-// use App\Http\Controllers\Company\cDashboardController;
+use App\Http\Controllers\Company\cDashboardController;
 use App\Http\Controllers\Company\CompanyController as PublicCompanyController;
+use App\Http\Controllers\Company\cApplicantController;
 
 
 // Campus Controllers
@@ -101,8 +104,11 @@ Route::prefix('company')->group(function () {
 Route::middleware(['auth.company'])->group(function () {
 
     // Dashboard
-    Route::get('/dashboard', fn() => view('company.company_dashboard'))->name('company.dashboard');
+  Route::get('/dashboard', [cDashboardController::class, 'index'])
+    ->name('company.dashboard');
 
+    Route::get('/company/jobs/{job}/applicants', [cApplicantController::class, 'showJobApplicants'])
+    ->name('companiesjobs.applicants');
     // // Lowongan
     // Route::get('/jobs', [cJobController::class, 'index'])->name('company.jobs.index');
     // Route::get('/jobs/create', [cJobController::class, 'create'])->name('company.jobs.create');
@@ -111,11 +117,12 @@ Route::middleware(['auth.company'])->group(function () {
     // Route::put('/jobs/{id}', [cJobController::class, 'update'])->name('jobs.update');
     // Route::delete('/jobs/{id}', [cJobController::class, 'destroy'])->name('jobs.destroy');
 
-    // API untuk wilayah (jika perlu akses terproteksi)
-    Route::get('/api/regencies/{id}', [cJobController::class, 'getRegencies']);
-    Route::get('/api/districts/{id}', [cJobController::class, 'getDistricts']);
-    Route::get('/api/villages/{id}', [cJobController::class, 'getVillages']);
-
+    // API endpoints untuk wilayah
+Route::get('/api/regencies/{provinceId}', [cJobController::class, 'getRegencies'])->name('api.regencies');
+Route::get('/api/districts/{regencyId}', [cJobController::class, 'getDistricts'])->name('api.districts');
+Route::get('/api/villages/{districtId}', [cJobController::class, 'getVillages'])->name('api.villages');
+Route::get('/api/location-details', [cJobController::class, 'getLocationDetails'])->name('api.location-details');
+Route::get('/api/job-stats', [cJobController::class, 'getStats'])->name('api.job-stats');
     // Profil
     Route::get('/profile', [cProfileController::class, 'index'])->name('profile');
     Route::post('/profile', [cProfileController::class, 'index'])->name('profile');
@@ -150,7 +157,30 @@ Route::middleware(['auth.company'])->group(function () {
     // Halaman daftar pelamar
 Route::get('jobs/pelamar', function () {
     return view('company.jobs.pelamar');
-})->name('companiesjobs.pelamar');
+})->name('companiesjobs.pelamar'); 
+ // Daftar semua pelamar untuk semua job
+    Route::get('/applications', [cApplicantController::class, 'index'])
+        ->name('company.applications.index');
+
+    // Pelamar per job
+    Route::get('/applications/job/{id}', [cApplicantController::class, 'pelamarByJob'])
+        ->name('company.applications.byJob');
+
+    // Detail pelamar
+    Route::get('/applications/show/{id}', [cApplicantController::class, 'show'])
+        ->name('company.applications.show');
+
+    // Update status
+    Route::post('/applications/status/{id}', [cApplicantController::class, 'updateStatus'])
+        ->name('company.applications.updateStatus');
+
+        Route::put('applications/status/{id}', [cApplicantController::class, 'updateStatus'])
+    ->name('company.applications.updateStatus');
+
+
+    // Download CV
+    Route::get('/applications/cv/{id}', [cApplicantController::class, 'cv'])
+        ->name('company.applications.cv');
 
     Route::get('jobs/{id}', [cJobController::class, 'show'])->name('companiesjobs.show');
 });
@@ -296,7 +326,15 @@ Route::name('campus.')->group(function () {
 // Halaman publik Job
 Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
 Route::get('/jobs/{id}', [JobController::class, 'show'])->name('jobs.show');
-Route::get('/jobs/{job}/apply', [JobController::class, 'apply'])->name('jobs.apply');
+
+// Route untuk halaman pencarian lowongan kerja
+Route::get('/lowongan-kerja', [JobController::class, 'index'])->name('jobs.index');
+Route::get('/lowongan-kerja/{id}', [JobController::class, 'show'])->name('jobs.show');
+Route::post('/lowongan-kerja/filter', [JobController::class, 'filterJobs'])->name('jobs.filter');
+// Form Apply
+Route::get('/jobs/{id}/apply', [JobController::class, 'applyForm'])->name('jobs.apply');
+Route::post('/jobs/{id}/apply', [JobController::class, 'applyStore'])->name('jobs.apply.store');
+
 
 /*
 |--------------------------------------------------------------------------
@@ -350,6 +388,24 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/api/magang/regencies/{provinceId}', [MagangController::class, 'getRegencies'])->name('magang.api.regencies');
 Route::get('/api/magang/districts/{regencyId}', [MagangController::class, 'getDistricts'])->name('magang.api.districts');
 Route::get('/api/magang/villages/{districtId}', [MagangController::class, 'getVillages'])->name('magang.api.villages');
+
+Route::get('/job-categories', [JobCategoryController::class, 'index'])
+        ->name('job-categories.index');
+
+    Route::get('/job-categories/create', [JobCategoryController::class, 'create'])
+        ->name('job-categories.create');
+
+    Route::post('/job-categories', [JobCategoryController::class, 'store'])
+        ->name('job-categories.store');
+
+    Route::get('/job-categories/{id}/edit', [JobCategoryController::class, 'edit'])
+        ->name('job-categories.edit');
+
+    Route::put('/job-categories/{id}', [JobCategoryController::class, 'update'])
+        ->name('job-categories.update');
+
+    Route::delete('/job-categories/{id}', [JobCategoryController::class, 'destroy'])
+        ->name('job-categories.destroy');
 
 
 
@@ -438,4 +494,11 @@ Route::prefix('wawancara')->name('wawancara.')->middleware(['auth', 'wawancara']
         Route::get('/events', [CalendarController::class, 'fetchEvents'])->name('index.events');
 
     });
+});
+
+Route::middleware(['auth'])->prefix('user')->name('user.')->group(function () {
+    Route::get('/applications', [UserApplicationsController::class, 'index'])->name('applications.index');
+    Route::get('/applications/{id}', [UserApplicationsController::class, 'show'])->name('applications.show');
+    Route::get('/applications/{id}/cv', [UserApplicationsController::class, 'cv'])->name('applications.cv');
+    Route::delete('/applications/{id}', [UserApplicationsController::class, 'destroy'])->name('applications.destroy');
 });
