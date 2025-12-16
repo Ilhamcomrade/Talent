@@ -571,87 +571,160 @@
                 }
             }
 
-            provinsiSelect.addEventListener('change', function() {
-                console.log('Provinsi changed:', this.value);
-                loadRegencies(this.value);
-            });
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- 1. Ambil Elemen DOM dan Input Tersembunyi ---
+        const provinsiEl = document.getElementById('provinsi');
+        const kabupatenEl = document.getElementById('kabupaten');
+        const kecamatanEl = document.getElementById('kecamatan');
+        const desaEl = document.getElementById('desa');
 
-            kabupatenSelect.addEventListener('change', function() {
-                console.log('Kabupaten changed:', this.value);
-                loadDistricts(this.value);
-            });
+        const provinceIdInput = document.getElementById('province_id');
+        const regencyIdInput = document.getElementById('regency_id');
+        const districtIdInput = document.getElementById('district_id');
+        const villageIdInput = document.getElementById('village_id'); // Digunakan di kedua versi, ambil yang ini.
+        const locationInput = document.getElementById('location'); // Input untuk menyimpan teks lokasi lengkap (dari versi 50dfe0cb...)
 
-            kecamatanSelect.addEventListener('change', function() {
-                console.log('Kecamatan changed:', this.value);
-                loadVillages(this.value);
-            });
+        // Elemen untuk menampilkan teks lokasi (dari versi 50dfe0cb...)
+        const locationDisplay = document.getElementById('location-display');
+        const locationText = document.getElementById('location-text');
 
-            desaSelect.addEventListener('change', function() {
-                console.log('Desa changed:', this.value);
-                villageIdField.value = this.value;
-                updateLocationText();
-            });
+        // --- 2. Fungsi Pembantu ---
 
-            // Load data jika sudah ada old value (saat form validation error)
-            const oldProvinsiId = @json(old('provinsi_id', ''));
-            const oldKabupatenId = @json(old('kabupaten_id', ''));
-            const oldKecamatanId = @json(old('kecamatan_id', ''));
-            const oldDesaId = @json(old('desa_id', ''));
+        function resetDropdowns(level) {
+            // Mereset dropdown di bawah level saat ini
+            if (level === 'provinsi') {
+                kabupatenEl.innerHTML = '<option value="">-- Pilih Kabupaten --</option>'; kabupatenEl.disabled = true;
+                kecamatanEl.innerHTML = '<option value="">-- Pilih Kecamatan --</option>'; kecamatanEl.disabled = true;
+                desaEl.innerHTML = '<option value="">-- Pilih Desa --</option>'; desaEl.disabled = true;
 
-            console.log('Old values:', {oldProvinsiId, oldKabupatenId, oldKecamatanId, oldDesaId});
-
-            if (oldProvinsiId) {
-                // Set value dan trigger change event
-                provinsiSelect.value = oldProvinsiId;
-                
-                // Trigger change setelah delay kecil
-                setTimeout(() => {
-                    const event = new Event('change');
-                    provinsiSelect.dispatchEvent(event);
-                    
-                    // Set kabupaten setelah data dimuat
-                    setTimeout(() => {
-                        if (oldKabupatenId) {
-                            // Tunggu sebentar agar dropdown terisi
-                            setTimeout(() => {
-                                kabupatenSelect.value = oldKabupatenId;
-                                const kabupatenEvent = new Event('change');
-                                kabupatenSelect.dispatchEvent(kabupatenEvent);
-                                
-                                // Set kecamatan setelah data dimuat
-                                setTimeout(() => {
-                                    if (oldKecamatanId) {
-                                        setTimeout(() => {
-                                            kecamatanSelect.value = oldKecamatanId;
-                                            const kecamatanEvent = new Event('change');
-                                            kecamatanSelect.dispatchEvent(kecamatanEvent);
-                                            
-                                            // Set desa setelah data dimuat
-                                            setTimeout(() => {
-                                                if (oldDesaId) {
-                                                    setTimeout(() => {
-                                                        desaSelect.value = oldDesaId;
-                                                        const desaEvent = new Event('change');
-                                                        desaSelect.dispatchEvent(desaEvent);
-                                                    }, 300);
-                                                }
-                                            }, 300);
-                                        }, 300);
-                                    }
-                                }, 300);
-                            }, 500);
-                        }
-                    }, 500);
-                }, 100);
+                regencyIdInput.value = ''; districtIdInput.value = ''; villageIdInput.value = '';
             }
+            if (level === 'kabupaten') {
+                kecamatanEl.innerHTML = '<option value="">-- Pilih Kecamatan --</option>'; kecamatanEl.disabled = true;
+                desaEl.innerHTML = '<option value="">-- Pilih Desa --</option>'; desaEl.disabled = true;
 
-            // Debug: Tambahkan event listener untuk melihat perubahan
-            provinsiSelect.addEventListener('change', () => console.log('Provinsi selected:', provinsiSelect.value));
-            kabupatenSelect.addEventListener('change', () => console.log('Kabupaten selected:', kabupatenSelect.value));
-            kecamatanSelect.addEventListener('change', () => console.log('Kecamatan selected:', kecamatanSelect.value));
-            desaSelect.addEventListener('change', () => console.log('Desa selected:', desaSelect.value));
+                districtIdInput.value = ''; villageIdInput.value = '';
+            }
+            if (level === 'kecamatan') {
+                desaEl.innerHTML = '<option value="">-- Pilih Desa --</option>'; desaEl.disabled = true;
+                villageIdInput.value = '';
+            }
+        }
+
+        function updateLocationDisplay() {
+            // Menggabungkan dan menampilkan teks lokasi lengkap (dari versi 50dfe0cb...)
+            const provName = provinsiEl.options[provinsiEl.selectedIndex]?.text || '';
+            const kabName = kabupatenEl.options[kabupatenEl.selectedIndex]?.text || '';
+            const kecName = kecamatanEl.options[kecamatanEl.selectedIndex]?.text || '';
+            const desaName = desaEl.options[desaEl.selectedIndex]?.text || '';
+
+            const parts = [];
+            // Urutan: Desa, Kecamatan, Kabupaten, Provinsi
+            if (desaName && !desaName.includes('-- Pilih Desa --')) parts.unshift(desaName);
+            if (kecName && !kecName.includes('-- Pilih Kecamatan --')) parts.unshift(kecName);
+            if (kabName && !kabName.includes('-- Pilih Kabupaten --')) parts.unshift(kabName);
+            if (provName && !provName.includes('-- Pilih Provinsi --')) parts.unshift(provName);
+
+            if (parts.length > 0) {
+                locationText.textContent = parts.join(', ');
+                locationInput.value = parts.join(', ');
+                locationDisplay.style.display = 'block';
+            } else {
+                locationDisplay.style.display = 'none';
+                locationInput.value = '';
+            }
+        }
+
+        async function fetchAndFill(url, selectEl, placeholderText, selectedValue = '') {
+            // Mengambil data dan mengisi dropdown (diadopsi dari versi 50dfe0cb...)
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                selectEl.innerHTML = `<option value="">${placeholderText}</option>`;
+                data.forEach(item => {
+                    const selected = item.id == selectedValue ? 'selected' : '';
+                    selectEl.innerHTML += `<option value="${item.id}" ${selected}>${item.name}</option>`;
+                });
+                selectEl.disabled = false;
+            } catch (err) {
+                console.error('Error fetching data:', err);
+            }
+        }
+
+        // --- 3. Event Listener (Diadopsi dari versi 50dfe0cb... dengan perbaikan log) ---
+
+        provinsiEl.addEventListener('change', () => {
+            const provId = provinsiEl.value;
+            console.log('Provinsi changed:', provId); // Log dari HEAD
+            provinceIdInput.value = provId;
+            resetDropdowns('provinsi');
+            if (provId) fetchAndFill(`/company/api/regencies/${provId}`, kabupatenEl, '-- Pilih Kabupaten --');
+            updateLocationDisplay();
         });
-    </script>
 
+        kabupatenEl.addEventListener('change', () => {
+            const regId = kabupatenEl.value;
+            console.log('Kabupaten changed:', regId); // Log dari HEAD
+            regencyIdInput.value = regId;
+            resetDropdowns('kabupaten');
+            if (regId) fetchAndFill(`/company/api/districts/${regId}`, kecamatanEl, '-- Pilih Kecamatan --');
+            updateLocationDisplay();
+        });
+
+        kecamatanEl.addEventListener('change', () => {
+            const distId = kecamatanEl.value;
+            console.log('Kecamatan changed:', distId); // Log dari HEAD
+            districtIdInput.value = distId;
+            resetDropdowns('kecamatan');
+            if (distId) fetchAndFill(`/company/api/villages/${distId}`, desaEl, '-- Pilih Desa --');
+            updateLocationDisplay();
+        });
+
+        desaEl.addEventListener('change', () => {
+            const villId = desaEl.value;
+            console.log('Desa changed:', villId); // Log dari HEAD
+            villageIdInput.value = villId;
+            updateLocationDisplay();
+        });
+
+
+        // --- 4. Pemuatan Ulang Nilai Lama (Saat Error Validasi) ---
+
+        // Ambil nilai lama (menggunakan syntax Laravel Blade yang ada di HEAD)
+        const oldProvinsiId = @json(old('provinsi_id', ''));
+        const oldKabupatenId = @json(old('kabupaten_id', ''));
+        const oldKecamatanId = @json(old('kecamatan_id', ''));
+        const oldDesaId = @json(old('desa_id', ''));
+        
+        // Cek apakah ada nilai lama (jika form gagal validasi)
+        if (oldProvinsiId) {
+            console.log('Mendeteksi nilai lama:', {oldProvinsiId, oldKabupatenId, oldKecamatanId, oldDesaId});
+            
+            // Atur nilai pada input tersembunyi
+            provinceIdInput.value = oldProvinsiId;
+            regencyIdInput.value = oldKabupatenId;
+            districtIdInput.value = oldKecamatanId;
+            villageIdInput.value = oldDesaId;
+            
+            // Atur nilai pada dropdown provinsi
+            provinsiEl.value = oldProvinsiId;
+
+            // Panggil fungsi pemuatan data secara async/await (lebih baik dari setTimeout bertingkat)
+            if (oldProvinsiId) {
+                await fetchAndFill(`/company/api/regencies/${oldProvinsiId}`, kabupatenEl, '-- Pilih Kabupaten --', oldKabupatenId);
+            }
+            if (oldKabupatenId) {
+                await fetchAndFill(`/company/api/districts/${oldKabupatenId}`, kecamatanEl, '-- Pilih Kecamatan --', oldKecamatanId);
+            }
+            if (oldKecamatanId) {
+                await fetchAndFill(`/company/api/villages/${oldKecamatanId}`, desaEl, '-- Pilih Desa --', oldDesaId);
+            }
+        }
+        
+        // Panggil updateLocationDisplay di akhir (baik ada old value atau tidak)
+        updateLocationDisplay();
+    });
+</script>
 </body>
 </html>

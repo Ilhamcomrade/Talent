@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
     <style>
-        /* ================= TAB STYLE ================= */
+        /* ======================= TAB STYLE BARU (SAMA SEPERTI KAMPUS) ======================= */
         #detail-page-content .detail-nav-menu {
             display: flex;
             gap: 0;
@@ -21,16 +21,23 @@
             padding: 12px 28px;
             font-weight: bold;
             cursor: pointer;
-            background:  #80868b;
+            background: #80868b;
             border: none;
             color: white;
             border-radius: 12px 12px 0 0;
             margin-right: 0;
+            /* Ganti margin-top dengan top dan transform */
+            position: relative;
+            top: -100px;
             transition: 0.3s;
             border-right: 2px solid rgba(255, 255, 255, 0.3);
             text-decoration: none;
             display: inline-block;
             text-align: center;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         #detail-page-content .detail-nav-item:last-child {
@@ -48,7 +55,7 @@
             text-decoration: none;
         }
 
-        /* ==================== RESET LAMA TETAP DIPERTAHANKAN ==================== */
+        /* ===================== STYLE LAMA KAMU (DIBIARKAN UTUH TANPA DIUBAH) ===================== */
         #detail-page-content * {
             margin: 0;
             padding: 0;
@@ -60,12 +67,6 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
-        }
-
-        #detail-page-content .detail-header {
-            padding: 40px 0 10px 0;
-            border-bottom: 1px solid #e0e0e0;
-            margin-top: -45px;
         }
 
         #detail-page-content .detail-header-content {
@@ -81,7 +82,7 @@
 
         #detail-page-content .detail-logo {
             width: 200px;
-            height: 200px;
+            height: 100px;
             border-radius: 12px;
             object-fit: contain;
             display: flex;
@@ -122,7 +123,10 @@
         }
 
         #detail-page-content .detail-main-content {
-            padding: 30px 0;
+                padding: 15px 0 30px 0;
+                margin-top: -90px;
+                position: relative;
+                z-index: 0;
         }
 
         #detail-page-content .detail-section-title {
@@ -132,7 +136,7 @@
             color: #000;
         }
 
-        /* ===================== STYLE UNTUK FASILITAS DAN KEUNGGULAN ===================== */
+        /* ===================== STYLE BARU UNTUK FASILITAS DAN KEUNGGULAN ===================== */
         #detail-page-content .benefits-section {
             margin-bottom: 50px;
         }
@@ -181,24 +185,33 @@
             line-height: 1.6;
         }
 
-        /* ===================== STYLE UNTUK WHY JOIN US ===================== */
-        #detail-page-content .why-join-section {
+        /* ===================== STYLE UNTUK ALASAN BERGABUNG ===================== */
+        #detail-page-content .reasons-section {
             margin-bottom: 40px;
         }
 
-        #detail-page-content .why-join-title {
+        #detail-page-content .reasons-title {
             font-size: 28px;
             font-weight: bold;
             margin-bottom: 20px;
             color: #000;
         }
 
-        #detail-page-content .why-join-text {
+        #detail-page-content .reasons-text {
             font-size: 15px;
             color: #333;
             line-height: 1.8;
             margin-bottom: 15px;
             text-align: justify;
+        }
+
+        /* ===================== GARIS PEMBATAS BARU ===================== */
+        #detail-page-content .separator-line {
+            height: 2px;
+            background-color: #e0e0e0;
+            margin: 20px 0;
+            margin-top: -10px;
+            width: 100%;
         }
 
         /* Responsive */
@@ -268,7 +281,7 @@
 
         </div>
 
-        <!-- TAB NAV -->
+        <!-- TAB NAVIGATION -->
         <div class="detail-nav-menu">
             <a href="{{ route('campus.detail', ['campus' => $campus->slug]) }}" class="detail-nav-item">Tentang</a>
             <a href="{{ route('campus.culture', ['campus' => $campus->slug]) }}" class="detail-nav-item active">Kehidupan dan Budaya</a>
@@ -280,6 +293,9 @@
 
     <!-- CONTENT BARU -->
     <div class="detail-main-content">
+
+        <!-- GARIS PEMBATAS BARU - DIPINDAHKAN KE POSISI YANG TEPAT -->
+        <div class="separator-line"></div>
 
         <!-- FASILITAS DAN KEUNGGULAN -->
         <div class="benefits-section">
@@ -332,19 +348,26 @@
             </div>
         </div>
 
-        <!-- MENGAPA BERGABUNG DENGAN KAMI -->
-        <div class="why-join-section">
-            <h2 class="why-join-title">Mengapa bergabung dengan kami?</h2>
+        <!-- ALASAN BERGABUNG - KONTEN DIUBAH -->
+        <div class="reasons-section">
+            <h2 class="reasons-title">Mengapa bergabung dengan kami ?</h2>
 
-            <p class="why-join-text">
-                Visi "Menjadi institusi pendidikan terkemuka yang menghasilkan lulusan berkualitas, berkarakter, dan siap
-                bersaing di tingkat nasional maupun internasional dengan mengedepankan inovasi dan pengembangan ilmu pengetahuan".
+            <p class="reasons-text">
+                Bergabung dengan {{ $campus->nama_kampus }} memberikan kesempatan untuk meraih pendidikan berkualitas tinggi
+                dengan fasilitas yang lengkap dan modern. Kami menyediakan lingkungan belajar yang inspiratif dan mendukung
+                pengembangan potensi akademik serta karakter mahasiswa secara optimal.
             </p>
 
-            <p class="why-join-text">
-                Misi "Menyelenggarakan pendidikan berkualitas tinggi dengan kurikulum yang relevan, memfasilitasi penelitian
-                dan pengabdian masyarakat, mengembangkan sumber daya manusia yang profesional, serta menciptakan lingkungan
-                akademik yang kondusif untuk pengembangan potensi mahasiswa secara optimal"
+            <p class="reasons-text">
+                Dengan kurikulum yang terus diperbarui sesuai perkembangan zaman dan kebutuhan industri,
+                {{ $campus->nama_kampus }} memastikan lulusan siap bersaing di dunia kerja. Dukungan dari dosen-dosen
+                berkualifikasi tinggi dan berpengalaman akan membimbing Anda menuju kesuksesan akademik dan karir.
+            </p>
+
+            <p class="reasons-text">
+                Kami juga menawarkan berbagai kegiatan ekstrakurikuler dan organisasi mahasiswa yang dapat
+                mengasah soft skills dan leadership. Jejaring alumni yang kuat akan membuka peluang karir
+                dan pengembangan profesional yang lebih luas bagi setiap lulusan.
             </p>
         </div>
 

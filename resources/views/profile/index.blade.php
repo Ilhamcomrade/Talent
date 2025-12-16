@@ -571,9 +571,8 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-// SweetAlert for success messages
 @if(session('success'))
+<script>
     Swal.fire({
         toast: true,
         position: "top-end",
@@ -583,9 +582,11 @@
         timer: 3000,
         timerProgressBar: true
     });
+</script>
 @endif
 
 @if(session('error'))
+<script>
     Swal.fire({
         toast: true,
         position: "top-end",
@@ -595,7 +596,10 @@
         timer: 3000,
         timerProgressBar: true
     });
+</script>
 @endif
+
+<script>
 
 function openEditModal(section) {
     const modal = new bootstrap.Modal(document.getElementById('editProfileModal'));
@@ -762,15 +766,17 @@ document.getElementById('profileForm').addEventListener('submit', function(e) {
 });
 
 // Auto-close modal on successful submission
+</script>
 @if(session('success'))
+<script>
     document.addEventListener('DOMContentLoaded', function() {
         const modal = bootstrap.Modal.getInstance(document.getElementById('editProfileModal'));
         if (modal) {
             modal.hide();
         }
     });
-@endif
 </script>
+@endif
 
 </body>
 </html>

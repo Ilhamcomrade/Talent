@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class CompaniesJob extends Model
 {
@@ -42,16 +43,16 @@ class CompaniesJob extends Model
         'is_public' => 'boolean',
     ];
 
-    /* ===============================
-     *  RELASI KE PERUSAHAAN
-     * =============================== */
+    /**
+     * Relasi ke tabel perusahaan
+     */
     public function company()
     {
         return $this->belongsTo(Company::class, 'company_id', 'id');
     }
 
     /* ===============================
-     *  RELASI KE PELAMAR
+     * RELASI KE PELAMAR
      * =============================== */
     public function applicants()
     {
@@ -59,7 +60,7 @@ class CompaniesJob extends Model
     }
 
     /* ===============================
-     *  RELASI KE KATEGORI PEKERJAAN
+     * RELASI KE KATEGORI PEKERJAAN
      * =============================== */
     public function category()
     {
@@ -67,7 +68,7 @@ class CompaniesJob extends Model
     }
 
     /* ===============================
-     *  RELASI WILAYAH BERTINGKAT
+     * RELASI WILAYAH BERTINGKAT
      * =============================== */
     public function province()
     {
@@ -90,7 +91,7 @@ class CompaniesJob extends Model
     }
 
     /* ===============================
-     *  ACCESSOR: LOKASI LENGKAP
+     * ACCESSOR: LOKASI LENGKAP
      * =============================== */
     public function getFullLocationAttribute()
     {
@@ -110,5 +111,59 @@ class CompaniesJob extends Model
         }
 
         return implode(', ', $parts);
+    }
+    
+    /**
+     * Accessor untuk lokasi singkat (Kabupaten, Provinsi)
+     */
+    public function getShortLocationAttribute()
+    {
+        $locationParts = [];
+
+        if ($this->regency) {
+            $locationParts[] = $this->regency->name;
+        }
+
+        if ($this->province) {
+            $locationParts[] = $this->province->name;
+        }
+
+        if (!empty($locationParts)) {
+            return implode(', ', $locationParts);
+        }
+
+        return 'Lokasi tidak ditentukan';
+    }
+
+    /**
+     * Accessor untuk waktu posting dalam format real-time
+     */
+    public function getPostedTimeAgoAttribute()
+    {
+        $createdAt = $this->created_at;
+        $now = Carbon::now();
+
+        // Hitung selisih waktu
+        $diffInSeconds = $createdAt->diffInSeconds($now);
+        $diffInMinutes = $createdAt->diffInMinutes($now);
+        $diffInHours = $createdAt->diffInHours($now);
+        $diffInDays = $createdAt->diffInDays($now);
+        $diffInMonths = $createdAt->diffInMonths($now);
+        $diffInYears = $createdAt->diffInYears($now);
+
+        // Format berdasarkan selisih waktu
+        if ($diffInSeconds < 60) {
+            return "{$diffInSeconds} detik yang lalu";
+        } elseif ($diffInMinutes < 60) {
+            return "{$diffInMinutes} menit yang lalu";
+        } elseif ($diffInHours < 24) {
+            return "{$diffInHours} jam yang lalu";
+        } elseif ($diffInDays < 30) {
+            return "{$diffInDays} hari yang lalu";
+        } elseif ($diffInMonths < 12) {
+            return "{$diffInMonths} bulan yang lalu";
+        } else {
+            return "{$diffInYears} tahun yang lalu";
+        }
     }
 }

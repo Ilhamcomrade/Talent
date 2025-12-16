@@ -19,7 +19,14 @@ class DashboardController extends Controller
         $newApplicationsCount = Application::where('status', 'baru')->count();
         $companiesCount = Company::count();
         $totalUsersCount = User::count();
-        $totalCampusesCount = Campus::count(); // TAMBAHKAN INI
+        
+        // Handle Campus count dengan error handling (jika tabel belum punya deleted_at column)
+        try {
+            $totalCampusesCount = Campus::count();
+        } catch (\Exception $e) {
+            // Jika query Campus gagal (deleted_at column missing), gunakan raw query
+            $totalCampusesCount = DB::table('campuses')->count();
+        }
 
         // Grafik 1: Distribusi Role User
         $userRoles = User::select('role', DB::raw('count(*) as total'))
@@ -37,7 +44,7 @@ class DashboardController extends Controller
             'newApplicationsCount',
             'companiesCount',
             'totalUsersCount',
-            'totalCampusesCount', // TAMBAHKAN INI
+            'totalCampusesCount',
             'userRoles',
             'lokasiStats'
         ));

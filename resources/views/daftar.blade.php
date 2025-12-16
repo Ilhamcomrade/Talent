@@ -264,7 +264,7 @@
       </div>
     </form>
 
-    <p class="company-link">Untuk perusahaan, kunjungi <a href="/perusahaan">halaman ini</a></p>
+    <p class="company-link">Untuk perusahaan, kunjungi <a href="/company">halaman ini</a></p>
     <p class="terms">Dengan mendaftar, saya setuju dengan <a href="#">Ketentuan Layanan</a></p>
 
     <div class="footer-line">

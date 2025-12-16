@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Company Dashboard</title>
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -357,25 +355,23 @@
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#companyNav" aria-expanded="false" aria-label="Toggle navigation">
+                data-bs-target="#companyNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="companyNav">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 position-relative" id="companyMenu">
-                    <!-- DASHBOARD -->
                     <li class="nav-item">
                         <a class="nav-link {{ request()->is('company/dashboard') ? 'active' : '' }}"
-                           href="{{ url('company/dashboard') }}">
-                           <i class="fas fa-chart-line me-1"></i> Dashboard
+                            href="{{ url('company/dashboard') }}">
+                            <i class="fas fa-chart-line me-1"></i> Dashboard
                         </a>
                     </li>
 
-                    <!-- LOWONGAN KERJA + SUBMENU -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle {{ request()->is('company/jobs*') ? 'active' : '' }}"
-                           href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                           <i class="fas fa-briefcase me-1"></i> Lowongan Kerja
+                            href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-briefcase me-1"></i> Lowongan Kerja
                         </a>
 
                         <ul class="dropdown-menu">
@@ -392,11 +388,10 @@
                         </ul>
                     </li>
 
-                    <!-- INTERNSHIP + SUBMENU -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle {{ request()->is('company/magang*') ? 'active' : '' }}"
-                           href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                           <i class="fas fa-graduation-cap me-1"></i> Internship
+                            href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-graduation-cap me-1"></i> Internship
                         </a>
 
                         <ul class="dropdown-menu">
@@ -413,6 +408,13 @@
                         </ul>
                     </li>
                     
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('company/benefits*') ? 'active' : '' }}"
+                        href="{{ route('company.benefits.index') }}">
+                        <i class="fas fa-gift me-1"></i> Benefit
+                        </a>
+                    </li>
+
 
                     <span class="nav-underline" id="companyUnderline"></span>
                 </ul>
@@ -429,11 +431,11 @@
 
                         <div class="dropdown">
                             <a class="d-flex align-items-center user-dropdown-toggle" 
-                               href="#" 
-                               role="button" 
-                               data-bs-toggle="dropdown" 
-                               aria-expanded="false"
-                               id="userDropdown">
+                                href="#" 
+                                role="button" 
+                                data-bs-toggle="dropdown" 
+                                aria-expanded="false"
+                                id="userDropdown">
                                 <div class="user-profile-icon">
                                     @if($company->logo)
                                         <img src="{{ asset('storage/' . $company->logo) }}" alt="Logo Perusahaan">
@@ -485,8 +487,80 @@
         </div>
     </nav>
 
-   
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
-   
+    <script>
+        // JS untuk menggerakkan underline pada navbar
+        document.addEventListener('DOMContentLoaded', function() {
+            const menu = document.getElementById('companyMenu');
+            const underline = document.getElementById('companyUnderline');
+            const activeLink = menu.querySelector('.nav-link.active');
+
+            function updateUnderline(element) {
+                if (element && window.innerWidth >= 992) {
+                    const rect = element.getBoundingClientRect();
+                    const menuRect = menu.getBoundingClientRect();
+
+                    underline.style.width = `${rect.width}px`;
+                    underline.style.left = `${rect.left - menuRect.left}px`;
+                    underline.style.opacity = 1;
+                } else {
+                    underline.style.opacity = 0;
+                }
+            }
+
+            // Inisialisasi posisi saat halaman dimuat
+            if (activeLink) {
+                updateUnderline(activeLink);
+            }
+
+            // Update posisi saat link dihover (desktop)
+            menu.querySelectorAll('.nav-link:not(.dropdown-toggle)').forEach(link => {
+                link.addEventListener('mouseenter', (e) => {
+                    if (window.innerWidth >= 992) {
+                         // Cek apakah bukan bagian dari dropdown
+                        let isDropdownItem = e.target.closest('.dropdown-menu');
+                        if (!isDropdownItem) {
+                            updateUnderline(e.currentTarget);
+                        }
+                    }
+                });
+
+                link.addEventListener('mouseleave', () => {
+                    if (window.innerWidth >= 992) {
+                        // Kembali ke posisi link aktif
+                        if (activeLink) {
+                            updateUnderline(activeLink);
+                        } else {
+                             underline.style.opacity = 0; // Sembunyikan jika tidak ada link aktif
+                        }
+                    }
+                });
+            });
+
+            // Handle dropdown toggle for Lowongan Kerja and Internship (Agar underline tidak muncul di link dropdown-toggle)
+            menu.querySelectorAll('.nav-item.dropdown > .nav-link').forEach(link => {
+                link.addEventListener('mouseenter', () => {
+                     if (window.innerWidth >= 992) {
+                         underline.style.opacity = 0; // Sembunyikan underline saat hover pada dropdown-toggle
+                     }
+                });
+                link.addEventListener('mouseleave', () => {
+                     if (window.innerWidth >= 992 && activeLink) {
+                         updateUnderline(activeLink); // Kembalikan ke link aktif
+                     }
+                });
+            });
+            
+            // Re-calculate on window resize
+            window.addEventListener('resize', () => {
+                if (activeLink) {
+                    updateUnderline(activeLink);
+                } else if (window.innerWidth < 992) {
+                     underline.style.opacity = 0;
+                }
+            });
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test API</title>
+</head>
+<body>
+    <h1>Test API Endpoints</h1>
+    
+    <button onclick="testProvince()">Test Province API</button>
+    <button onclick="testKabupaten()">Test Kabupaten API</button>
+    <button onclick="testKecamatan()">Test Kecamatan API</button>
+    
+    <pre id="output"></pre>
+    
+    <script>
+        const output = document.getElementById('output');
+        
+        async function testProvince() {
+            output.innerHTML = 'Loading provinces...\n';
+            try {
+                const response = await fetch('/api/reference/provinsi/list');
+                const data = await response.json();
+                output.innerHTML += `Status: ${response.status}\n`;
+                output.innerHTML += `Total: ${data.length}\n`;
+                output.innerHTML += JSON.stringify(data.slice(0, 3), null, 2);
+            } catch (error) {
+                output.innerHTML += `ERROR: ${error.message}`;
+            }
+        }
+        
+        async function testKabupaten() {
+            output.innerHTML = 'Loading kabupaten for province 11...\n';
+            try {
+                const response = await fetch('/api/reference/kabupaten/by-province?parent_id=11');
+                const data = await response.json();
+                output.innerHTML += `Status: ${response.status}\n`;
+                output.innerHTML += `Total: ${data.length}\n`;
+                output.innerHTML += JSON.stringify(data.slice(0, 3), null, 2);
+            } catch (error) {
+                output.innerHTML += `ERROR: ${error.message}`;
+            }
+        }
+        
+        async function testKecamatan() {
+            output.innerHTML = 'Loading kecamatan for regency 1101 (Aceh Selatan)...\n';
+            try {
+                const response = await fetch('/api/reference/kecamatan/by-kabupaten?parent_id=1101');
+                const data = await response.json();
+                output.innerHTML += `Status: ${response.status}\n`;
+                output.innerHTML += `Total: ${data.length}\n`;
+                output.innerHTML += JSON.stringify(data.slice(0, 3), null, 2);
+            } catch (error) {
+                output.innerHTML += `ERROR: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -178,7 +178,7 @@
             max-width: 90%;
         }
         .terms a {
-            color: #000; 
+            color: #000;
             font-weight: normal;
             text-decoration: none;
         }
@@ -296,20 +296,20 @@
     @include('partials.footer')
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <script>
         // Tambahkan event listener untuk tombol Google (jika diperlukan)
         document.addEventListener('DOMContentLoaded', function() {
             const googleBtn = document.querySelector('.register-btn:first-child');
             const emailBtn = document.querySelector('.register-btn[href]');
-            
+
             // Contoh: Tambahkan loading state untuk tombol Google
             googleBtn.addEventListener('click', function(e) {
                 // Jika ingin mengimplementasikan Google OAuth di masa depan
                 // e.preventDefault();
                 // window.location.href = '/auth/google';
             });
-            
+
             // Email button sudah memiliki href yang benar ke route company.register
         });
     </script>

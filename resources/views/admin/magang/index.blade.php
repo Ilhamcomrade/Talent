@@ -423,9 +423,9 @@
                                                 </div>
                                                 <div class="modal-footer justify-content-center">
                                                     <button class="btn btn-secondary px-4" data-bs-dismiss="modal">Batal</button>
-                                                    <form action="{{ route('admin.magang.destroy', $item->id) }}" method="POST">
-                                                        @csrf
-                                                        @method('DELETE')
+                                                        <form action="{{ route('admin.magang.destroy', $item->id) }}" method="POST">
+                                                            @csrf
+                                                            <input type="hidden" name="_method" value="DELETE">
                                                         <button class="btn btn-danger px-4">Ya, Hapus</button>
                                                     </form>
                                                 </div>

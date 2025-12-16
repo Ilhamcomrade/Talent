@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, CanResetPassword;
 
     /**
      * The attributes that are mass assignable.
@@ -22,8 +24,8 @@ class User extends Authenticatable
         'role',
         'is_active',
         'lokasi',
-        'whatsapp', 
-        'google_id', 
+        'whatsapp',
+        'google_id',
         'avatar',
         'gender',
         'upload_cv',
@@ -52,9 +54,6 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        // HAPUS: 'password' => 'hashed', 
-        // ALASAN: Kolom password tidak perlu di-hash otomatis 
-        // karena kita mengizinkan NULL untuk Google Login.
     ];
 
     /**
@@ -62,7 +61,7 @@ class User extends Authenticatable
      */
     public function scopeActive($query)
     {
-        return $query->where('is_active', true); // Perbaikan: Ganti 'status' menjadi 'is_active'
+        return $query->where('is_active', true);
     }
 
     /**
@@ -72,7 +71,21 @@ class User extends Authenticatable
     {
         return $query->where('role', $role);
     }
-    
-   
-    
+
+    /**
+     * Get the email address where password reset links are sent.
+     */
+    public function getEmailForPasswordReset()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Send the password reset notification.
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        // Ini akan menggunakan notifikasi bawaan Laravel
+        // Kita akan override nanti jika perlu custom email
+    }
 }

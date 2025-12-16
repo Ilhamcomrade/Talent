@@ -21,16 +21,22 @@
             padding: 12px 28px;
             font-weight: bold;
             cursor: pointer;
-            background:  #80868b;
+            background: #80868b;
             border: none;
             color: white;
             border-radius: 12px 12px 0 0;
             margin-right: 0;
+            position: relative;
+            top: -100px;
             transition: 0.3s;
             border-right: 2px solid rgba(255, 255, 255, 0.3);
             text-decoration: none;
             display: inline-block;
             text-align: center;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         #detail-page-content .detail-nav-item:last-child {
@@ -48,7 +54,7 @@
             text-decoration: none;
         }
 
-        /* ===================== STYLE LAMA KAMU (DIBIARKAN UTUH TANPA DIUBAH) ===================== */
+        /* ===================== STYLE LAMA ===================== */
         #detail-page-content * {
             margin: 0;
             padding: 0;
@@ -60,12 +66,6 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
-        }
-
-        #detail-page-content .detail-header {
-            padding: 40px 0 10px 0;
-            border-bottom: 1px solid #e0e0e0;
-            margin-top: -45px;
         }
 
         #detail-page-content .detail-header-content {
@@ -81,7 +81,7 @@
 
         #detail-page-content .detail-logo {
             width: 200px;
-            height: 200px;
+            height: 100px;
             border-radius: 12px;
             object-fit: contain;
             display: flex;
@@ -122,7 +122,10 @@
         }
 
         #detail-page-content .detail-main-content {
-            padding: 30px 0;
+                padding: 15px 0 30px 0;
+                margin-top: -90px;
+                position: relative;
+                z-index: 0;
         }
 
         #detail-page-content .detail-section-title {
@@ -132,7 +135,7 @@
             color: #000;
         }
 
-        /* ===================== STYLE BARU UNTUK TUNJANGAN DAN KEUNTUNGAN ===================== */
+        /* ===================== STYLE UNTUK TUNJANGAN DAN KEUNTUNGAN ===================== */
         #detail-page-content .benefits-section {
             margin-bottom: 50px;
         }
@@ -148,19 +151,27 @@
             display: flex;
             gap: 15px;
             align-items: flex-start;
+            min-height: 80px;
         }
 
         #detail-page-content .benefit-icon {
             flex-shrink: 0;
-            width: 24px;
-            height: 24px;
+            width: 50px;
+            height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
+        }
+
+        #detail-page-content .benefit-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         #detail-page-content .benefit-icon i {
-            font-size: 24px;
+            font-size: 28px;
             color: #333;
         }
 
@@ -168,37 +179,61 @@
             flex: 1;
         }
 
+        /* Ukuran font disamakan dengan halaman detail perusahaan */
         #detail-page-content .benefit-title {
             font-size: 16px;
-            font-weight: bold;
+            font-weight: 600;
             color: #000;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
         }
 
         #detail-page-content .benefit-description {
-            font-size: 14px;
+            font-size: 15px;
             color: #555;
-            line-height: 1.6;
+            line-height: 1.7;
+            text-align: justify;
         }
 
-        /* ===================== STYLE UNTUK WHY JOIN US ===================== */
-        #detail-page-content .why-join-section {
+        /* ===================== STYLE UNTUK ALASAN BERGABUNG ===================== */
+        #detail-page-content .reasons-section {
             margin-bottom: 40px;
         }
 
-        #detail-page-content .why-join-title {
+        #detail-page-content .reasons-title {
             font-size: 28px;
             font-weight: bold;
             margin-bottom: 20px;
             color: #000;
         }
 
-        #detail-page-content .why-join-text {
+        /* Ukuran font disamakan dengan halaman detail perusahaan */
+        #detail-page-content .reasons-text {
+            margin-top: -10px;
+            margin-bottom: 12px;
             font-size: 15px;
-            color: #333;
-            line-height: 1.8;
-            margin-bottom: 15px;
+            color: #555;
+            line-height: 1.7;
             text-align: justify;
+            white-space: pre-line;
+        }
+
+        /* Style untuk konten dari database */
+        #detail-page-content .database-content {
+            line-height: 1.2 !important;
+        }
+
+        /* Style untuk konten paragraf */
+        #detail-page-content .paragraph-content {
+            line-height: 1.7 !important;
+        }
+
+        /* ===================== GARIS PEMBATAS BARU ===================== */
+        #detail-page-content .separator-line {
+            height: 2px;
+            background-color: #e0e0e0;
+            margin: 20px 0;
+            margin-top: -10px;
+            width: 100%;
         }
 
         /* Responsive */
@@ -232,6 +267,15 @@
             #detail-page-content .benefits-grid {
                 grid-template-columns: 1fr;
                 gap: 20px;
+            }
+
+            #detail-page-content .benefit-icon {
+                width: 45px;
+                height: 45px;
+            }
+
+            #detail-page-content .benefit-icon i {
+                font-size: 24px;
             }
         }
     </style>
@@ -275,77 +319,55 @@
             <a href="{{ route('company.culture', ['company' => $company->slug]) }}" class="detail-nav-item active">Kehidupan dan Budaya</a>
             <a href="{{ route('company.job', ['company' => $company->slug]) }}" class="detail-nav-item">Pekerjaan</a>
             <a href="{{ route('company.salary', ['company' => $company->slug]) }}" class="detail-nav-item">Gaji</a>
-            {{-- <button class="detail-nav-item">Ulasan</button> --}}
         </div>
     </div>
 
     <!-- CONTENT BARU -->
     <div class="detail-main-content">
 
+        <!-- GARIS PEMBATAS BARU -->
+        <div class="separator-line"></div>
+
         <!-- TUNJANGAN DAN KEUNTUNGAN -->
         <div class="benefits-section">
             <h2 class="detail-section-title">Tunjangan dan keuntungan</h2>
 
-            <div class="benefits-grid">
-                <!-- Medical -->
-                <div class="benefit-item">
-                    <div class="benefit-icon">
-                        <i class="bi bi-gift-fill"></i>
-                    </div>
-                    <div class="benefit-content">
-                        <div class="benefit-title">Medis</div>
-                        <div class="benefit-description">Manfaat klaim medis untuk karyawan tetap</div>
-                    </div>
+            @if($benefits->count() > 0)
+                <div class="benefits-grid">
+                    @foreach($benefits as $benefit)
+                        <div class="benefit-item">
+                            <div class="benefit-icon">
+                                @if($benefit->icon)
+                                    <img src="{{ asset('storage/' . $benefit->icon) }}"
+                                         alt="{{ $benefit->judul }}"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <i class="bi bi-gift-fill" style="display: none;"></i>
+                                @else
+                                    <i class="bi bi-gift-fill"></i>
+                                @endif
+                            </div>
+                            <div class="benefit-content">
+                                <div class="benefit-title">{{ $benefit->judul }}</div>
+                                <div class="benefit-description">{{ $benefit->deskripsi }}</div>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
-
-                <!-- Sports -->
-                <div class="benefit-item">
-                    <div class="benefit-icon">
-                        <i class="bi bi-gift-fill"></i>
-                    </div>
-                    <div class="benefit-content">
-                        <div class="benefit-title">Olahraga (e.g. Gym)</div>
-                        <div class="benefit-description">Berbagai aktivitas olahraga untuk menjaga keseimbangan kehidupan kerja</div>
-                    </div>
-                </div>
-
-                <!-- Parking -->
-                <div class="benefit-item">
-                    <div class="benefit-icon">
-                        <i class="bi bi-gift-fill"></i>
-                    </div>
-                    <div class="benefit-content">
-                        <div class="benefit-title">Parkir</div>
-                        <div class="benefit-description">Parkir gratis</div>
-                    </div>
-                </div>
-
-                <!-- BPJS, Annual Bonus, and THR -->
-                <div class="benefit-item">
-                    <div class="benefit-icon">
-                        <i class="bi bi-gift-fill"></i>
-                    </div>
-                    <div class="benefit-content">
-                        <div class="benefit-title">BPJS, Bonus Tahunan, dan THR</div>
-                        <div class="benefit-description">Plus manfaat dana pensiun dari Indomobil Group</div>
-                    </div>
-                </div>
-            </div>
+            @else
+                <p class="reasons-text">Perusahaan ini belum menambahkan tunjangan dan keuntungan.</p>
+            @endif
         </div>
 
-        <!-- WHY JOIN US -->
-        <div class="why-join-section">
-            <h2 class="why-join-title">Mengapa bergabung dengan kami ?</h2>
+        <!-- ALASAN BERGABUNG -->
+        <div class="reasons-section">
+            <h2 class="reasons-title">Mengapa bergabung dengan kami ?</h2>
 
-            <p class="why-join-text">
-                Visi "Menjadi sumber pembiayaan produk-produk Indomobil Group, yang terbaik dalam hal kepuasan pelanggan,
-                terbesar dalam jumlah pembiayaan dan perolehan tingkat keuntungan bagi para pemegang saham".
-            </p>
-
-            <p class="why-join-text">
-                Misi "Menjadi perusahaan pembiayaan terpercaya, memiliki informasi yang tepat guna dengan jaringan cabang yang
-                dapat mewakili seluruh potensi pasar di Indonesia, sumber daya manusia yang berkualitas, pengelolaan sumber dana
-                yang optimal, serta program penjualan yang kompetitif dan berkesinambungan"
+            <p class="reasons-text @if($company->alasan) paragraph-content @endif">
+                @if($company->alasan)
+                    {{ $company->alasan }}
+                @else
+                    Data alasan bergabung dengan perusahaan ini belum tersedia.
+                @endif
             </p>
         </div>
 

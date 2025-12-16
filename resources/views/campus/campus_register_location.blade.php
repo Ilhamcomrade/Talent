@@ -18,7 +18,7 @@
 
         /* NAVBAR */
         .navbar {
-            font-size: 1rem; 
+            font-size: 1rem;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
             background: #fff;
             border-bottom: 1px solid #dee2e6;
@@ -106,35 +106,35 @@
             margin: 2rem auto;
             overflow: hidden;
         }
-        
+
         .card-header {
             padding: 1.5rem 2rem 1rem 2rem;
             border-bottom: 1px solid #eee;
         }
-        
+
         .card-title {
             font-size: 1.3rem;
             font-weight: 600;
             margin-bottom: 0;
             color: #333;
         }
-        
+
         .card-body {
             padding: 1.5rem 2rem;
         }
-        
+
         .form-group {
             margin-bottom: 1.5rem;
         }
-        
+
         .form-label {
             display: none; /* Sembunyikan label */
         }
-        
+
         .required-star {
             color: #e53935;
         }
-        
+
         .form-control {
             border-radius: 2px;
             border: 1px solid #999;
@@ -142,7 +142,7 @@
             font-size: 0.95rem;
             transition: border-color 0.2s;
         }
-        
+
         .form-control:focus {
             border-color: #333;
             box-shadow: none;
@@ -151,7 +151,7 @@
         .custom-select-wrapper {
             position: relative;
         }
-        
+
         .custom-select {
             border-radius: 2px;
             border: 1px solid #999;
@@ -162,7 +162,7 @@
             appearance: none;
             cursor: pointer;
         }
-        
+
         .custom-select:focus {
             border-color: #333;
             box-shadow: none;
@@ -187,7 +187,7 @@
         .custom-select-wrapper.open .custom-arrow i {
             transform: rotate(180deg);
         }
-        
+
         .btn-primary {
             background-color: #00b14f;
             border-color: #00b14f;
@@ -199,7 +199,7 @@
             float: right;
             margin-top: 0;
         }
-        
+
         .btn-primary:hover {
             background-color: #009944;
             border-color: #009944;
@@ -215,12 +215,12 @@
             width: auto;
             margin-top: 0;
         }
-        
+
         .btn-secondary:hover {
             background-color: #5a6268;
             border-color: #545b62;
         }
-        
+
         .form-footer::after {
             content: "";
             display: table;
@@ -236,15 +236,15 @@
             display: flex;
             gap: 1rem;
         }
-        
+
         .location-col {
             flex: 1;
         }
-        
+
         .full-width {
             width: 100%;
         }
-        
+
         .char-counter {
             text-align: right;
             font-size: 0.8rem;
@@ -310,7 +310,7 @@
             <div class="card-header">
                 <h1 class="card-title">Lokasi Kampus/Sekolah</h1>
             </div>
-            
+
             <div class="card-body">
 
                 <form id="locationForm" action="{{ route('campus.register.step3') }}" method="POST">
@@ -394,7 +394,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <textarea class="form-control @error('alamat_lengkap') is-invalid @enderror" id="alamatLengkap" name="alamat_lengkap" placeholder="Alamat lengkap (gedung & lantai, jalan, dst.)*" rows="3" maxlength="255" required>{{ old('alamat_lengkap') }}</textarea>
                         <div class="char-counter">
@@ -406,7 +406,7 @@
                             </div>
                         @enderror
                     </div>
-                    
+
                     <div class="form-footer">
 
                         <a href="{{ route('campus.register.process') }}" class="btn btn-secondary">
@@ -416,7 +416,7 @@
                         <button type="submit" class="btn btn-primary" id="submitButton">
                             Buat Kampus/Sekolah
                         </button>
-                        
+
                     </div>
                 </form>
             </div>
@@ -424,7 +424,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Data provinsi dan kota (setiap provinsi memiliki 5 kota)
@@ -444,28 +444,28 @@
                 "Bogor": ["Bogor Barat", "Bogor Selatan", "Bogor Tengah", "Bogor Timur", "Bogor Utara"],
                 "Depok": ["Beji", "Cimanggis", "Limo", "Pancoran Mas", "Sawangan"],
                 "Cimahi": ["Cimahi Selatan", "Cimahi Tengah", "Cimahi Utara", "Cimahi Barat", "Cimahi Timur"],
-                
+
                 // Jawa Tengah
                 "Semarang": ["Banyumanik", "Candisari", "Gajah Mungkur", "Gayamsari", "Genuk"],
                 "Surakarta": ["Banjarsari", "Jebres", "Laweyan", "Pasar Kliwon", "Serengan"],
                 "Tegal": ["Margadana", "Tegal Barat", "Tegal Selatan", "Tegal Timur", "Tegal Utara"],
                 "Pekalongan": ["Pekalongan Barat", "Pekalongan Selatan", "Pekalongan Timur", "Pekalongan Utara", "Pekalongan Tengah"],
                 "Salatiga": ["Argomulyo", "Sidomukti", "Sidorejo", "Tingkir", "Salatiga Selatan"],
-                
+
                 // Jawa Timur
                 "Surabaya": ["Asemrowo", "Benowo", "Bubutan", "Bulak", "Dukuh Pakis"],
                 "Malang": ["Blimbing", "Kedungkandang", "Klojen", "Lowokwaru", "Sukun"],
                 "Kediri": ["Kediri Kota", "Mojoroto", "Pesantren", "Kediri Selatan", "Kediri Utara"],
                 "Madiun": ["Kartoharjo", "Manguharjo", "Taman", "Madiun Lor", "Madiun Kidul"],
                 "Blitar": ["Kepanjenkidul", "Sananwetan", "Sukorejo", "Blitar Selatan", "Blitar Utara"],
-                
+
                 // DKI Jakarta
                 "Jakarta Pusat": ["Cempaka Putih", "Gambir", "Johar Baru", "Kemayoran", "Menteng"],
                 "Jakarta Selatan": ["Cilandak", "Jagakarsa", "Kebayoran Baru", "Kebayoran Lama", "Mampang Prapatan"],
                 "Jakarta Timur": ["Cakung", "Cipayung", "Ciracas", "Duren Sawit", "Jatinegara"],
                 "Jakarta Barat": ["Cengkareng", "Grogol Petamburan", "Kalideres", "Kebon Jeruk", "Kembangan"],
                 "Jakarta Utara": ["Cilincing", "Kelapa Gading", "Koja", "Pademangan", "Penjaringan"],
-                
+
                 // Banten
                 "Serang": ["Cipocok Jaya", "Curug", "Kasemen", "Taktakan", "Walantaka"],
                 "Tangerang": ["Batuceper", "Benda", "Cibodas", "Ciledug", "Cipondoh"],
@@ -482,168 +482,168 @@
                 "Buahbatu": ["Cijawura", "Jatisari", "Kebon Lega", "Mekar Jaya", "Buahbatu"],
                 "Cibeunying Kidul": ["Cikutra", "Padasuka", "Sukamaju", "Sukapada", "Cibeunying Kidul"],
                 "Cibeunying Kaler": ["Cigadung", "Cihaurgeulis", "Cisaga", "Sukaluyu", "Cibeunying Kaler"],
-                
+
                 // Bekasi
                 "Bekasi Barat": ["Bintara", "Bintara Jaya", "Karang Asem Barat", "Karang Asem Timur", "Kranji"],
                 "Bekasi Selatan": ["Jakasampurna", "Kaliabang Tengah", "Margahayu", "Perwira", "Teluk Pucung"],
                 "Bekasi Timur": ["Aren Jaya", "Bekasi Jaya", "Duren Jaya", "Margahayu", "Bekasi Timur"],
                 "Bekasi Utara": ["Harapan Baru", "Harapan Jaya", "Kaliabang Bungur", "Perwira", "Bekasi Utara"],
                 "Medan Satria": ["Harapan Mulya", "Kali Baru", "Pejuang", "Medan Satria", "Satria Jaya"],
-                
+
                 // Bogor
                 "Bogor Barat": ["Balungbangjaya", "Bubulak", "Cilendek Barat", "Cilendek Timur", "Curug"],
                 "Bogor Selatan": ["Batutulis", "Bojongkerta", "Bondongan", "Cikaret", "Empang"],
                 "Bogor Tengah": ["Babakan", "Babakan Pasar", "Cibogor", "Gudang", "Paledang"],
                 "Bogor Timur": ["Baranangsiang", "Katulampa", "Sindangrasa", "Sindangsari", "Sukasari"],
                 "Bogor Utara": ["Cibuluh", "Ciluar", "Kedunghalang", "Tanah Baru", "Tegal Gundil"],
-                
+
                 // Depok
                 "Beji": ["Beji", "Beji Timur", "Kemiri Muka", "Kukusan", "Pondok Cina"],
                 "Cimanggis": ["Cisalak Pasar", "Curug", "Harjamukti", "Mekarsari", "Pasir Gunung Selatan"],
                 "Limo": ["Grogol", "Krukut", "Limo", "Meruyung", "Limo Jaya"],
                 "Pancoran Mas": ["Depok", "Depok Jaya", "Mampang", "Pancoran Mas", "Rangkapan Jaya"],
                 "Sawangan": ["Bedahan", "Cinangka", "Kedaung", "Pasir Putih", "Sawangan Baru"],
-                
+
                 // Cimahi
                 "Cimahi Selatan": ["Cibeber", "Cibeureum", "Leuwigajah", "Melong", "Utama"],
                 "Cimahi Tengah": ["Baros", "Cigugur Tengah", "Cimahi", "Karangmekar", "Padasuka"],
                 "Cimahi Utara": ["Cibabat", "Cipageran", "Citeureup", "Pasirkaliki", "Cimahi Utara"],
                 "Cimahi Barat": ["Cibabat Barat", "Cipageran Barat", "Citeureup Barat", "Pasirkaliki Barat", "Cimahi Barat"],
                 "Cimahi Timur": ["Cibabat Timur", "Cipageran Timur", "Citeureup Timur", "Pasirkaliki Timur", "Cimahi Timur"],
-                
+
                 // Semarang
                 "Banyumanik": ["Banyumanik", "Gedawang", "Jabungan", "Padangsari", "Pedalangan"],
                 "Candisari": ["Candisari", "Jatingaleh", "Jomblang", "Karanganyar Gunung", "Tegalsari"],
                 "Gajah Mungkur": ["Bendan Ngisor", "Bendungan", "Gajah Mungkur", "Karanganyar", "Lempongsari"],
                 "Gayamsari": ["Gayamsari", "Kaligawe", "Pandean Lamper", "Sambirejo", "Sawah Besar"],
                 "Genuk": ["Bangetayu Kulon", "Bangetayu Wetan", "Gebangsari", "Genuk", "Karangroto"],
-                
+
                 // Surakarta
                 "Banjarsari": ["Banjarsari", "Gilingan", "Kadipiro", "Kestalan", "Nusukan"],
                 "Jebres": ["Jebres", "Kepatihan Kulon", "Kepatihan Wetan", "Mojosongo", "Pucang Sawit"],
                 "Laweyan": ["Bumi", "Kerten", "Laweyan", "Pajang", "Penumping"],
                 "Pasar Kliwon": ["Baluwarti", "Gajahan", "Joyosuran", "Kampung Baru", "Sangkrah"],
                 "Serengan": ["Danukusuman", "Jayengan", "Kedung Lumbu", "Kemlayan", "Serengan"],
-                
+
                 // Tegal
                 "Margadana": ["Margadana", "Kalinyamat Wetan", "Sumur Panggang", "Kemandungan", "Pesurungan Kidul"],
                 "Tegal Barat": ["Tegal Barat", "Kemandungan", "Muarareja", "Pekauman", "Tegalsari"],
                 "Tegal Selatan": ["Tegal Selatan", "Debong Lor", "Kaligangsa", "Krandon", "Panggung"],
                 "Tegal Timur": ["Tegal Timur", "Kalinyamat Kulon", "Mintaragen", "Pasar Pagi", "Slerok"],
                 "Tegal Utara": ["Tegal Utara", "Bandung", "Debong Kidul", "Kalibuntu", "Keturen"],
-                
+
                 // Pekalongan
                 "Pekalongan Barat": ["Pekalongan Barat", "Bendan", "Gamer", "Krapyak", "Sapuro"],
                 "Pekalongan Selatan": ["Pekalongan Selatan", "Jenggot", "Kauman", "Klego", "Noyontaansari"],
                 "Pekalongan Timur": ["Pekalongan Timur", "Kandang Panjang", "Padukuhan Kraton", "Panjang Wetan", "Seteran"],
                 "Pekalongan Utara": ["Pekalongan Utara", "Dukuh", "Kramat Sari", "Pasir Kraton Kramat", "Tirto"],
                 "Pekalongan Tengah": ["Pekalongan Tengah", "Jatirejo", "Kebulen", "Sampangan", "Sukorejo"],
-                
+
                 // Salatiga
                 "Argomulyo": ["Argomulyo", "Cebongan", "Kumpulrejo", "Ledok", "Tegalrejo"],
                 "Sidomukti": ["Sidomukti", "Blotongan", "Bugel", "Kauman Kidul", "Pulutan"],
                 "Sidorejo": ["Sidorejo", "Kecandran", "Kutowinangun", "Pulutan", "Salatiga"],
                 "Tingkir": ["Tingkir", "Gendongan", "Kutowinangun Kidul", "Kutowinangun Lor", "Sidorejo"],
                 "Salatiga Selatan": ["Salatiga Selatan", "Bobosan", "Cebongan", "Kumpulrejo", "Tegalrejo"],
-                
+
                 // Surabaya
                 "Asemrowo": ["Asemrowo", "Genting Kalianak", "Tambak Sarioso", "Asemrowo", "Kalianak"],
                 "Benowo": ["Benowo", "Babat Jerawat", "Kandangan", "Pakal", "Romokalisari"],
                 "Bubutan": ["Bubutan", "Alun-alun Contong", "Bubutan", "Gundih", "Jepara"],
                 "Bulak": ["Bulak", "Bulak Banteng", "Kedung Cowek", "Sukolilo Baru", "Tambak Wedi"],
                 "Dukuh Pakis": ["Dukuh Pakis", "Dukuh Kupang", "Gunung Sari", "Pradah Kalikendal", "Dukuh Pakis"],
-                
+
                 // Malang
                 "Blimbing": ["Blimbing", "Arjosari", "Blimbing", "Pandanwangi", "Polowijen"],
                 "Kedungkandang": ["Kedungkandang", "Bumiayu", "Kedungkandang", "Lesanpuro", "Samaan"],
                 "Klojen": ["Klojen", "Bareng", "Gading Kasri", "Klojen", "Rampal Celaket"],
                 "Lowokwaru": ["Lowokwaru", "Jatimulyo", "Merjosari", "Sumbersari", "Tunggulwulung"],
                 "Sukun": ["Sukun", "Bakalan Krajan", "Ciptomulyo", "Gadang", "Kebonsari"],
-                
+
                 // Kediri
                 "Kediri Kota": ["Kediri Kota", "Balowerti", "Banjaran", "Dandangan", "Kemasan"],
                 "Mojoroto": ["Mojoroto", "Gayam", "Kampung Dalem", "Mrican", "Pojok"],
                 "Pesantren": ["Pesantren", "Betet", "Bawang", "Pesantren", "Tinalan"],
                 "Kediri Selatan": ["Kediri Selatan", "Jamsaren", "Kaliombo", "Manisrenggo", "Sukorame"],
                 "Kediri Utara": ["Kediri Utara", "Banjaranyar", "Kembang", "Pakunden", "Setonogedong"],
-                
+
                 // Madiun
                 "Kartoharjo": ["Kartoharjo", "Kartoharjo", "Klegen", "Oro-Oro Ombo", "Rejomulyo"],
                 "Manguharjo": ["Manguharjo", "Madiun Lor", "Manguharjo", "Ngegong", "Winongo"],
                 "Taman": ["Taman", "Banjarejo", "Kejuron", "Taman", "Tambran"],
                 "Madiun Lor": ["Madiun Lor", "Mojopurno", "Pangongangan", "Sogaten", "Sukosari"],
                 "Madiun Kidul": ["Madiun Kidul", "Demangan", "Josenan", "Kuncen", "Pandean"],
-                
+
                 // Blitar
                 "Kepanjenkidul": ["Kepanjenkidul", "Bendo", "Kauman", "Kepanjenkidul", "Tanggung"],
                 "Sananwetan": ["Sananwetan", "Gedog", "Karangsari", "Sananwetan", "Sukorejo"],
                 "Sukorejo": ["Sukorejo", "Pakunden", "Sukorejo", "Tanjungsari", "Turi"],
                 "Blitar Selatan": ["Blitar Selatan", "Karangsari", "Kepanjenkidul", "Sananwetan", "Sukorejo"],
                 "Blitar Utara": ["Blitar Utara", "Gedog", "Kauman", "Kepanjenkidul", "Tanggung"],
-                
+
                 // Jakarta Pusat
                 "Cempaka Putih": ["Cempaka Putih", "Cempaka Putih Barat", "Cempaka Putih Timur", "Rawasari", "Cempaka Putih"],
                 "Gambir": ["Gambir", "Gambir", "Kebon Kelapa", "Petojo Selatan", "Petojo Utara"],
                 "Johar Baru": ["Johar Baru", "Galur", "Johar Baru", "Kampung Rawa", "Tanah Tinggi"],
                 "Kemayoran": ["Kemayoran", "Gunung Sahari Selatan", "Kemayoran", "Kebon Kosong", "Serdang"],
                 "Menteng": ["Menteng", "Cikini", "Gondangdia", "Kebon Sirih", "Menteng"],
-                
+
                 // Jakarta Selatan
                 "Cilandak": ["Cilandak", "Cilandak Barat", "Cipete Selatan", "Gandaria Selatan", "Lebak Bulus"],
                 "Jagakarsa": ["Jagakarsa", "Ciganjur", "Cipedak", "Jagakarsa", "Lenteng Agung"],
                 "Kebayoran Baru": ["Kebayoran Baru", "Gandaria Utara", "Kramat Pela", "Melawai", "Senayan"],
                 "Kebayoran Lama": ["Kebayoran Lama", "Cipulir", "Grogol Selatan", "Kebayoran Lama", "Pondok Pinang"],
                 "Mampang Prapatan": ["Mampang Prapatan", "Kuningan Barat", "Mampang Prapatan", "Pela Mampang", "Tegal Parang"],
-                
+
                 // Jakarta Timur
                 "Cakung": ["Cakung", "Cakung Barat", "Cakung Timur", "Rawa Terate", "Ujung Menteng"],
                 "Cipayung": ["Cipayung", "Cipayung", "Cipayung Jaya", "Lubang Buaya", "Setu"],
                 "Ciracas": ["Ciracas", "Cibubur", "Ciracas", "Kelapa Dua Wetan", "Rambutan"],
                 "Duren Sawit": ["Duren Sawit", "Duren Sawit", "Klender", "Malaka Jaya", "Malaka Sari"],
                 "Jatinegara": ["Jatinegara", "Bali Mester", "Bidara Cina", "Cipinang Besar Utara", "Kampung Melayu"],
-                
+
                 // Jakarta Barat
                 "Cengkareng": ["Cengkareng", "Cengkareng Barat", "Cengkareng Timur", "Duri Kosambi", "Kapuk"],
                 "Grogol Petamburan": ["Grogol Petamburan", "Grogol", "Jelambar", "Jelambar Baru", "Tanjung Duren"],
                 "Kalideres": ["Kalideres", "Kalideres", "Kamal", "Pegadungan", "Semanan"],
                 "Kebon Jeruk": ["Kebon Jeruk", "Duri Kepa", "Kebon Jeruk", "Kedoya Selatan", "Sukabumi Utara"],
                 "Kembangan": ["Kembangan", "Joglo", "Kembangan Selatan", "Kembangan Utara", "Meruya Selatan"],
-                
+
                 // Jakarta Utara
                 "Cilincing": ["Cilincing", "Cilincing", "Kalibaru", "Marunda", "Sukapura"],
                 "Kelapa Gading": ["Kelapa Gading", "Kelapa Gading Barat", "Kelapa Gading Timur", "Pegangsaan Dua", "Kelapa Gading"],
                 "Koja": ["Koja", "Koja", "Lagoa", "Rawa Badak Selatan", "Tugu Selatan"],
                 "Pademangan": ["Pademangan", "Pademangan Barat", "Pademangan Timur", "Ancol", "Sungai Bambu"],
                 "Penjaringan": ["Penjaringan", "Kamal Muara", "Kapuk Muara", "Pejagalan", "Penjaringan"],
-                
+
                 // Serang
                 "Cipocok Jaya": ["Cipocok Jaya", "Cipocok Jaya", "Dalung", "Karang Anyar", "Panancangan"],
                 "Curug": ["Curug", "Cilaku", "Curug", "Kamanisan", "Sukalaksana"],
                 "Kasemen": ["Kasemen", "Bendung", "Kasemen", "Kebon Baru", "Terumbu"],
                 "Taktakan": ["Taktakan", "Cibendung", "Kuranji", "Pancur", "Taktakan"],
                 "Walantaka": ["Walantaka", "Kalodran", "Pager Agung", "Pancalaksana", "Walantaka"],
-                
+
                 // Tangerang
                 "Batuceper": ["Batuceper", "Batuceper", "Batujaya", "Kebon Besar", "Poris Gaga"],
                 "Benda": ["Benda", "Benda", "Belendung", "Karang Anyar", "Karang Sari"],
                 "Cibodas": ["Cibodas", "Cibodas", "Cibodas Baru", "Cibodas Sari", "Jatiuwung"],
                 "Ciledug": ["Ciledug", "Ciledug", "Ciledug Kulon", "Ciledug Wetan", "Paninggilan"],
                 "Cipondoh": ["Cipondoh", "Cipondoh", "Cipondoh Indah", "Cipondoh Makmur", "Gondrong"],
-                
+
                 // Cilegon
                 "Cibeber": ["Cibeber", "Bulakan", "Cibeber", "Kedaleman", "Kota Baru"],
                 "Cilegon": ["Cilegon", "Cilegon", "Karang Anyar", "Kebonsari", "Ramanuju"],
                 "Citangkil": ["Citangkil", "Citangkil", "Deringo", "Kebon Dalem", "Samangraya"],
                 "Ciwandan": ["Ciwandan", "Ciwandan", "Gerem", "Grogol", "Kedungbunder"],
                 "Gerogol": ["Gerogol", "Karang Asem", "Kebon Jati", "Lebak Gede", "Pabean"],
-                
+
                 // Tangerang Selatan
                 "Ciputat": ["Ciputat", "Ciputat", "Ciputat Jaya", "Jombang", "Sawah Lama"],
                 "Ciputat Timur": ["Ciputat Timur", "Ciputat Timur", "Jatiwaringin", "Pondok Ranji", "Rempoa"],
                 "Pamulang": ["Pamulang", "Bambu Apus", "Pamulang Barat", "Pamulang Timur", "Pondok Benda"],
                 "Pondok Aren": ["Pondok Aren", "Jurang Mangu", "Pondok Aren", "Pondok Kacang", "Pondok Karya"],
                 "Serpong": ["Serpong", "Buaran", "Cilenggang", "Lengkong Gudang", "Serpong"],
-                
+
                 // Cibinong
                 "Cibinong": ["Cibinong", "Cibinong", "Cirimekar", "Karadenan", "Sukahati"],
                 "Cileungsi": ["Cileungsi", "Cileungsi", "Cipeucang", "Jatisari", "Mampir"],

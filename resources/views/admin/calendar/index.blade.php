@@ -7,7 +7,7 @@
     $isEditable = in_array($userRole, ['admin', 'super admin']);
 @endphp
 
-<div class="container-fluid mt-4">
+<div class="container-fluid mt-4" data-is-editable="{{ $isEditable ? 'true' : 'false' }}">
     <h2 class="mb-4 fw-bold text-secondary">kalender skejull</h2>
 
     <div class="row">
@@ -100,7 +100,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const isEditable = @json($isEditable);
+    const isEditable = document.querySelector('[data-is-editable]').getAttribute('data-is-editable') === 'true';
 
     // 🟢 Hanya jalankan fitur draggable kalau admin
     let containerEl = document.getElementById('external-events');
