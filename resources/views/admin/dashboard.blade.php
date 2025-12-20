@@ -1,5 +1,7 @@
 @extends('admin.layout')
 
+@section('title', 'Dashboard Admin')
+
 @section('content')
 
 <style>
