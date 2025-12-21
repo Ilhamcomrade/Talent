@@ -20,11 +20,18 @@
       margin: 0;
       padding: 0;
       overflow-x: hidden;
+      height: 100vh;
+    }
+
+    html, body {
+      height: 100%;
     }
 
     #wrapper {
       display: flex;
       min-height: 100vh;
+      height: 100vh;
+      overflow: hidden;
     }
 
     /* DARK MODE */
@@ -44,7 +51,6 @@
     body.dark-mode .profile-text {
       color: #ddd !important;
     }
-    body.dark-mode .nav-link:hover,
     body.dark-mode .nav-link.active {
       background-color: rgba(255, 255, 255, 0.15);
     }
@@ -53,27 +59,22 @@
         SIDEBAR STYLES - IMPROVED
         ==================== */
     #sidebar-wrapper {
-      background: linear-gradient(0deg,
-        red, orange, yellow, green, blue, indigo, violet
-      );
-      background-size: 100% 400%;
+      background: linear-gradient(180deg, #2c5282 0%, #1a365d 100%);
       color: #fff;
-      min-height: 100vh;
+      height: 100vh;
       width: 250px;
       transition: all 0.3s ease;
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
       position: fixed;
       z-index: 1000;
-      animation: rainbowBG 15s linear infinite;
       left: 0;
       display: flex;
       flex-direction: column;
     }
 
-    @keyframes rainbowBG {
-      0%   { background-position: 50% 100%; }
-      50%  { background-position: 50% 0%; }
-      100% { background-position: 50% 100%; }
+    /* HAPUS IKON TAMBAHAN DARI SIDEBAR DROPDOWN */
+    .sidebar-nav .dropdown-toggle::after {
+    display: none !important;
     }
 
     .sidebar-brand {
@@ -86,6 +87,7 @@
       justify-content: center;
       height: 120px;
       flex-shrink: 0;
+      background-color: rgba(0, 0, 0, 0.1);
     }
 
     .sidebar-brand img {
@@ -103,50 +105,81 @@
       transition: all 0.5s ease;
     }
 
+    /* PERBAIKAN UTAMA: Struktur scroll yang benar */
     .sidebar-nav-container {
       flex: 1;
       display: flex;
       flex-direction: column;
       overflow: hidden;
       position: relative;
+      height: calc(100vh - 180px);
+      min-height: 0;
     }
 
+    /* AREA YANG HARUS SCROLL - PASTIKAN INI */
     .sidebar-nav {
       flex: 1;
-      overflow-y: auto;
+      overflow-y: auto !important;
+      overflow-x: hidden;
       padding-bottom: 1rem;
-      max-height: calc(100vh - 180px); /* Membatasi tinggi maksimum */
+      width: 100%;
+      height: 100%;
+      display: block !important;
     }
 
+    /* FORCE SCROLLBAR ALWAYS VISIBLE AND WORKING */
+    .sidebar-nav {
+      scrollbar-width: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+      overflow: auto !important;
+    }
+
+    /* Scrollbar styling yang sangat jelas */
     .sidebar-nav::-webkit-scrollbar {
-      width: 6px;
+      width: 8px !important;
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
     }
 
     .sidebar-nav::-webkit-scrollbar-track {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.1) !important;
+      border-radius: 4px !important;
     }
 
     .sidebar-nav::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.3);
-      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.6) !important;
+      border-radius: 4px !important;
+      border: 2px solid rgba(255, 255, 255, 0.1) !important;
     }
 
     .sidebar-nav::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.8) !important;
     }
 
+    /* PERBAIKAN: Mencegah konten sidebar meluap secara horizontal */
     .nav-item {
       padding: 0 1rem;
+      width: 100%;
+      box-sizing: border-box;
+      display: block;
     }
 
     .nav-link {
       display: flex;
       align-items: center;
-      padding: 0.8rem 1rem; /* Sedikit lebih kecil padding */
+      padding: 0.8rem 1rem;
       color: #fff;
       position: relative;
       transition: all 0.3s ease;
-      font-size: 0.95rem; /* Sedikit lebih kecil font */
+      font-size: 0.95rem;
+      width: 100%;
+      box-sizing: border-box;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-decoration: none;
+      cursor: pointer;
     }
 
     .nav-link.active {
@@ -154,67 +187,127 @@
         border-radius: 5px;
     }
 
+    /* PERUBAHAN: HAPUS SELURUH EFEK HOVER PADA NAV-LINK */
     .nav-link:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-        border-radius: 5px;
-        transform: translateX(5px);
+        /* SEMUA PROPERTI DIHAPUS - TIDAK ADA EFEK APAPUN */
     }
 
     .nav-link i {
       margin-right: 0.8rem;
-      font-size: 1.1rem; /* Sedikit lebih kecil */
+      font-size: 1.1rem;
       width: 20px;
       text-align: center;
+      flex-shrink: 0;
     }
 
-    /* Ikon dropdown custom */
+    .nav-link span {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ====================
+        PERUBAHAN UTAMA: POSISI IKON DROPDOWN
+        ==================== */
+    /* Ikon dropdown digeser ke kanan hingga hampir menempel batas sidebar */
     .dropdown-arrow {
       margin-left: auto;
+      margin-right: 0;
       color: #fff;
       transition: transform 0.3s ease;
       font-size: 0.8rem;
-    }
-    .nav-link[aria-expanded="false"] .dropdown-arrow {
-      transform: rotate(0deg);
-    }
-    .nav-link[aria-expanded="true"] .dropdown-arrow {
-      transform: rotate(90deg);
+      flex-shrink: 0;
+      width: 16px;
+      text-align: center;
+      position: relative;
+      right: -30px; /* DIPERBESAR: Geser lebih ke kanan hingga hampir menempel batas sidebar */
     }
 
-    /* Dropdown menu di sidebar */
+    /* Untuk menu Widget khusus, posisikan ikon dropdown di posisi paling kanan */
+    .nav-item .nav-link[data-bs-target="#widgetSubmenu"] .dropdown-arrow {
+      margin-right: -12px; /* DIPERBESAR: Geser lebih ke kanan agar hampir mepet ke batas sidebar */
+      right: 0; /* Reset right untuk menghindari double offset */
+    }
+
+    /* Default state: dropdown tertutup, ikon mengarah ke bawah */
+    .nav-link .dropdown-arrow i {
+      transform: rotate(0deg);
+      transition: transform 0.3s ease;
+    }
+
+    /* State ketika dropdown terbuka: ikon mengarah ke atas */
+    .nav-link:not(.collapsed) .dropdown-arrow i {
+      transform: rotate(180deg);
+    }
+
+    /* Dropdown menu di sidebar - PERBAIKAN */
     .sidebar-nav .dropdown-menu {
-      background-color: rgba(59, 96, 196, 0.9);
+      background-color: rgba(26, 54, 93, 0.95);
       border: none;
       padding: 0;
       margin-top: 0;
       width: 100%;
       position: static !important;
       transform: none !important;
+      box-sizing: border-box;
+      overflow: hidden;
+      border-radius: 0 0 5px 5px;
     }
 
-    .sidebar-nav .dropdown-menu .dropdown-item {
+    .sidebar-nav .collapse {
+      background-color: rgba(20, 40, 70, 0.8);
+      border-radius: 0 0 5px 5px;
+      margin-top: -5px;
+      margin-bottom: 5px;
+    }
+
+    .sidebar-nav .collapse.show {
+      display: block !important;
+    }
+
+    .sidebar-nav .collapse .dropdown-item {
       color: #fff;
-      padding: 0.6rem 1rem 0.6rem 3.2rem; /* Sedikit lebih kecil */
+      padding: 0.6rem 1rem 0.6rem 3.2rem;
       background-color: transparent;
-      font-size: 0.9rem; /* Sedikit lebih kecil */
+      font-size: 0.9rem;
       display: flex;
       align-items: center;
       transition: all 0.3s ease;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+      box-sizing: border-box;
+      text-decoration: none;
     }
 
-    .sidebar-nav .dropdown-menu .dropdown-item i {
+    .sidebar-nav .collapse .dropdown-item i {
       margin-right: 0.75rem;
       width: 20px;
+      flex-shrink: 0;
     }
 
-    .sidebar-nav .dropdown-menu .dropdown-item:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-        transform: translateX(5px);
+    /* PERUBAHAN: HAPUS SELURUH EFEK HOVER PADA DROPDOWN ITEM */
+    .sidebar-nav .collapse .dropdown-item:hover {
+        /* SEMUA PROPERTI DIHAPUS - TIDAK ADA EFEK APAPUN */
     }
 
-    .sidebar-nav .dropdown-menu .dropdown-item.active {
+    .sidebar-nav .collapse .dropdown-item.active {
         background-color: rgba(255, 255, 255, 0.2);
         font-weight: bold;
+    }
+
+    /* PERUBAHAN: Hapus badge untuk menu Widget */
+    .nav-item .nav-link[data-bs-target="#widgetSubmenu"] .badge {
+      display: none !important; /* Sembunyikan badge jika ada */
+    }
+
+    /* Badge untuk pesan baru (hanya untuk menu kontak) */
+    .sidebar-nav .badge {
+      flex-shrink: 0;
+      margin-left: auto;
+      margin-right: 8px;
     }
 
     /* Logout button di bagian bawah */
@@ -222,6 +315,11 @@
       padding: 1rem;
       border-top: 1px solid rgba(255, 255, 255, 0.1);
       flex-shrink: 0;
+      width: 100%;
+      box-sizing: border-box;
+      background-color: rgba(0, 0, 0, 0.1);
+      position: relative;
+      z-index: 2;
     }
 
     .logout-btn {
@@ -232,6 +330,9 @@
       text-decoration: none;
       transition: all 0.3s ease;
       border-radius: 5px;
+      width: 100%;
+      box-sizing: border-box;
+      white-space: nowrap;
     }
 
     .logout-btn:hover {
@@ -242,6 +343,7 @@
     .logout-btn i {
       margin-right: 0.8rem;
       font-size: 1.1rem;
+      flex-shrink: 0;
     }
 
     /* ====================
@@ -254,6 +356,8 @@
       min-height: 100vh;
       transition: all 0.3s ease;
       width: calc(100% - 250px);
+      height: 100vh;
+      overflow-y: auto;
     }
 
     .navbar {
@@ -317,6 +421,7 @@
 
     .profile-icon {
       font-size: 2.25rem !important;
+      margin-right: 20px !important;
       cursor: pointer;
       transition: transform 0.3s ease;
     }
@@ -555,7 +660,7 @@
     #wrapper.toggled .dropdown-arrow {
       display: none;
     }
-    #wrapper.toggled .sidebar-nav .dropdown-menu {
+    #wrapper.toggled .sidebar-nav .collapse {
       display: none !important;
     }
     #wrapper.toggled .sidebar-brand {
@@ -586,6 +691,7 @@
       #sidebar-wrapper {
         width: 250px;
         transform: translateX(-100%);
+        height: 100vh;
       }
 
       #content-wrapper {
@@ -620,6 +726,18 @@
         min-width: 280px;
         max-width: 300px;
       }
+    }
+
+    /* FORCE FIX FOR SCROLL ISSUE */
+    .sidebar-nav ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    /* Tambahkan item dummy untuk test scroll jika diperlukan */
+    .test-scroll-items {
+      display: none; /* Sembunyikan dulu */
     }
   </style>
 </head>
@@ -701,13 +819,10 @@
 
               {{-- TAMBAHAN: Navigasi untuk Pesan Masuk / Form Kontak yang telah disubmit pengguna --}}
               <li class="nav-item">
-                  {{-- Menghitung jumlah pesan baru (belum dibaca).
-                      Jika Anda ingin menghindari query di blade, pindahkan ke view composer. --}}
                   @php
                       try {
                           $countNewMessages = \App\Models\ContactMessage::whereNull('read_at')->count();
                       } catch (\Throwable $e) {
-                          // Jika model/migration belum ada -> fallback 0 supaya UI tidak error
                           $countNewMessages = 0;
                       }
                   @endphp
@@ -716,9 +831,44 @@
                      href="{{ route('admin.contact-messages.index') }}">
                      <i class="fas fa-envelope"></i> <span>kontak</span>
                      @if($countNewMessages > 0)
-                         <span class="badge bg-danger ms-auto" style="margin-left: 0.5rem;">{{ $countNewMessages }}</span>
+                         <span class="badge bg-danger">{{ $countNewMessages }}</span>
                      @endif
                   </a>
+              </li>
+            @endif
+
+            {{-- MENU WIDGET - Hanya untuk Admin & Super Admin --}}
+            @if(in_array(Auth::user()->role, ['admin', 'super admin']))
+              <li class="nav-item">
+                <a class="nav-link dropdown-toggle collapsed"
+                   href="#widgetSubmenu"
+                   data-bs-toggle="collapse"
+                   aria-expanded="false"
+                   aria-controls="widgetSubmenu">
+                  <i class="fas fa-puzzle-piece"></i> <span>Widget</span>
+                  <!-- PERUBAHAN: Hanya ada ikon dropdown saja -->
+                  <span class="dropdown-arrow"><i class="fas fa-chevron-down"></i></span>
+                </a>
+                <div class="collapse" id="widgetSubmenu">
+                  <ul class="nav flex-column">
+                    <li class="nav-item">
+                      <a class="dropdown-item {{ request()->routeIs('admin.slider.*') ? 'active' : '' }}" href="{{ route('admin.slider.index') }}">
+    <i class="fas fa-sliders-h"></i> <span>Slider</span>
+</a>
+                    </li>
+                    <li class="nav-item">
+                    {{-- Ganti kode menu testimoni dengan yang berikut --}}
+                    <a class="dropdown-item {{ request()->routeIs('admin.testimoni.*') ? 'active' : '' }}" href="{{ route('admin.testimoni.index') }}">
+                        <i class="fas fa-comment-alt"></i> <span>Testimoni</span>
+                    </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="dropdown-item {{ request()->routeIs('admin.faq.*') ? 'active' : '' }}" href="{{ route('admin.faq.index') }}">
+                            <i class="fas fa-question-circle"></i> <span>FAQ</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
               </li>
             @endif
 
@@ -749,6 +899,7 @@
               </li>
             @endif
           @endauth
+
         </ul>
       </div>
 
@@ -853,34 +1004,22 @@
       const body = document.body;
 
       // State management untuk sidebar
-      let sidebarState = 'open'; // 'open', 'collapsed', 'closed'
+      let sidebarState = 'open';
 
       // Sidebar toggle dengan 3 status
       sidebarToggle.addEventListener('click', function () {
         if (sidebarState === 'open') {
-          // Buka -> Mode ikon
           wrapper.classList.add('toggled');
           wrapper.classList.remove('fully-closed');
           sidebarState = 'collapsed';
         } else if (sidebarState === 'collapsed') {
-          // Mode ikon -> Tutup sepenuhnya
           wrapper.classList.remove('toggled');
           wrapper.classList.add('fully-closed');
           sidebarState = 'closed';
         } else {
-          // Tutup -> Buka
           wrapper.classList.remove('fully-closed');
           wrapper.classList.remove('toggled');
           sidebarState = 'open';
-        }
-
-        // Tutup dropdown yang terbuka saat men-toggle sidebar
-        const openDropdown = document.querySelector('.sidebar-nav .dropdown-menu.show');
-        if (openDropdown) {
-          const collapseElement = bootstrap.Collapse.getInstance(openDropdown.closest('.collapse'));
-          if (collapseElement) {
-            collapseElement.hide();
-          }
         }
       });
 
@@ -905,10 +1044,49 @@
         }
       }
 
+      // PERBAIKAN SEDERHANA: Inisialisasi collapse Bootstrap
+      const widgetToggle = document.querySelector('[data-bs-target="#widgetSubmenu"]');
+      const widgetSubmenu = document.getElementById('widgetSubmenu');
+
+      if (widgetToggle && widgetSubmenu) {
+        // Bootstrap akan otomatis menangani collapse dengan data-bs-toggle="collapse"
+
+        // Tambahkan event listener untuk update ikon
+        widgetSubmenu.addEventListener('show.bs.collapse', function() {
+          const arrowIcon = widgetToggle.querySelector('.dropdown-arrow i');
+          if (arrowIcon) {
+            arrowIcon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+          }
+          widgetToggle.classList.remove('collapsed');
+        });
+
+        widgetSubmenu.addEventListener('hide.bs.collapse', function() {
+          const arrowIcon = widgetToggle.querySelector('.dropdown-arrow i');
+          if (arrowIcon) {
+            arrowIcon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+          }
+          widgetToggle.classList.add('collapsed');
+        });
+
+        // Set initial state - PASTIKAN DEFAULNYA TERTUTUP (collapsed)
+        if (widgetSubmenu.classList.contains('show')) {
+          widgetToggle.classList.remove('collapsed');
+          const arrowIcon = widgetToggle.querySelector('.dropdown-arrow i');
+          if (arrowIcon) {
+            arrowIcon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+          }
+        } else {
+          widgetToggle.classList.add('collapsed');
+          const arrowIcon = widgetToggle.querySelector('.dropdown-arrow i');
+          if (arrowIcon) {
+            arrowIcon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+          }
+        }
+      }
+
       // Handle responsive behavior
       function handleResponsive() {
         if (window.innerWidth <= 768) {
-          // Di mobile, defaultnya sidebar tertutup
           if (!wrapper.classList.contains('toggled') && !wrapper.classList.contains('fully-closed')) {
             wrapper.classList.add('fully-closed');
             sidebarState = 'closed';
@@ -924,7 +1102,6 @@
 
       // ==================== NOTIFICATION FUNCTIONS ====================
 
-      // Fungsi untuk memuat notifikasi dari server
       async function loadNotifications() {
         try {
           const notificationList = document.querySelector('.notification-list');
@@ -963,7 +1140,6 @@
         }
       }
 
-      // Fungsi untuk memperbarui dropdown notifikasi
       function updateNotificationDropdown(notifications) {
         const notificationList = document.querySelector('.notification-list');
         if (!notificationList) return;
@@ -1003,7 +1179,6 @@
         notificationList.innerHTML = html;
       }
 
-      // Fungsi untuk memperbarui badge notifikasi
       function updateNotificationBadge(unreadCount) {
         const badge = document.querySelector('.notification-badge');
         if (!badge) return;
@@ -1016,7 +1191,6 @@
         }
       }
 
-      // Fungsi untuk menandai notifikasi sebagai dibaca
       window.markAsRead = async function(notificationId) {
         try {
           const response = await fetch(`/admin/notif/read/${notificationId}`, {
@@ -1029,7 +1203,6 @@
           });
 
           if (response.ok) {
-            // Update tampilan notifikasi
             const notificationItem = document.querySelector(`.notification-item[data-id="${notificationId}"]`);
             if (notificationItem) {
               notificationItem.classList.remove('unread');
@@ -1040,7 +1213,6 @@
               }
             }
 
-            // Update badge count
             loadNotifications();
           }
         } catch (error) {
@@ -1048,7 +1220,6 @@
         }
       }
 
-      // Fungsi utility untuk format waktu
       function getTimeAgo(timestamp) {
         const now = new Date();
         const time = new Date(timestamp);
@@ -1066,19 +1237,13 @@
         });
       }
 
-      // Load notifikasi saat halaman pertama kali dimuat
       loadNotifications();
-
-      // Auto-refresh notifikasi setiap 30 detik
       setInterval(loadNotifications, 30000);
 
-      // Event listener untuk dropdown notifikasi
       notificationToggle.addEventListener('click', function () {
-        // Load notifikasi ketika dropdown diklik
         loadNotifications();
       });
 
-      // Make loadNotifications available globally
       window.loadNotifications = loadNotifications;
     });
   </script>

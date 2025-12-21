@@ -440,7 +440,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('campus', [CampusController::class, 'index'])->name('campus.index');
     Route::get('campus/{campus:slug}', [CampusController::class, 'show'])->name('campus.show'); // Gunakan slug
     Route::delete('campus/{campus:slug}', [CampusController::class, 'destroy'])->name('campus.destroy'); // Gunakan slug
-    
+
 
     // TAMBAHAN: Routes untuk Pemagang (Interns)
     Route::prefix('interns')->name('interns.')->group(function () {});
@@ -453,6 +453,25 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::patch('/update', [CalendarController::class, 'update'])->name('update');
         Route::post('/delete', [CalendarController::class, 'destroy'])->name('delete');
     });
+
+      // Routes untuk Testimoni
+    Route::resource('testimoni', \App\Http\Controllers\Admin\TestimoniController::class);
+
+    // Tambahkan ini setelah Route::resource('testimoni', ...)
+
+
+    // Slider Routes
+    Route::prefix('slider')->name('slider.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\SliderController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\SliderController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\SliderController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [\App\Http\Controllers\Admin\SliderController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [\App\Http\Controllers\Admin\SliderController::class, 'update'])->name('update');
+        Route::delete('/{id}', [\App\Http\Controllers\Admin\SliderController::class, 'destroy'])->name('destroy');
+    });
+
+     // Routes untuk FAQ
+    Route::resource('faq', \App\Http\Controllers\Admin\FaqController::class);
 
     // 5. Laporan & Analitik
     Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
