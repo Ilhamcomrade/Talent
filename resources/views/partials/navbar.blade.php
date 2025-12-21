@@ -537,9 +537,10 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="{{ url('/lamaran-saya') }}">
-                                        <i class="fas fa-file-alt"></i> LAMARAN SAYA
-                                    </a>
+                                    <a class="dropdown-item" href="{{ route('user.applications.index') }}">
+    <i class="fas fa-file-alt"></i> LAMARAN SAYA
+</a>
+
                                 </li>
                                 <li>
                                     <a class="dropdown-item" href="{{ url('/pengaturan/detail') }}">

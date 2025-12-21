@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         :root {
             --primary: #4361ee;
@@ -14,6 +15,7 @@
             --success: #4cc9f0;
             --info: #4895ef;
             --warning: #f72585;
+            --danger: #ef476f;
             --light: #f8f9fa;
             --dark: #212529;
             --gradient: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
@@ -22,527 +24,291 @@
         body {
             background-color: #f5f7fa;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #333;
         }
         
         .dashboard-container {
             max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
+            margin: auto;
+            padding: 15px 20px;
         }
         
         .dashboard-header {
             background: var(--gradient);
             color: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 10px 20px rgba(67, 97, 238, 0.2);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .dashboard-header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 300px;
-            height: 300px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-        }
-        
-        .dashboard-header h1 {
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-        
-        .dashboard-header p {
-            opacity: 0.9;
-            margin-bottom: 0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(67,97,238,0.15);
         }
         
         .stat-card {
-            border-radius: 15px;
+            border-radius: 10px;
             border: none;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-            overflow: hidden;
-            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+            transition: all 0.2s ease;
+            height: 100%;
+            padding: 15px;
         }
         
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-        }
-        
-        .stat-card .card-body {
-            padding: 25px;
+        .stat-card:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
         
         .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            margin-bottom: 15px;
+            font-size: 18px;
+            margin-bottom: 10px;
         }
         
-        .stat-card.loker .stat-icon {
-            background: rgba(67, 97, 238, 0.15);
-            color: var(--primary);
+        .loker .stat-icon { 
+            background: rgba(67,97,238,0.12); 
+            color: var(--primary); 
         }
         
-        .stat-card.internship .stat-icon {
-            background: rgba(76, 201, 240, 0.15);
-            color: var(--success);
+        .internship .stat-icon { 
+            background: rgba(76,201,240,0.12); 
+            color: var(--success); 
         }
         
-        .stat-card.lamaran .stat-icon {
-            background: rgba(247, 37, 133, 0.15);
-            color: var(--warning);
+        .lamaran .stat-icon { 
+            background: rgba(247,37,133,0.12); 
+            color: var(--warning); 
         }
         
-        .stat-card.pelamar .stat-icon {
-            background: rgba(72, 149, 239, 0.15);
-            color: var(--info);
+        .pelamar .stat-icon { 
+            background: rgba(72,149,239,0.12); 
+            color: var(--info); 
         }
         
-        .stat-number {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 5px;
+        .stat-number { 
+            font-size: 24px; 
+            font-weight: 700; 
+            color: #2c3e50;
+            margin-bottom: 2px;
         }
         
-        .stat-label {
-            color: #6c757d;
+        .stat-label { 
+            color: #6c757d; 
+            font-size: 12px;
             font-weight: 500;
-            font-size: 14px;
+        }
+        
+        .stat-badge {
+            font-size: 10px;
+            padding: 3px 8px;
+            margin-top: 5px;
         }
         
         .chart-card {
-            border-radius: 15px;
+            border-radius: 12px;
             border: none;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            margin-bottom: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+            height: 100%;
+            margin-top: 15px;
         }
         
         .chart-card .card-header {
             background: white;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            padding: 20px 25px;
-            border-radius: 15px 15px 0 0 !important;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+            border-radius: 12px 12px 0 0 !important;
+            padding: 1rem 1.25rem;
         }
         
-        .chart-card .card-body {
-            padding: 25px;
+        .chart-card .card-header h5 {
+            margin: 0;
+            font-weight: 600;
+            color: #343a40;
+            font-size: 15px;
         }
         
         .chart-container {
             position: relative;
-            height: 300px;
+            height: 250px;
+            width: 100%;
         }
         
-        .activity-card, .lowongan-card {
-            border-radius: 15px;
-            border: none;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            margin-bottom: 25px;
-        }
-        
-        .activity-card .card-header, .lowongan-card .card-header {
+        .month-selector {
             background: white;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            padding: 20px 25px;
-            border-radius: 15px 15px 0 0 !important;
+            border-radius: 6px;
+            padding: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.04);
         }
         
-        .activity-card .card-body, .lowongan-card .card-body {
-            padding: 25px;
-        }
-        
-        .activity-item {
-            display: flex;
-            padding: 15px 0;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
-        
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-        
-        .activity-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            flex-shrink: 0;
-        }
-        
-        .activity-icon.success {
-            background: rgba(76, 201, 240, 0.15);
-            color: var(--success);
-        }
-        
-        .activity-icon.primary {
-            background: rgba(67, 97, 238, 0.15);
-            color: var(--primary);
-        }
-        
-        .activity-icon.info {
-            background: rgba(72, 149, 239, 0.15);
-            color: var(--info);
-        }
-        
-        .activity-content {
-            flex: 1;
-        }
-        
-        .activity-title {
-            font-weight: 600;
-            margin-bottom: 5px;
-            font-size: 15px;
-        }
-        
-        .activity-time {
-            color: #6c757d;
+        .month-selector select {
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 5px 10px;
+            width: 100%;
             font-size: 13px;
-        }
-        
-        .lowongan-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
-        
-        .lowongan-item:last-child {
-            border-bottom: none;
-        }
-        
-        .lowongan-info h6 {
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-        
-        .lowongan-meta {
-            color: #6c757d;
-            font-size: 13px;
-        }
-        
-        .badge-status {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-weight: 500;
-            font-size: 12px;
-        }
-        
-        .badge-aktif {
-            background: rgba(76, 201, 240, 0.15);
-            color: var(--success);
-        }
-        
-        .badge-draft {
-            background: rgba(108, 117, 125, 0.15);
-            color: #6c757d;
-        }
-        
-        .badge-tutup {
-            background: rgba(247, 37, 133, 0.15);
-            color: var(--warning);
         }
         
         .quick-actions {
-            display: flex;
-            gap: 15px;
-            margin-top: 25px;
+            margin-top: 20px;
         }
         
-        .quick-action-btn {
-            flex: 1;
+        .action-card {
             background: white;
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            border-radius: 12px;
+            border-radius: 8px;
             padding: 15px;
             text-align: center;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            color: var(--dark);
+            transition: all 0.2s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+            height: 100%;
         }
         
-        .quick-action-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            color: var(--primary);
+        .action-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
             border-color: var(--primary);
         }
         
         .action-icon {
-            font-size: 24px;
-            margin-bottom: 10px;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            margin: 0 auto 10px;
+            background: rgba(67,97,238,0.1);
             color: var(--primary);
         }
         
-        .action-text {
-            font-weight: 600;
-            font-size: 14px;
+        .action-card h6 {
+            font-size: 13px;
+            margin-bottom: 5px;
         }
         
-        @media (max-width: 768px) {
-            .dashboard-container {
-                padding: 15px;
-            }
-            
-            .dashboard-header {
-                padding: 20px;
-            }
-            
-            .quick-actions {
-                flex-direction: column;
-            }
-            
-            .stat-card .card-body {
-                padding: 20px;
-            }
-            
-            .chart-card .card-body, 
-            .activity-card .card-body, 
-            .lowongan-card .card-body {
-                padding: 20px;
-            }
+        .action-card small {
+            font-size: 11px;
+        }
+        
+        /* Styling untuk chart summary boxes */
+        .chart-summary-box {
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid rgba(0,0,0,0.08);
+        }
+        
+        .chart-summary-box .value {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+        
+        .chart-summary-box .label {
+            font-size: 11px;
+            color: #6c757d;
         }
     </style>
 </head>
+
 <body>
-    <!-- Navbar -->
-    @include('partials.navbar_company')
 
-    <div class="dashboard-container">
-        <!-- Header -->
-        <div class="dashboard-header">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h1>Dashboard Perusahaan</h1>
-                    <p>Selamat datang di panel perusahaan Anda</p>
-                </div>
-                {{-- <div class="col-md-4 text-md-end">
-                    <div class="btn-group">
-                        <button class="btn btn-light">Hari ini</button>
-                        <button class="btn btn-outline-light">Minggu ini</button>
-                        <button class="btn btn-outline-light">Bulan ini</button>
+@include('partials.navbar_company')
+
+<div class="dashboard-container">
+
+    <!-- Header -->
+    <div class="dashboard-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="mb-1 fw-bold">Dashboard Perusahaan</h4>
+                <p class="mb-0 opacity-90">Selamat datang di panel perusahaan Anda</p>
+            </div>
+            <div class="d-none d-md-block">
+                <span class="badge bg-light text-primary px-3 py-1" style="font-size: 12px">
+                    <i class="fas fa-calendar-alt me-1"></i>
+                    <?php echo date('d F Y'); ?>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    @if(session('login_success'))
+        <div class="alert alert-success alert-dismissible fade show d-flex align-items-center py-2" role="alert" style="font-size: 14px">
+            <i class="fas fa-check-circle me-2 fs-6"></i>
+            <div class="flex-grow-1">{{ session('login_success') }}</div>
+            <button type="button" class="btn-close" style="font-size: 10px" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
+    <!-- Statistik KPI (Lebih Kecil) -->
+    <div class="row g-3">
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card loker">
+                <div class="d-flex align-items-center">
+                    <div class="stat-icon me-3">
+                        <i class="fas fa-briefcase"></i>
                     </div>
-                </div> --}}
+                    <div class="flex-grow-1">
+                        <div class="stat-number">{{ $totalJobs }}</div>
+                        <div class="stat-label">Lowongan Kerja</div>
+                        <div class="stat-badge badge bg-primary bg-opacity-10 text-primary d-inline-block">
+                            {{ $chartJobs[date('n')-1] ?? 0 }} bulan ini
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Alert -->
-        @if(session('login_success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fas fa-check-circle me-2"></i>
-                {{ session('login_success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card internship">
+                <div class="d-flex align-items-center">
+                    <div class="stat-icon me-3">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="stat-number">{{ $totalMagangJobs }}</div>
+                        <div class="stat-label">Lowongan Magang</div>
+                        <div class="stat-badge badge bg-success bg-opacity-10 text-success d-inline-block">
+                            {{ $chartMagang[date('n')-1] ?? 0 }} bulan ini
+                        </div>
+                    </div>
+                </div>
             </div>
-        @endif
-
-        <!-- Quick Actions -->
-        <div class="quick-actions">
-            <a href="#" class="quick-action-btn">
-                <div class="action-icon">
-                    <i class="fas fa-plus-circle"></i>
-                </div>
-                <div class="action-text">Buat Lowongan</div>
-            </a>
-            <a href="#" class="quick-action-btn">
-                <div class="action-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <div class="action-text">Kelola Pelamar</div>
-            </a>
-            <a href="#" class="quick-action-btn">
-                <div class="action-icon">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <div class="action-text">Lihat Statistik</div>
-            </a>
-            <a href="#" class="quick-action-btn">
-                <div class="action-icon">
-                    <i class="fas fa-cog"></i>
-                </div>
-                <div class="action-text">Pengaturan</div>
-            </a>
         </div>
 
-        <!-- Statistik -->
-        <div class="row mt-4">
-            <div class="col-xl-3 col-md-6">
-                <div class="card stat-card loker">
-                    <div class="card-body">
-                        <div class="stat-icon">
-                            <i class="fas fa-briefcase"></i>
-                        </div>
-                        <div class="stat-number">12</div>
-                        <div class="stat-label">Total Lowongan Kerja</div>
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card lamaran">
+                <div class="d-flex align-items-center">
+                    <div class="stat-icon me-3">
+                        <i class="fas fa-file-alt"></i>
                     </div>
-                </div>
-            </div>
-            
-            <div class="col-xl-3 col-md-6">
-                <div class="card stat-card internship">
-                    <div class="card-body">
-                        <div class="stat-icon">
-                            <i class="fas fa-user-graduate"></i>
-                        </div>
-                        <div class="stat-number">8</div>
-                        <div class="stat-label">Total Internship</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-xl-3 col-md-6">
-                <div class="card stat-card lamaran">
-                    <div class="card-body">
-                        <div class="stat-icon">
-                            <i class="fas fa-file-alt"></i>
-                        </div>
-                        <div class="stat-number">45</div>
+                    <div class="flex-grow-1">
+                        <div class="stat-number">{{ $totalApplicants }}</div>
                         <div class="stat-label">Lamaran Masuk</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-xl-3 col-md-6">
-                <div class="card stat-card pelamar">
-                    <div class="card-body">
-                        <div class="stat-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="stat-number">28</div>
-                        <div class="stat-label">Total Pelamar</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Grafik dan Aktivitas -->
-        <div class="row mt-4">
-            <!-- Grafik -->
-            <div class="col-lg-8">
-                <div class="card chart-card">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-chart-bar me-2"></i>Statistik Lowongan per Bulan
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="chart-container">
-                            <canvas id="barChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Aktivitas Terbaru -->
-            <div class="col-lg-4">
-                <div class="card activity-card">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-bell me-2"></i>Aktivitas Terbaru
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="activity-item">
-                            <div class="activity-icon success">
-                                <i class="fas fa-user-plus"></i>
-                            </div>
-                            <div class="activity-content">
-                                <div class="activity-title">3 lamaran baru diterima</div>
-                                <div class="activity-time">2 jam yang lalu</div>
-                            </div>
-                        </div>
-                        
-                        <div class="activity-item">
-                            <div class="activity-icon primary">
-                                <i class="fas fa-briefcase"></i>
-                            </div>
-                            <div class="activity-content">
-                                <div class="activity-title">Lowongan Data Scientist dipublikasi</div>
-                                <div class="activity-time">1 hari yang lalu</div>
-                            </div>
-                        </div>
-                        
-                        <div class="activity-item">
-                            <div class="activity-icon info">
-                                <i class="fas fa-building"></i>
-                            </div>
-                            <div class="activity-content">
-                                <div class="activity-title">Profil perusahaan diperbarui</div>
-                                <div class="activity-time">2 hari yang lalu</div>
-                            </div>
-                        </div>
-                        
-                        <div class="activity-item">
-                            <div class="activity-icon success">
-                                <i class="fas fa-check-circle"></i>
-                            </div>
-                            <div class="activity-content">
-                                <div class="activity-title">5 lamaran berhasil diproses</div>
-                                <div class="activity-time">3 hari yang lalu</div>
-                            </div>
+                        <div class="mt-1">
+                            <small class="text-muted" style="font-size: 11px">
+                                <i class="fas fa-user me-1"></i> {{ $totalUniqueApplicants }} pelamar unik
+                            </small>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Lowongan Terbaru -->
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="card lowongan-card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-briefcase me-2"></i>Lowongan Terbaru
-                        </h5>
-                        <a href="#" class="btn btn-sm btn-primary">Lihat Semua</a>
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card pelamar">
+                <div class="d-flex align-items-center">
+                    <div class="stat-icon me-3">
+                        <i class="fas fa-users"></i>
                     </div>
-                    <div class="card-body">
-                        <div class="lowongan-item">
-                            <div class="lowongan-info">
-                                <h6>Frontend Developer</h6>
-                                <div class="lowongan-meta">Diposting: 2 hari lalu | 15 pelamar</div>
-                            </div>
-                            <span class="badge badge-status badge-aktif">Aktif</span>
-                        </div>
-                        
-                        <div class="lowongan-item">
-                            <div class="lowongan-info">
-                                <h6>Backend Developer</h6>
-                                <div class="lowongan-meta">Diposting: 1 minggu lalu | 8 pelamar</div>
-                            </div>
-                            <span class="badge badge-status badge-aktif">Aktif</span>
-                        </div>
-                        
-                        <div class="lowongan-item">
-                            <div class="lowongan-info">
-                                <h6>UI/UX Designer</h6>
-                                <div class="lowongan-meta">Diposting: 3 minggu lalu | 22 pelamar</div>
-                            </div>
-                            <span class="badge badge-status badge-aktif">Aktif</span>
-                        </div>
-                        
-                        <div class="lowongan-item">
-                            <div class="lowongan-info">
-                                <h6>Data Scientist</h6>
-                                <div class="lowongan-meta">Diposting: 1 bulan lalu | 12 pelamar</div>
-                            </div>
-                            <span class="badge badge-status badge-tutup">Ditutup</span>
+                    <div class="flex-grow-1">
+                        <div class="stat-number">{{ $totalUniqueApplicants }}</div>
+                        <div class="stat-label">Pelamar Unik</div>
+                        <div class="mt-1">
+                            <small class="text-muted" style="font-size: 11px">
+                                <i class="fas fa-graduation-cap me-1"></i> {{ $totalMagangApplicants }} magang
+                            </small>
                         </div>
                     </div>
                 </div>
@@ -550,70 +316,288 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Data untuk grafik
-        const barChartData = {
+    <!-- Grafik (Lebih Ke Atas) -->
+    <div class="row g-3 mt-0">
+        <!-- BAR CHART -->
+        <div class="col-lg-8">
+            <div class="chart-card">
+                <div class="card-header d-flex justify-content-between align-items-center py-2">
+                    <h5><i class="fas fa-chart-bar me-2"></i>Statistik Lowongan per Bulan</h5>
+                    <div class="month-selector">
+                        <select class="form-select form-select-sm" id="yearFilter" style="font-size: 12px">
+                            <option value="2024" selected>2024</option>
+                            <option value="2023">2023</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="card-body p-3">
+                    <div class="chart-container">
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PIE CHART -->
+        <div class="col-lg-4">
+            <div class="chart-card">
+                <div class="card-header py-2">
+                    <h5><i class="fas fa-chart-pie me-2"></i>Distribusi Pelamar</h5>
+                </div>
+                <div class="card-body p-3">
+                    <div class="chart-container">
+                        <canvas id="pieChart"></canvas>
+                    </div>
+                    <div class="row g-2 mt-3">
+                        <div class="col-6">
+                            <div class="chart-summary-box">
+                                <div class="value text-primary">{{ $totalApplicants - $totalMagangApplicants }}</div>
+                                <div class="label">Pelamar Reguler</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="chart-summary-box">
+                                <div class="value text-success">{{ $totalMagangApplicants }}</div>
+                                <div class="label">Pelamar Magang</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row quick-actions g-2">
+        <div class="col-12">
+            <div class="chart-card">
+                <div class="card-header py-2">
+                    <h5><i class="fas fa-bolt me-2"></i>Aksi Cepat</h5>
+                </div>
+                <div class="card-body p-3">
+                    <div class="row g-2">
+                        <div class="col-md-3 col-6">
+                            <a href="{{ route('company.magang.create') }}" class="text-decoration-none">
+                                <div class="action-card">
+                                    <div class="action-icon">
+                                        <i class="fas fa-plus"></i>
+                                    </div>
+                                    <h6 class="fw-bold mb-1">Buat Magang</h6>
+                                    <small>Tambah lowongan magang</small>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <a href="{{ route('companiesjobs.create') }}" class="text-decoration-none">
+                                <div class="action-card">
+                                    <div class="action-icon">
+                                        <i class="fas fa-briefcase"></i>
+                                    </div>
+                                    <h6 class="fw-bold mb-1">Buat Lowongan</h6>
+                                    <small>Tambah lowongan kerja</small>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <a href="#" class="text-decoration-none">
+                                <div class="action-card">
+                                    <div class="action-icon">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <h6 class="fw-bold mb-1">Lihat Pelamar</h6>
+                                    <small>Kelola lamaran masuk</small>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <a href="#" class="text-decoration-none">
+                                <div class="action-card">
+                                    <div class="action-icon">
+                                        <i class="fas fa-chart-line"></i>
+                                    </div>
+                                    <h6 class="fw-bold mb-1">Laporan</h6>
+                                    <small>Lihat statistik lengkap</small>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // === BAR CHART ===
+    const barCtx = document.getElementById('barChart').getContext('2d');
+    const chartJobs = @json($chartJobs);
+    const chartMagang = @json($chartMagang);
+    
+    const barChart = new Chart(barCtx, {
+        type: 'bar',
+        data: {
             labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
             datasets: [
                 {
                     label: 'Lowongan Kerja',
-                    data: [5, 8, 7, 10, 12, 15, 14, 12, 10, 8, 6, 4],
-                    backgroundColor: 'rgba(67, 97, 238, 0.7)',
+                    data: chartJobs,
+                    backgroundColor: 'rgba(67, 97, 238, 0.8)',
                     borderColor: 'rgba(67, 97, 238, 1)',
                     borderWidth: 1,
-                    borderRadius: 5
+                    borderRadius: 4,
+                    borderSkipped: false,
                 },
                 {
-                    label: 'Internship',
-                    data: [3, 5, 4, 6, 8, 7, 9, 10, 8, 6, 4, 3],
-                    backgroundColor: 'rgba(76, 201, 240, 0.7)',
+                    label: 'Lowongan Magang',
+                    data: chartMagang,
+                    backgroundColor: 'rgba(76, 201, 240, 0.8)',
                     borderColor: 'rgba(76, 201, 240, 1)',
                     borderWidth: 1,
-                    borderRadius: 5
+                    borderRadius: 4,
+                    borderSkipped: false,
                 }
             ]
-        };
-
-        // Inisialisasi grafik batang
-        const barCtx = document.getElementById('barChart').getContext('2d');
-        const barChart = new Chart(barCtx, {
-            type: 'bar',
-            data: barChartData,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            drawBorder: false
-                        },
-                        ticks: {
-                            color: '#6c757d'
-                        }
-                    },
-                    x: {
-                        grid: {
-                            display: false
-                        },
-                        ticks: {
-                            color: '#6c757d'
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        padding: 15,
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        font: {
+                            size: 11
                         }
                     }
                 },
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        labels: {
-                            color: '#333',
-                            usePointStyle: true,
-                            padding: 15
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    padding: 10,
+                    cornerRadius: 5,
+                    displayColors: true,
+                    titleFont: {
+                        size: 11
+                    },
+                    bodyFont: {
+                        size: 11
+                    },
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.dataset.label}: ${context.parsed.y} lowongan`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: {
+                            size: 10
+                        }
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.04)'
+                    },
+                    ticks: {
+                        stepSize: 1,
+                        font: {
+                            size: 10
+                        },
+                        callback: function(value) {
+                            return value;
                         }
                     }
                 }
             }
-        });
-    </script>
+        }
+    });
+
+    // === PIE CHART ===
+    const pieCtx = document.getElementById('pieChart').getContext('2d');
+    const regularApplicants = {{ $totalApplicants - $totalMagangApplicants }};
+    const magangApplicants = {{ $totalMagangApplicants }};
+    const totalApplicants = regularApplicants + magangApplicants;
+    
+    const pieChart = new Chart(pieCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Pelamar Reguler', 'Pelamar Magang'],
+            datasets: [{
+                data: [regularApplicants, magangApplicants],
+                backgroundColor: [
+                    'rgba(67, 97, 238, 0.9)',
+                    'rgba(76, 201, 240, 0.9)'
+                ],
+                borderColor: [
+                    'rgba(67, 97, 238, 1)',
+                    'rgba(76, 201, 240, 1)'
+                ],
+                borderWidth: 1,
+                hoverOffset: 10
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '60%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        font: {
+                            size: 11
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    padding: 10,
+                    cornerRadius: 5,
+                    titleFont: {
+                        size: 11
+                    },
+                    bodyFont: {
+                        size: 11
+                    },
+                    callbacks: {
+                        label: function(context) {
+                            const value = context.raw || 0;
+                            const percentage = Math.round((value / totalApplicants) * 100) || 0;
+                            return `${context.label}: ${value} (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Event listener untuk filter tahun
+    document.getElementById('yearFilter').addEventListener('change', function(e) {
+        console.log('Filter tahun:', this.value);
+        // Implementasi filter tahun sesuai dengan data yang tersedia
+    });
+</script>
+
+<!-- Bootstrap 5 JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

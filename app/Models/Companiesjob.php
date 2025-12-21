@@ -7,12 +7,13 @@ use Carbon\Carbon;
 
 class CompaniesJob extends Model
 {
-    protected $table = 'companiesjobs'; // Nama tabel
+    protected $table = 'companiesjobs';
 
     protected $fillable = [
         'company_id',
         'company_name',
         'industry',
+        'job_category_id',
         'company_logo',
         'title',
         'job_level',
@@ -47,75 +48,71 @@ class CompaniesJob extends Model
      */
     public function company()
     {
-        return $this->belongsTo(Company::class, 'company_id');
+        return $this->belongsTo(Company::class, 'company_id', 'id');
     }
 
-    /**
-     * Relasi ke tabel provinsi
-     */
+    /* ===============================
+     * RELASI KE PELAMAR
+     * =============================== */
+    public function applicants()
+    {
+        return $this->hasMany(CompaniesApplication::class, 'companies_job_id', 'id');
+    }
+
+    /* ===============================
+     * RELASI KE KATEGORI PEKERJAAN
+     * =============================== */
+    public function category()
+    {
+        return $this->belongsTo(JobCategory::class, 'job_category_id', 'id');
+    }
+
+    /* ===============================
+     * RELASI WILAYAH BERTINGKAT
+     * =============================== */
     public function province()
     {
-        return $this->belongsTo(Province::class, 'provinsi_id');
+        return $this->belongsTo(Province::class, 'provinsi_id', 'id');
     }
 
-    /**
-     * Relasi ke tabel kabupaten/kota
-     */
     public function regency()
     {
-        return $this->belongsTo(Regency::class, 'kabupaten_id');
+        return $this->belongsTo(Regency::class, 'kabupaten_id', 'id');
     }
 
-    /**
-     * Relasi ke tabel kecamatan
-     */
     public function district()
     {
-        return $this->belongsTo(District::class, 'kecamatan_id');
+        return $this->belongsTo(District::class, 'kecamatan_id', 'id');
     }
 
-    /**
-     * Relasi ke tabel desa/kelurahan
-     */
     public function village()
     {
-        return $this->belongsTo(Village::class, 'desa_id');
+        return $this->belongsTo(Village::class, 'desa_id', 'id');
     }
 
-    /**
-     * Accessor untuk mendapatkan lokasi lengkap
-     */
+    /* ===============================
+     * ACCESSOR: LOKASI LENGKAP
+     * =============================== */
     public function getFullLocationAttribute()
     {
-        $locationParts = [];
+        $parts = [];
 
-        // Tambahkan desa jika ada
         if ($this->village) {
-            $locationParts[] = $this->village->name;
+            $parts[] = $this->village->name;
         }
-
-        // Tambahkan kecamatan jika ada
         if ($this->district) {
-            $locationParts[] = $this->district->name;
+            $parts[] = $this->district->name;
         }
-
-        // Tambahkan kabupaten/kota jika ada
         if ($this->regency) {
-            $locationParts[] = $this->regency->name;
+            $parts[] = $this->regency->name;
         }
-
-        // Tambahkan provinsi jika ada
         if ($this->province) {
-            $locationParts[] = $this->province->name;
+            $parts[] = $this->province->name;
         }
 
-        if (!empty($locationParts)) {
-            return implode(', ', $locationParts);
-        }
-
-        return 'Lokasi tidak ditentukan';
+        return implode(', ', $parts);
     }
-
+    
     /**
      * Accessor untuk lokasi singkat (Kabupaten, Provinsi)
      */

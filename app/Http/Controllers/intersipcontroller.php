@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Magang;
+use App\Models\CompaniesMagang; // Ganti dari Magang ke CompaniesMagang
 use App\Models\Province;
 use App\Models\Regency;
 use App\Models\District;
@@ -20,20 +20,15 @@ class intersipController extends Controller
         $provinsi = $request->input('provinsi');
         $kabupaten = $request->input('kabupaten');
 
-        $magang = Magang::with(['province', 'regency'])
-            ->where('status', true) // hanya tampilkan magang aktif
+        $magang = CompaniesMagang::with(['company'])
+            ->where('status', 'aktif') // Sesuaikan dengan status di CompaniesMagang
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
-                    $q->where('judul', 'like', "%$search%")
-                      ->orWhere('perusahaan', 'like', "%$search%")
-                      ->orWhere('posisi', 'like', "%$search%");
+                    $q->where('title', 'like', "%$search%")
+                      ->orWhereHas('company', function ($companyQuery) use ($search) {
+                          $companyQuery->where('nama_perusahaan', 'like', "%$search%");
+                      });
                 });
-            })
-            ->when($provinsi, function ($query) use ($provinsi) {
-                $query->where('provinsi_id', $provinsi);
-            })
-            ->when($kabupaten, function ($query) use ($kabupaten) {
-                $query->where('kabupaten_id', $kabupaten);
             })
             ->latest()
             ->paginate(9);
@@ -48,8 +43,8 @@ class intersipController extends Controller
      */
     public function show($id)
     {
-        $magang = Magang::with(['province', 'regency', 'district', 'village'])
-            ->where('status', true)
+        $magang = CompaniesMagang::with(['company'])
+            ->where('status', 'aktif')
             ->findOrFail($id);
 
         return view('magang.show', compact('magang'));

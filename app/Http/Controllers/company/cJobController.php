@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Company;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\CompaniesJob;
+use App\Models\CompaniesApplication;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Province;
 use App\Models\Regency;
@@ -30,6 +31,12 @@ class cJobController extends Controller
             ->latest()
             ->paginate(10);
 
+        // Hitung pelamar setiap job
+        foreach ($jobs as $job) {
+            $job->pelamar = CompaniesApplication::where('companies_job_id', $job->id)->count();
+            $job->save();
+        }
+
         return view('company.jobs.index', compact('jobs', 'search'));
     }
 
@@ -49,69 +56,59 @@ class cJobController extends Controller
     {
         $company = Auth::guard('company')->user();
 
+        // VALIDATION
         $request->validate([
-            'industry'          => 'nullable|string|max:255',
-            'company_logo'      => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'title'             => 'required|string|max:255',
-            'job_level'         => 'nullable|string|max:255',
-            'show_salary'       => 'nullable|boolean',
-            'salary_min'        => 'nullable|integer',
-            'salary_max'        => 'nullable|integer',
-            'employment_type'   => 'nullable|string',
-            'work_mode'         => 'nullable|string',
-            'education_level'   => 'nullable|string',
-            'experience'        => 'nullable|string',
-            'skills'            => 'nullable|string',
-            'requirements'      => 'nullable|string',
-            'description'       => 'nullable|string',
-            'tanggung_jawab'    => 'nullable|string',
-            'kualifikasi'       => 'nullable|string',
-            'nilai_tambah'      => 'nullable|string',
-            'provinsi_id'       => 'nullable|string',
-            'kabupaten_id'      => 'nullable|string',
-            'kecamatan_id'      => 'nullable|string',
-            'desa_id'           => 'nullable|string',
-            'location'          => 'nullable|string',
-            'is_public'         => 'nullable|boolean',
+            'industry' => 'nullable|string|max:255',
+            'company_logo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'title' => 'required|string|max:255',
+            'employment_type' => 'required|string',
+            'work_mode' => 'required|string',
+            'experience' => 'required|string',
+            'education_level' => 'required|string',
+            'job_category_id' => 'nullable|exists:job_categories,id',
         ]);
 
-        // Upload Logo
+        // Upload logo jika ada
         $logoPath = null;
         if ($request->hasFile('company_logo')) {
             $logoPath = $request->file('company_logo')->store('company_logos', 'public');
         }
 
-        $skills = $request->skills ? array_map('trim', explode(',', $request->skills)) : [];
+        // Skills array
+        $skills = $request->skills
+            ? array_map('trim', explode(',', $request->skills))
+            : [];
 
         CompaniesJob::create([
-            'company_id'        => $company->id,
-            'company_name'      => $company->nama_perusahaan,
-            'industry'          => $request->industry,
-            'company_logo'      => $logoPath,
-            'title'             => $request->title,
-            'job_level'         => $request->job_level,
-            'show_salary'       => $request->show_salary ? true : false,
-            'salary_min'        => $request->salary_min,
-            'salary_max'        => $request->salary_max,
-            'employment_type'   => $request->employment_type,
-            'work_mode'         => $request->work_mode,
-            'education_level'   => $request->education_level,
-            'experience'        => $request->experience,
-            'skills'            => $skills,
-            'requirements'      => $request->requirements,
-            'description'       => $request->description,
-            'tanggung_jawab'    => $request->tanggung_jawab,
-            'kualifikasi'       => $request->kualifikasi,
-            'nilai_tambah'      => $request->nilai_tambah,
-            'provinsi_id'       => $request->provinsi_id,
-            'kabupaten_id'      => $request->kabupaten_id,
-            'kecamatan_id'      => $request->kecamatan_id,
-            'desa_id'           => $request->desa_id,
-            'location'          => $request->location,
-            'is_public'         => $request->is_public ? true : false,
+            'company_id'      => $company->id,
+            'company_name'    => $company->nama_perusahaan,
+            'industry'        => $request->industry,
+            'job_category_id' => $request->job_category_id,   // FIX
+            'company_logo'    => $logoPath,
+            'title'           => $request->title,
+            'job_level'       => $request->job_level,
+            'show_salary'     => $request->has('show_salary'),
+            'salary_min'      => $request->salary_min,
+            'salary_max'      => $request->salary_max,
+            'employment_type' => $request->employment_type,
+            'work_mode'       => $request->work_mode,
+            'education_level' => $request->education_level,
+            'experience'      => $request->experience,
+            'skills'          => $skills,
+            'requirements'    => $request->requirements,
+            'description'     => $request->description,
+            'tanggung_jawab'  => $request->tanggung_jawab,
+            'kualifikasi'     => $request->kualifikasi,
+            'nilai_tambah'    => $request->nilai_tambah,
+            'provinsi_id'     => $request->provinsi_id,
+            'kabupaten_id'    => $request->kabupaten_id,
+            'kecamatan_id'    => $request->kecamatan_id,
+            'desa_id'         => $request->desa_id,
+            'is_public'       => $request->has('is_public'),
         ]);
 
-        return redirect()->route('companiesjobs.index')->with('success', 'Job berhasil dibuat!');
+        return redirect()->route('companiesjobs.index')
+            ->with('success', 'Job berhasil dibuat!');
     }
 
     /**
@@ -147,18 +144,12 @@ class cJobController extends Controller
         }
 
         $request->validate([
-            'industry'          => 'nullable|string|max:255',
-            'company_logo'      => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'title'             => 'required|string|max:255',
-            'skills'            => 'nullable|string',
-            'provinsi_id'       => 'nullable|string',
-            'kabupaten_id'      => 'nullable|string',
-            'kecamatan_id'      => 'nullable|string',
-            'desa_id'           => 'nullable|string',
-            'location'          => 'nullable|string',
-            'is_public'         => 'nullable|boolean',
+            'industry' => 'nullable|string|max:255',
+            'title' => 'required|string|max:255',
+            'job_category_id' => 'nullable|exists:job_categories,id',
         ]);
 
+        // Update logo jika diupload ulang
         if ($request->hasFile('company_logo')) {
             if ($job->company_logo) {
                 Storage::disk('public')->delete($job->company_logo);
@@ -169,48 +160,32 @@ class cJobController extends Controller
         $skills = $request->skills ? array_map('trim', explode(',', $request->skills)) : [];
 
         $job->update([
-            'company_id'        => $company->id,
-            'company_name'      => $company->nama_perusahaan,
-            'industry'          => $request->industry,
-            'title'             => $request->title,
-            'job_level'         => $request->job_level,
-            'show_salary'       => $request->show_salary ? true : false,
-            'salary_min'        => $request->salary_min,
-            'salary_max'        => $request->salary_max,
-            'employment_type'   => $request->employment_type,
-            'work_mode'         => $request->work_mode,
-            'education_level'   => $request->education_level,
-            'experience'        => $request->experience,
-            'skills'            => $skills,
-            'requirements'      => $request->requirements,
-            'description'       => $request->description,
-            'tanggung_jawab'    => $request->tanggung_jawab,
-            'kualifikasi'       => $request->kualifikasi,
-            'nilai_tambah'      => $request->nilai_tambah,
-            'provinsi_id'       => $request->provinsi_id,
-            'kabupaten_id'      => $request->kabupaten_id,
-            'kecamatan_id'      => $request->kecamatan_id,
-            'desa_id'           => $request->desa_id,
-            'location'          => $request->location,
-            'is_public'         => $request->is_public ? true : false,
+            'industry' => $request->industry,
+            'title' => $request->title,
+            'job_category_id' => $request->job_category_id, // FIX
+            'job_level' => $request->job_level,
+            'show_salary' => $request->show_salary ? true : false,
+            'salary_min' => $request->salary_min,
+            'salary_max' => $request->salary_max,
+            'employment_type' => $request->employment_type,
+            'work_mode' => $request->work_mode,
+            'education_level' => $request->education_level,
+            'experience' => $request->experience,
+            'skills' => $skills,
+            'requirements' => $request->requirements,
+            'description' => $request->description,
+            'tanggung_jawab' => $request->tanggung_jawab,
+            'kualifikasi' => $request->kualifikasi,
+            'nilai_tambah' => $request->nilai_tambah,
+            'provinsi_id' => $request->provinsi_id,
+            'kabupaten_id' => $request->kabupaten_id,
+            'kecamatan_id' => $request->kecamatan_id,
+            'desa_id' => $request->desa_id,
+            'location' => $request->location,
+            'is_public' => $request->is_public ? true : false,
         ]);
 
         return redirect()->route('companiesjobs.index')->with('success', 'Job berhasil diperbarui!');
-    }
-
-    /**
-     * SHOW
-     */
-    public function show($id)
-    {
-        $company = Auth::guard('company')->user();
-        $job = CompaniesJob::findOrFail($id);
-
-        if ($job->company_id != $company->id) {
-            abort(403);
-        }
-
-        return view('company.jobs.show', compact('job'));
     }
 
     /**

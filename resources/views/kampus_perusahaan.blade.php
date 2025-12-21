@@ -140,6 +140,21 @@
             background-color: #029a45;
             color: #fff;
         }
+        .login-text {
+    margin-top: 12px;
+    font-size: 14px;
+}
+
+.login-text a {
+    color: #0d47a1;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login-text a:hover {
+    text-decoration: underline;
+}
+
     </style>
 </head>
 
@@ -166,12 +181,22 @@
                     <a href="/kampus" class="btn btn-choose btn-campus d-flex align-items-center justify-content-center">
                         Daftar Kampus
                     </a>
+                    
+                    <!-- Tambahan Login -->
+                    <p class="login-text">
+                        Sudah punya akun kampus? <a href="/login-kampus">Login di sini</a>
+                    </p>
                 </div>
                 <div class="choice-item">
                     <img src="/images/perusahaan.png" alt="Ilustrasi Perusahaan" class="registration-img">
                     <a href="/company" class="btn btn-choose btn-company d-flex align-items-center justify-content-center">
                         Daftar Perusahaan
                     </a>
+
+                     <!-- Tambahan Login -->
+                    <p class="login-text">
+                        Sudah punya akun perusahaan? <a href="/company/login">Login di sini</a>
+                    </p>
                 </div>
             </div>
         </div>
