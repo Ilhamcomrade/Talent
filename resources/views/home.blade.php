@@ -339,6 +339,7 @@
 
     </section>
 
+
     {{-- Ganti seluruh section testimoni dari baris 209-259 dengan kode berikut --}}
 
     <section class="py-5 text-center glints-section">
@@ -359,25 +360,17 @@
                 @foreach($testimonis as $testimoni)
                 <div class="col">
                     <div class="testimonial-card">
-                        <img src="{{ asset('images/foto2.png') }}" alt="Windya A." class="img-fluid">
-                        <blockquote class="mb-0">
-                            "Talenthub jadi platform cari kerja yang paling mudah & cepat buatku. Aku berhasil career switch ke bidang yang jadi passion-ku dan dapat kerja cuma dalam 4 hari."
-                        </blockquote>
-                        <div class="mt-3">
-                            <div class="testimonial-author">ilham sadewo, 24 tahun</div>
-                            <div class="testimonial-role">pemula</div>
+                        <div class="testimonial-photo-container">
+                            <img src="{{ $testimoni->foto_url }}" alt="{{ $testimoni->nama }}" class="testimonial-photo">
                         </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="testimonial-card">
-                        <img src="{{ asset('images/foto1.png') }}" alt="Dimas B Wicaksono" class="img-fluid">
-                        <blockquote class="mb-0">
-                            "Lewat Talenthub, aku bisa dapat pekerjaan yang bikin aku puas dan orang tua bangga. Prosesnya cepat, cuma 4 hari aku langsung dihubungi rekruter."
-                        </blockquote>
-                        <div class="mt-3">
-                            <div class="testimonial-author">rimba sadewo, 26 tahun</div>
-                            <div class="testimonial-role">full stack developer</div>
+                        <div class="testimonial-content">
+                            <blockquote class="mb-0 testimonial-quote">
+                                "{{ $testimoni->kesan_pesan }}"
+                            </blockquote>
+                            <div class="testimonial-footer">
+                                <div class="testimonial-author">{{ $testimoni->nama }}, {{ $testimoni->umur }} tahun</div>
+                                <div class="testimonial-role">{{ $testimoni->pekerjaan }}</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -393,7 +386,7 @@
         @endif
     </div>
     </section>
-
+    
     <!-- FAQ Section -->
     <section class="py-5 faq-section">
     <div class="container">
