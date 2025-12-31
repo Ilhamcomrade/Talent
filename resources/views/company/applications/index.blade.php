@@ -26,7 +26,7 @@
             <table class="table table-bordered mb-0">
                 <thead class="table-dark">
                     <tr>
-                        <th>#</th>
+                        <th>No</th>
                         <th>Nama</th>
                         <th>Pendidikan</th>
                         <th>Lowongan</th>
