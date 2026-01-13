@@ -1,0 +1,140 @@
+talent-hub/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── AuthController.php
+│   │   │   ├── PasswordResetController.php
+│   │   │   ├── AccountSettingsController.php
+│   │   │   ├── ProfileController.php
+│   │   │   ├── JobController.php
+│   │   │   ├── ContactController.php
+│   │   │   ├── UserNotifController.php
+│   │   │   ├── IntersipController.php
+│   │   │   │
+│   │   │   ├── Api/
+│   │   │   │   └── LocationApiController.php
+│   │   │   │
+│   │   │   ├── User/
+│   │   │   │   └── UserApplicationsController.php
+│   │   │   │
+│   │   │   ├── Admin/
+│   │   │   │   ├── DashboardController.php
+│   │   │   │   ├── UserController.php
+│   │   │   │   ├── LokasiController.php
+│   │   │   │   ├── JobListingController.php
+│   │   │   │   ├── ApplicantController.php
+│   │   │   │   ├── CalendarController.php
+│   │   │   │   ├── ReportController.php
+│   │   │   │   ├── CompanyController.php
+│   │   │   │   ├── CampusController.php
+│   │   │   │   ├── CandidateController.php
+│   │   │   │   ├── ContactController.php
+│   │   │   │   ├── NotifController.php
+│   │   │   │   ├── MagangController.php
+│   │   │   │   ├── JobCategoryController.php
+│   │   │   │   ├── ReferenceController.php
+│   │   │   │   ├── ProvinsiController.php
+│   │   │   │   ├── KabupatenController.php
+│   │   │   │   ├── KecamatanController.php
+│   │   │   │   ├── DesaController.php
+│   │   │   │   ├── SliderController.php
+│   │   │   │   ├── TestimoniController.php
+│   │   │   │   └── FaqController.php
+│   │   │   │
+│   │   │   ├── Company/
+│   │   │   │   ├── RegisterController.php
+│   │   │   │   ├── LoginController.php
+│   │   │   │   ├── CompanyPasswordResetController.php
+│   │   │   │   ├── cAuthController.php
+│   │   │   │   ├── cDashboardController.php
+│   │   │   │   ├── cProfileController.php
+│   │   │   │   ├── cJobController.php
+│   │   │   │   ├── cApplicantController.php
+│   │   │   │   ├── cMagangController.php
+│   │   │   │   ├── cNotificationController.php
+│   │   │   │   ├── CompanyController.php
+│   │   │   │   ├── CompanyJobController.php
+│   │   │   │   └── BenefitController.php
+│   │   │   │
+│   │   │   └── Campus/
+│   │   │       ├── RegisterController.php
+│   │   │       ├── LoginController.php
+│   │   │       ├── PasswordResetController.php
+│   │   │       └── CampusController.php
+│   │   │
+│   │   └── Middleware/
+│   │       ├── AdminMiddleware.php
+│   │       ├── SuperAdminMiddleware.php
+│   │       ├── WawancaraMiddleware.php
+│   │       ├── RedirectIfNotCompany.php
+│   │       ├── RedirectIfNotCampus.php
+│   │       └── LogoutForPassword.php
+│   │
+│   ├── Models/
+│   │   ├── User.php
+│   │   ├── Company.php
+│   │   ├── Campus.php
+│   │   ├── CompaniesJob.php
+│   │   ├── CompaniesApplication.php
+│   │   ├── JobCategory.php
+│   │   ├── Province.php
+│   │   ├── Regency.php
+│   │   ├── District.php
+│   │   ├── Village.php
+│   │   ├── Magang.php
+│   │   ├── Benefit.php
+│   │   ├── Notification.php
+│   │   └── Slider.php
+│
+├── bootstrap/
+│   └── app.php
+│
+├── config/
+│   ├── app.php
+│   ├── auth.php
+│   ├── database.php
+│   └── services.php
+│
+├── database/
+│   ├── migrations/
+│   ├── seeders/
+│   └── factories/
+│
+├── resources/
+│   ├── views/
+│   │   ├── layouts/
+│   │   │   ├── app.blade.php
+│   │   │   ├── admin.blade.php
+│   │   │   └── company.blade.php
+│   │   │
+│   │   ├── admin/
+│   │   ├── company/
+│   │   ├── campus/
+│   │   ├── user/
+│   │   ├── auth/
+│   │   └── public/
+│   │
+│   ├── css/
+│   └── js/
+│
+├── routes/
+│   ├── web.php
+│   ├── api.php
+│   └── console.php
+│
+├── storage/
+│   ├── app/
+│   ├── framework/
+│   └── logs/
+│
+├── public/
+│   ├── storage/
+│   ├── images/
+│   ├── css/
+│   └── js/
+│
+├── tests/
+├── vendor/
+├── .env
+├── artisan
+└── composer.json
