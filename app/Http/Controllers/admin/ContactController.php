@@ -17,24 +17,24 @@ class ContactController extends Controller
         $status = $request->query('status', 'without');
         $search = $request->query('search'); // Ambil nilai pencarian
         $limit = $request->query('limit', 10); // Ambil limit, default 10
-        
+
         // 2. Tentukan Query Dasar
         // PERUBAHAN: Diurutkan DESC (terbaru di atas)
-        $query = ContactMessage::orderBy('created_at', 'desc'); 
+        $query = ContactMessage::orderBy('created_at', 'desc');
 
         // 3. Terapkan Pencarian (Jika ada nilai search)
         if ($search) {
             // Konversi string pencarian menjadi huruf kecil untuk perbandingan case-insensitive
             $lowerSearch = strtolower($search);
             // Tambahkan wildcard untuk LIKE
-            $searchPattern = '%' . $lowerSearch . '%'; 
+            $searchPattern = '%' . $lowerSearch . '%';
 
             $query->where(function ($q) use ($searchPattern) {
                 // Untuk Kolom Teks (name, email): Gunakan LOWER() untuk pencarian case-insensitive
                 // LOWER(kolom) LIKE ?
                 $q->whereRaw('LOWER(name) LIKE ?', [$searchPattern])
                     ->orWhereRaw('LOWER(email) LIKE ?', [$searchPattern])
-                    ->orWhereRaw('LOWER(phone) LIKE ?', [$searchPattern]); 
+                    ->orWhereRaw('LOWER(phone) LIKE ?', [$searchPattern]);
             });
         }
 
@@ -42,7 +42,7 @@ class ContactController extends Controller
         if ($status === 'only') {
             // Hanya data yang dihapus (onlyTrashed).
             $messages = $query->onlyTrashed()->paginate($limit)->withQueryString();
-            
+
         } elseif ($status === 'with') {
             // Dengan data yang dihapus (withTrashed).
             $messages = $query->withTrashed()->paginate($limit)->withQueryString();
@@ -52,9 +52,9 @@ class ContactController extends Controller
             $messages = $query->whereNull('deleted_at')->paginate($limit)->withQueryString();
         }
 
-        // Catatan: Fungsi withQueryString() di Laravel akan otomatis 
+        // Catatan: Fungsi withQueryString() di Laravel akan otomatis
         // mempertahankan parameter search, limit, dan status pada link pagination.
-        
+
         // Kirimkan variabel $messages ke view
         // $status sudah ada di $messages karena kita menggunakan withQueryString(),
         // tetapi untuk konsistensi blade, kita tetap kirim.
@@ -85,25 +85,25 @@ class ContactController extends Controller
         $message->update(['active' => 0]);
 
         // 2. Lakukan Soft Delete (mengisi kolom deleted_at)
-        $message->delete(); 
+        $message->delete();
 
-        return redirect()->route('admin.contact.index')->with('success', 'Pesan berhasil disembunyikan.');
+        // PERBAIKAN: Mengubah route dari 'admin.contact.index' menjadi 'admin.contact-messages.index'
+        return redirect()->route('admin.contact-messages.index')->with('success', 'Pesan berhasil disembunyikan.');
     }
-    
+
     public function restore($id)
     {
         // Cari pesan yang di-soft delete (hanya yang terhapus)
         // Kita harus menggunakan withTrashed() untuk mencari ID
         $message = ContactMessage::withTrashed()->findOrFail($id);
-        
+
         // 1. Pulihkan Soft Delete (mengosongkan kolom deleted_at)
         $message->restore();
 
         // 2. Kembalikan active menjadi 1 - Sesuai logika Anda
         $message->update(['active' => 1]);
 
-
-        // Alihkan kembali ke halaman data terhapus, lalu beri notifikasi
-        return redirect()->route('admin.contact.index', ['status' => 'only'])->with('success', 'Pesan berhasil dipulihkan dan ditampilkan kembali di Pesan Aktif.');
+        // PERBAIKAN: Mengubah route dari 'admin.contact.index' menjadi 'admin.contact-messages.index'
+        return redirect()->route('admin.contact-messages.index', ['status' => 'only'])->with('success', 'Pesan berhasil dipulihkan dan ditampilkan kembali di Pesan Aktif.');
     }
 }
