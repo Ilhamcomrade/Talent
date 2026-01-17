@@ -493,6 +493,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
       // Routes untuk Testimoni
     Route::resource('testimoni', \App\Http\Controllers\Admin\TestimoniController::class);
 
+      // Routes untuk Profile
+    Route::get('profile', [\App\Http\Controllers\Admin\ProfileController::class, 'index'])->name('profile.index');
+    Route::put('profile', [\App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update');
+
     // Tambahkan ini setelah Route::resource('testimoni', ...)
 
 

@@ -244,7 +244,7 @@
             .navbar .container-fluid {
                 padding: 0 1rem;
             }
-            
+
             .company-name-navbar {
                 margin-right: 1rem;
                 font-size: 1rem;
@@ -256,31 +256,31 @@
             body {
                 padding-top: 60px;
             }
-            
+
             .navbar .nav-link {
                 margin: 0.25rem 0;
                 padding: 0.75rem 1rem !important;
                 border-radius: 8px;
                 width: 100%;
             }
-            
+
             .nav-underline {
                 display: none;
             }
-            
+
             .glints-dropdown {
                 min-width: 100%;
                 border-radius: 8px;
                 box-shadow: none;
                 border: 1px solid var(--border-color);
             }
-            
+
             .company-name-navbar {
                 margin: 0.5rem 0;
                 text-align: center;
                 display: inline-block;
             }
-            
+
             .dropdown-menu {
                 border: none;
             }
@@ -290,19 +290,19 @@
             .navbar-logo {
                 height: 36px;
             }
-            
+
             .btn-login {
                 padding: 0.5rem 1rem;
                 width: 100%;
                 text-align: center;
                 margin-top: 0.5rem;
             }
-            
+
             .user-profile-container {
                 justify-content: center;
                 margin-top: 1rem;
             }
-            
+
             .navbar .container-fluid {
                 padding: 0 0.75rem;
             }
@@ -350,10 +350,16 @@
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light">
+    
+       <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
+
             <a class="navbar-brand d-flex align-items-center" href="{{ url('company/dashboard') }}">
-                <img src="{{ asset('images/logo_inotal.png') }}" class="navbar-logo" alt="Logo Perusahaan">
+                @if($profile->logo_navbar_company && Storage::disk('public')->exists($profile->logo_navbar_company))
+                    <img src="{{ asset('storage/' . $profile->logo_navbar_company) }}" class="navbar-logo" alt="Logo Perusahaan">
+                @else
+                    <img src="{{ asset('images/logo_inotal.png') }}" class="navbar-logo" alt="Logo Perusahaan">
+                @endif
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -418,7 +424,7 @@
                         <i class="fas fa-gift me-1"></i> Benefit
                         </a>
                     </li>
-                    
+
                     <span class="nav-underline" id="companyUnderline"></span>
                 </ul>
 
@@ -433,10 +439,10 @@
                         </span>
 
                         <div class="dropdown">
-                            <a class="d-flex align-items-center user-dropdown-toggle" 
-                               href="#" 
-                               role="button" 
-                               data-bs-toggle="dropdown" 
+                            <a class="d-flex align-items-center user-dropdown-toggle"
+                               href="#"
+                               role="button"
+                               data-bs-toggle="dropdown"
                                aria-expanded="false"
                                id="userDropdown">
                                 <div class="user-profile-icon">
@@ -477,7 +483,7 @@
                                             <i class="fas fa-power-off"></i>&nbsp;Keluar
                                         </button>
                                     </form>
-                                </li> 
+                                </li>
                             </ul>
                         </div>
                     @else

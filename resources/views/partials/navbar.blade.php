@@ -408,7 +408,11 @@
     <div class="container-fluid mx-lg-5">
 
         <a class="navbar-brand d-flex align-items-center py-2" href="{{ url('/') }}">
-            <img src="{{ asset('images/logo_inotal.png') }}" alt="Inotal Logo" class="navbar-logo d-inline-block align-text-top">
+            @if($profile->logo_navbar_public && Storage::disk('public')->exists($profile->logo_navbar_public))
+                <img src="{{ asset('storage/' . $profile->logo_navbar_public) }}" alt="Inotal Logo" class="navbar-logo d-inline-block align-text-top">
+            @else
+                <img src="{{ asset('images/logo_inotal.png') }}" alt="Inotal Logo" class="navbar-logo d-inline-block align-text-top">
+            @endif
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"

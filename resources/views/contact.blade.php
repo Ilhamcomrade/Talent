@@ -427,7 +427,7 @@
     {{-- Pastikan data $profile tersedia sebelum mencoba mengaksesnya --}}
     @if (isset($profile))
         {{-- diasumsikan file ini ada --}}
-        @include('partials.navbar') 
+        @include('partials.navbar')
 
         <div class="map-container">
             <div id="map"></div>
@@ -557,32 +557,36 @@
                         <div class="contact-card">
                             <h2 class="contact-info-heading">Informasi Kontak</h2>
 
-                            {{-- ALAMAT DARI DATABASE --}}
+                            {{-- PERUBAHAN: ALAMAT DARI MODEL PROFILE --}}
                             <div class="info-item">
                                 <i class="fas fa-map-marker-alt info-icon"></i>
                                 <div class="info-text">
-                                    {!! nl2br(e($profile->address)) !!}
+                                    @if($profile->address)
+                                        {!! nl2br(e($profile->address)) !!}
+                                    @else
+                                        Jl. Pratista Utara III No.2, Antapani Kidul, Kec. Antapani, Kota Bandung, Jawa Barat, Indonesia 4029
+                                    @endif
                                 </div>
                             </div>
 
-                            {{-- EMAIL DARI DATABASE --}}
+                            {{-- PERUBAHAN: EMAIL DARI MODEL PROFILE --}}
                             <div class="info-item">
                                 <i class="fas fa-envelope info-icon"></i>
-                                <div class="info-text">Email: {{ $profile->email }}</div>
+                                <div class="info-text">Email: {{ $profile->email ?? 'corporate@inotal.tech' }}</div>
                             </div>
 
-                            {{-- TELEPON DARI DATABASE --}}
+                            {{-- PERUBAHAN: TELEPON DARI MODEL PROFILE --}}
                             <div class="info-item">
                                 <i class="fas fa-phone-alt info-icon"></i>
-                                <div class="info-text">Phone: {{ $profile->phone }}</div>
+                                <div class="info-text">Phone: {{ $profile->phone ?? '+(62) 82115179879' }}</div>
                             </div>
 
-                            {{-- JAM OPERASIONAL DARI DATABASE --}}
+                            {{-- PERUBAHAN: JAM OPERASIONAL DARI MODEL PROFILE --}}
                             <div class="info-item">
                                 <i class="fas fa-clock info-icon"></i>
                                 <div class="info-text">
                                     Jam Operasional:<br>
-                                    {{ $profile->operation_hours }}
+                                    {{ $profile->operation_hours ?? 'Senin - Jumat, 08.00 - 16.00 WIB' }}
                                 </div>
                             </div>
                         </div>
@@ -598,13 +602,11 @@
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
         <script>
             document.addEventListener('DOMContentLoaded', () => {
-                // Pastikan variabel-variabel ini tersedia, jika tidak, inisialisasi dengan nilai default
-                const latitude = typeof {{ $profile->latitude ?? 'null' }} !== 'undefined' ?
-                    {{ $profile->latitude ?? 'null' }} : -6.200000;
-                const longitude = typeof {{ $profile->longitude ?? 'null' }} !== 'undefined' ?
-                    {{ $profile->longitude ?? 'null' }} : 106.816666;
-                const mapPopupText = "{!! addslashes($profile->map_popup_text ?? 'Lokasi') !!}";
-                const location = (latitude && longitude) ? [latitude, longitude] : [-6.200000, 106.816666];
+                // PERUBAHAN: Gunakan data dari model Profile
+                const latitude = {{ $profile->latitude ?? '-6.925457980196308' }};
+                const longitude = {{ $profile->longitude ?? '107.66299344598612' }};
+                const mapPopupText = "{!! addslashes($profile->map_popup_text ?? 'PT INOTAL SISTEMA INTERNASIONAL Jl. Pratista Utara III No.2, Antapani.') !!}";
+                const location = [latitude, longitude];
 
                 if (document.getElementById('map') && latitude !== null && longitude !== null) {
                     const map = L.map('map').setView(location, 18);

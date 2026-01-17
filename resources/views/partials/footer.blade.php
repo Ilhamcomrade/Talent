@@ -29,16 +29,21 @@
     }
     .text-red-custom { color: #e11c25; }
 </style>
+
 <footer class="py-5 footer-bg text-white">
     <div class="container">
         <div class="row">
             <div class="col-md-4 mb-4 mb-md-0">
                 <div class="mb-3">
-                    {{-- ✅ Logo sekarang bisa diklik menuju halaman utama --}}
                     <a href="{{ route('home') }}">
-                        <img src="{{ asset('images/inotal.png') }}" alt="INOTAL SISTEMA INTERNASIONAL" class="footer-logo">
+                        @if($profile->logo_footer && Storage::disk('public')->exists($profile->logo_footer))
+                            <img src="{{ asset('storage/' . $profile->logo_footer) }}" alt="INOTAL SISTEMA INTERNASIONAL" class="footer-logo">
+                        @else
+                            <img src="{{ asset('images/inotal.png') }}" alt="INOTAL SISTEMA INTERNASIONAL" class="footer-logo">
+                        @endif
                     </a>
                 </div>
+
                 <p class="mb-1">PT INOTAL SISTEMA INTERNASIONAL</p>
                 <p>Langkah Mudah Menuju Masa Depan Karier</p>
             </div>

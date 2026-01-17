@@ -881,9 +881,9 @@
               </li>
 
               <li class="nav-item">
-    <a class="nav-link {{ request()->routeIs('admin.job-categories.*') ? 'active' : '' }}" 
+    <a class="nav-link {{ request()->routeIs('admin.job-categories.*') ? 'active' : '' }}"
        href="{{ route('admin.job-categories.index') }}">
-        <i class="fas fa-users-cog"></i> 
+        <i class="fas fa-users-cog"></i>
         <span>Kategori Pekerjaan</span>
     </a>
 </li>
@@ -906,6 +906,13 @@
                   <i class="fa-solid fa-school"></i> <span>Kampus</span>
                 </a>
               </li>
+
+              <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('admin.profile.index') ? 'active' : '' }}" href="{{ route('admin.profile.index') }}">
+                    <i class="fa-solid fa-user"></i> <span>Profile</span>
+                </a>
+             </li>
+
             @endif
           @endauth
 

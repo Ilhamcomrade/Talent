@@ -26,6 +26,9 @@ use Illuminate\Support\HtmlString;
 use Illuminate\Support\Uri;
 use League\Uri\Contracts\UriInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Cookie;
+use Illuminate\Routing\Redirector;
+use Illuminate\Http\RedirectResponse;
 
 use function Illuminate\Support\enum_value;
 
@@ -213,7 +216,7 @@ if (! function_exists('bcrypt')) {
     }
 }
 
-if (! function_exists('broadcast')) {
+    if (! function_exists('broadcast')) {
     /**
      * Begin broadcasting an event.
      *
@@ -222,9 +225,18 @@ if (! function_exists('broadcast')) {
      */
     function broadcast($event = null)
     {
-        return app(BroadcastFactory::class)->event($event);
+         /** @var \Illuminate\Broadcasting\BroadcastManager $factory */
+        $factory = app(BroadcastFactory::class);
+
+        if (method_exists($factory, 'event')) {
+            return $factory->event($event); // kode lama tetap dipakai
+        }
+
+        // fallback untuk kontrak baru
+        return app('events')->dispatch($event);
     }
-}
+    } // ✅ INI YANG KURANG — PENUTUP if broadcast
+
 
 if (! function_exists('broadcast_if')) {
     /**
@@ -235,13 +247,22 @@ if (! function_exists('broadcast_if')) {
      * @return \Illuminate\Broadcasting\PendingBroadcast
      */
     function broadcast_if($boolean, $event = null)
-    {
-        if ($boolean) {
-            return app(BroadcastFactory::class)->event(value($event));
-        } else {
-            return new FakePendingBroadcast;
+{
+    if ($boolean) {
+
+     /** @var \Illuminate\Broadcasting\BroadcastManager $factory */
+        $factory = app(BroadcastFactory::class);
+
+        if (method_exists($factory, 'event')) {
+            return $factory->event(value($event)); // kode lama
         }
+
+        return app('events')->dispatch(value($event)); // fallback
     }
+
+    return new FakePendingBroadcast;
+}
+
 }
 
 if (! function_exists('broadcast_unless')) {
@@ -253,14 +274,18 @@ if (! function_exists('broadcast_unless')) {
      * @return \Illuminate\Broadcasting\PendingBroadcast
      */
     function broadcast_unless($boolean, $event = null)
-    {
-        if (! $boolean) {
-            return app(BroadcastFactory::class)->event(value($event));
-        } else {
-            return new FakePendingBroadcast;
-        }
+{
+    if (! $boolean) {
+        /** @var \Illuminate\Broadcasting\BroadcastManager $factory */
+        $factory = app(BroadcastFactory::class);
+
+        return $factory->event(value($event));
+    } else {
+        return new FakePendingBroadcast;
     }
 }
+
+    }
 
 if (! function_exists('cache')) {
     /**
@@ -353,19 +378,20 @@ if (! function_exists('context')) {
 
 if (! function_exists('cookie')) {
     /**
-     * Create a new cookie instance.
-     *
-     * @param  string|null  $name
-     * @param  string|null  $value
-     * @param  int  $minutes
-     * @param  string|null  $path
-     * @param  string|null  $domain
-     * @param  bool|null  $secure
-     * @param  bool  $httpOnly
-     * @param  bool  $raw
-     * @param  string|null  $sameSite
-     * @return ($name is null ? \Illuminate\Cookie\CookieJar : \Symfony\Component\HttpFoundation\Cookie)
-     */
+      * Create a new cookie instance.
+      *
+      * @param  string|null  $name
+      * @param  string|null  $value
+      * @param  int  $minutes
+      * @param  string|null  $path
+      * @param  string|null  $domain
+      * @param  bool|null  $secure
+      * @param  bool  $httpOnly
+      * @param  bool  $raw
+      * @param  string|null  $sameSite
+      *
+      * @return \Illuminate\Contracts\Cookie\Factory|\Symfony\Component\HttpFoundation\Cookie
+      */
     function cookie($name = null, $value = null, $minutes = 0, $path = null, $domain = null, $secure = null, $httpOnly = true, $raw = false, $sameSite = null)
     {
         $cookie = app(CookieFactory::class);
@@ -706,21 +732,25 @@ if (! function_exists('public_path')) {
 
 if (! function_exists('redirect')) {
     /**
-     * Get an instance of the redirector.
+     * Get an instance of the redirector or redirect to a path.
      *
      * @param  string|null  $to
      * @param  int  $status
      * @param  array  $headers
      * @param  bool|null  $secure
-     * @return ($to is null ? \Illuminate\Routing\Redirector : \Illuminate\Http\RedirectResponse)
+     *
+     * @return Redirector|RedirectResponse
      */
     function redirect($to = null, $status = 302, $headers = [], $secure = null)
     {
+        /** @var Redirector $redirector */
+        $redirector = app(Redirector::class);
+
         if (is_null($to)) {
-            return app('redirect');
+            return $redirector;
         }
 
-        return app('redirect')->to($to, $status, $headers, $secure);
+        return $redirector->to($to, $status, $headers, $secure);
     }
 }
 

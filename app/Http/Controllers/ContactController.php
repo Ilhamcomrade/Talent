@@ -17,6 +17,19 @@ class ContactController extends Controller
         // Ambil data profile
         $profile = Profile::first();
 
+                // Jika belum ada, buat data default
+        if (!$profile) {
+            $profile = Profile::create([
+                'address' => 'Jl. Pratista Utara III No.2, Antapani Kidul, Kec. Antapani, Kota Bandung, Jawa Barat, Indonesia 4029',
+                'email' => 'corporate@inotal.tech',
+                'phone' => '+(62) 82115179879',
+                'operation_hours' => 'Senin - Jumat, 08.00 - 16.00 WIB',
+                'latitude' =>  -6.925457980196308,
+                'longitude' =>   107.66299344598612,
+                'map_popup_text' => 'PT INOTAL SISTEMA INTERNASIONAL Jl. Pratista Utara III No.2, Antapani.',
+            ]);
+        }
+
         // Cek apakah ada session flash 'success_message' yang dikirim dari method store()
         $success_message = $request->session()->get('success_message');
 
